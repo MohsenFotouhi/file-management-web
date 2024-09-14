@@ -1,0 +1,34 @@
+.context-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  width: 150px; /* تنظیم عرض منو به اندازه دلخواه */
+}
+
+.context-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 2px #616060;
+
+}
+
+.context-menu li {
+  padding: 8px 12px;
+  cursor: pointer;
+  border: 2px #7a1919;
+  font-size: smaller;
+}
+
+.context-menu li:hover {
+  background-color: #f1f1f1;
+}
+
+.menu-holder {
+  display: inline-flex;
+  padding: 2px;
+  align-items: center;
+  padding-left: 0.5rem;
+  width: 100%;
+}

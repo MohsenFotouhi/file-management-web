@@ -1,0 +1,99 @@
+<div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px' }">
+  <ul *ngIf="ShowFileMenu">
+    <div class="menu-holder">
+      <i class="fa-solid fa-trash"></i>
+      <li (click)="delete()">delete</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-i-cursor"></i>
+      <li (click)="rename($event)">rename</li>
+    </div>
+
+    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <li (click)="upload()">upload</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-cloud-arrow-down"></i>
+      <li (click)="download()">download</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-share-alt"></i>
+      <li (click)="share()">share</li>
+    </div>
+  </ul>
+
+  <ul *ngIf="ShowTreeMenu">
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-folder-plus"></i>
+      <li (click)="createFolder()">createFolder
+      </li>
+    </div>
+
+    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-trash"></i>
+      <li (click)="delete()">delete</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-i-cursor"></i>
+      <li (click)="rename($event)">rename</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-scissors"></i>
+      <li (click)="cut()">cut</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-copy"></i>
+      <li (click)="copy()">copy</li>
+    </div>
+
+    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <li (click)="upload()">upload</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-refresh"></i>
+      <li (click)="reload()">reload</li>
+    </div>
+
+  </ul>
+
+  <ul *ngIf="showEmptyArea">
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-folder-plus"></i>
+      <li (click)="createFolder()">createFolder
+      </li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-download"></i>
+      <li (click)="paste()">paste</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <li (click)="upload()">upload</li>
+    </div>
+
+    <div class="menu-holder">
+      <i class="fa-solid fa-share-alt"></i>
+      <li (click)="share()">share</li>
+    </div>
+  </ul>
+
+</div>

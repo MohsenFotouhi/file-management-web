@@ -1,0 +1,24 @@
+<div
+  [class.container]="isVerticalLayout$ | async"
+  class="toolbar text-default w-full px-6 flex items-center justify-between">
+  <button
+    (click)="openSidenav()"
+    [class.invisible]="isDesktop$ | async"
+    mat-icon-button
+    type="button">
+    <mat-icon svgIcon="mat:menu"></mat-icon>
+  </button>
+
+
+  <div class="-mx-1 flex items-center">
+    <div></div>
+    <div class="px-1">
+      <vex-toolbar-user></vex-toolbar-user>
+    </div>
+
+  </div>
+</div>
+
+<vex-navigation
+  *ngIf="(isVerticalLayout$ | async) && (isNavbarBelowToolbar$ | async)"
+  [class.hidden]="!(isDesktop$ | async)"></vex-navigation>

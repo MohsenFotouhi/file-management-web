@@ -1,0 +1,19 @@
+<ul class="tree">
+  <li class="tree-li" (click)="onChildClick($event, rootPath)" (contextmenu)="onRightClick($event, rootPath)">
+    <div class="d-flex">
+      <img class="tree-image" src="assets/img/filesIcons/treeicon.png" alt="Folder Icon"/>
+      <img class="tree-image" src="assets/img/filesIcons/folder.png" alt="Folder Icon"/>
+      <a style="text-overflow: ellipsis">{{ rootPath.title }}</a>
+    </div>
+    <ul *ngIf="hasChilds(rootPath)">
+      <li *ngFor="let child of rootPath.childs" (click)="onChildClick($event, child)"
+          (contextmenu)="onRightClick($event, child)">
+
+        <app-path [rootPath]="child" (currentPathChanged)="currentPathChanged.emit($event)"
+                  (rightClickNodeChanged)="rightClickNodeChanged.emit($event)"></app-path>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+

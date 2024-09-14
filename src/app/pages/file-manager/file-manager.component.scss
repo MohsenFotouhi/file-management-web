@@ -1,0 +1,215 @@
+.context-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 150px;
+    /* تنظیم عرض منو به اندازه دلخواه */
+  }
+
+  .context-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .context-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .context-menu li:hover {
+    background-color: #f1f1f1;
+  }
+
+  .btn-toolbar {
+    border-radius: 5px;
+    border: solid 1px #d1d1d1;
+    transition: all .25s linear;
+    color: #3e5a70;
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .btn-toolbar:disabled {
+    background-color: #ccc;
+    color: #666;
+    border: 1px solid #aaa;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+
+  .file-container {
+    height: 50vh;
+    overflow: auto;
+    background-color: white;
+    text-align: center;
+    align-items: center;
+  }
+
+  .tree-holder{
+    height: 50vh;
+    overflow: auto;
+    width: 300px;
+  }
+
+  .file-holder {
+    background-color: rgb(242 242 243);
+  }
+
+
+
+  .fileItem.active {
+    background-color: rgba(46, 115, 252, 0.11) !important;
+  }
+
+  .file {
+    white-space: nowrap;
+    margin: 0 auto;
+    font-size: 14px;
+    display: block;
+    max-width: 100%;
+    text-wrap: nowrap;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .grid-view .file-name {
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-wrap: nowrap;
+  }
+
+  .list-view-file-image {
+    max-width: 100px;
+    max-height: 30px;
+    align-self: center;
+  }
+
+  .grid-view-file-image {
+    max-width: 100px;
+    max-height: 95px;
+    align-self: center;
+  }
+
+  .horizontalLine {
+    border: none;
+    border-bottom: 1px solid rgb(248, 247, 247);
+  }
+
+  .header-text {
+    font-size: 56px;
+    font-weight: 300;
+  }
+
+  .file-size {
+    color: #8b8b8b;
+    font-size: smaller;
+    text-align: center;
+    margin-bottom: 0.7rem;
+    margin-left: 0.5rem;
+  }
+
+  .toolbar-holder {
+    background-color: rgb(246, 247, 249);
+  }
+
+  .horizontalLine {
+    border-left: black;
+  }
+
+  .resizable-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .resizable {
+    position: relative;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  .resizer {
+    width: 18px;
+    height: 100%;
+    background: #dad6d6;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: col-resize;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
+    background-position: 10%;
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+
+  }
+
+
+  .search-input {
+    flex: 1;
+    min-width: 100px;
+  }
+
+
+  .list-view .fileItem {
+    padding: 1px;
+    height: 0.01rem;
+    margin: 0.1rem;
+    background: rgb(246, 247, 249);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    overflow: hidden;
+    display: flex;
+    padding: 0.1rem;
+    align-items: center;
+    border: 1px solid #00000000;
+    cursor: pointer;
+    flex-direction: row;
+    align-items: center;
+    width: fit-content;
+    margin-right: 50%;
+  }
+
+  .list-view .file-name {
+    margin-top: 1rem;
+  }
+
+
+  .list-view .file-size{
+    margin-top: 1rem;
+  }
+
+  .grid-view .fileItem {
+    padding: 1px;
+    height: 170px;
+    width: 150px;
+    margin: 3px;
+    background: rgb(246, 247, 249);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 8px;
+    align-items: center;
+    border: 1px solid #00000000;
+    cursor: pointer;
+
+  }
+
+  @media screen and (max-width: 768px) {
+    .tree-holder, app-path {
+      display: none;
+    }
+  }

@@ -1,0 +1,189 @@
+<div class="mt-5 pt-5">
+  <div dir="ltr" class="card col-12 col-md-10 col-lg-10 mx-auto ">
+    <div>
+      <div class="border d-flex flex-wrap align-items-center gap-1 p-1 rounded">
+        <button class="btn-toolbar" title="back" [disabled]="backButtonEnable" (click)="backButtonClicked()">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+        <button class="btn-toolbar" title="up" [disabled]="upButtonEnable" (click)="upButtonClicked()">
+          <i class="fa-solid fa-turn-up"></i>
+        </button>
+        <button class="btn-toolbar" title="copy" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="copyButtonClicked()">
+          <i class="fa-solid fa-copy"></i>
+        </button>
+        <button class="btn-toolbar" title="Cut" [disabled]="selectedFiles.length == 0  && selectedFolders == undefined"
+                (click)="cutButtonClicked()">
+          <i class="fa-solid fa-scissors"></i>
+        </button>
+        <button class="btn-toolbar" title="paste" [disabled]="canPaste == false"
+                (click)="pasteButtonClicked()">
+          <i class="fa-solid fa-paste"></i>
+        </button>
+        <div class="horizontalLine">|</div>
+        <button class="btn-toolbar" title="rename" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="renameButtonClicked()">
+          <i class="fa-solid fa-i-cursor"></i>
+        </button>
+        <button class="btn-toolbar" title="edit" disabled="true">
+          <i class="fa-solid fa-file-pen"></i>
+        </button>
+        <button class="btn-toolbar" title="delete" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="deleteButtonClicked()">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <div class="horizontalLine">|</div>
+        <button class="btn-toolbar" title="NewFile" (click)="addNewFolderButtonClicked()">
+          <i class="fa-solid fa-folder-plus"></i>
+        </button>
+        <button class="btn-toolbar" title="NewFile" (click)="addNewFileButtonClicked()">
+          <i class="fa-solid fa-file-circle-plus"></i>
+        </button>
+        <div class="horizontalLine">|</div>
+        <button class="btn-toolbar" title="view" disabled=true>
+          <i class="fa-solid fa-eye"></i>
+        </button>
+        <button class="btn-toolbar" title="download"
+                [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+        </button>
+        <button class="btn-toolbar" title="upload" (click)="uploadButtonClicked()">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </button>
+        <div class="horizontalLine">|</div>
+        <button class="btn-toolbar" title="zip" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="zipdButtonClicked()">
+          <i class="fa-solid fa-file-zipper"></i>
+        </button>
+        <button class="btn-toolbar" title="unZip" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="unZipdButtonClicked()">
+          <i class="fa-solid fa-square-arrow-up-right"></i>
+        </button>
+        <button class="btn-toolbar" title="SwitchView" (click)="SwitchView()">
+          <i class="fa-solid fa-list-ul"></i>
+        </button>
+        <input class="form-control form-control-sm search-input" placeholder="Search ..." matInput
+               [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
+      </div>
+
+      <div class="row mx-0 border file-holder w-100 resizable-container" #resizableContainer>
+        <div class="col-2 border-end resizable tree-holder" style="min-width: 150px; overflow-x: auto;" #resizableDiv1
+             (contextmenu)="onContextMenu($event , 'tree')">
+          <div class="resizer" (mousedown)="onMouseDown($event, 'left')">
+            <div class="resizer-icon"></div>
+          </div>
+          <app-path [rootPath]="rootPath"
+                    (currentPathChanged)="pathChange($event)"
+                    (currentChildPathChanged)="pathChange($event)"
+                    (rightClickNodeChanged)="pathRighClick($event)"
+          ></app-path>
+        </div>
+        <!-- (contextmenu)="onContextMenu($event , 'tree')" -->
+        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="file-container p-2 resizable"
+             #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
+          <div class="mx-0 row" (click)="onDivClick($event)">
+            <div class="p-2 border px-2 py-4 fileItem" id="myDiv"
+                 [ngClass]="{ 'active':  isFolderInSelectedFiles(currentFolder)  }"
+                 *ngFor="let currentFolder of folders"
+                 (contextmenu)="onFolderContextMenu($event, currentFolder)"
+                 (click)="onFolderClick($event , currentFolder)">
+              <img src="assets/img/filesIcons/folder.png" alt="img/folder.png"
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <p class="file-name">{{ currentFolder.FolderName }}</p>
+              <div class="file-size"></div>
+            </div>
+
+            <div class="p-2 border px-2 py-4 fileItem" id="myDiv"
+                 [ngClass]="{ 'active': isFileInSelectedFiles( currentFile.file) }"
+                 *ngFor="let currentFile of blobs let i = index"
+                 (contextmenu)="onFileContextMenu($event, currentFile.file)"
+                 (click)="selectedFileChanged($event , currentFile.file)">
+              <img *ngIf="currentFile.file.FileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('dll')" src="assets/img/filesIcons/dll.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.exe') " src="assets/img/filesIcons/exe.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.file')" src="assets/img/filesIcons/file.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf=" currentFile.file.FileName.endsWith('.folder')" src="assets/img/filesIcons/folder.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf=" currentFile.file.FileName.endsWith('.html')" src="assets/img/filesIcons/html.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf=" currentFile.file.FileName.endsWith('.js')" src="assets/img/filesIcons/js.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf=" currentFile.file.FileName.endsWith('.json')" src="assets/img/filesIcons/json.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.MP3')" src="assets/img/filesIcons/MP3.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/MP4.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.php')" src="assets/img/filesIcons/php.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.txt')" src="assets/img/filesIcons/txt.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.zip')" src="assets/img/filesIcons/zip.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <img *ngIf="currentFile.file.FileName.endsWith('.pdf')" src="assets/img/filesIcons/pdf.png" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+
+              <img *ngIf="
+                         currentFile.file.FileName.endsWith('.img') ||
+                         currentFile.file.FileName.endsWith('.png') ||
+                         currentFile.file.FileName.endsWith('.jpeg') "
+                   [src]="currentFile.content" alt=""
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+
+              <img *ngIf="
+                    ! currentFile.file.FileName.endsWith('.css') &&
+                    ! currentFile.file.FileName.endsWith('.dll') &&
+                    ! currentFile.file.FileName.endsWith('.exe') &&
+                    ! currentFile.file.FileName.endsWith('.file') &&
+                    ! currentFile.file.FileName.endsWith('.folder') &&
+                    ! currentFile.file.FileName.endsWith('.html') &&
+                    ! currentFile.file.FileName.endsWith('.js') &&
+                    ! currentFile.file.FileName.endsWith('.json') &&
+                    ! currentFile.file.FileName.endsWith('.MP3') &&
+                    ! currentFile.file.FileName.endsWith('.MP4') &&
+                    ! currentFile.file.FileName.endsWith('.pdf') &&
+                    ! currentFile.file.FileName.endsWith('.php') &&
+                    ! currentFile.file.FileName.endsWith('.txt') &&
+                    ! currentFile.file.FileName.endsWith('.zip') &&
+                    ! currentFile.file.FileName.endsWith('.png') &&
+                    ! currentFile.file.FileName.endsWith('.img') &&
+                    ! currentFile.file.FileName.endsWith('.jpeg')
+                    " src="img/file.png" alt="file.png"
+                   [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
+                   class="file-image"/>
+              <span style="max-width: 100%;">
+                        <p class="file-name">{{  currentFile.file.FileName }}</p>
+                    </span>
+              <div class="file-size">{{  currentFile.file.FileSize }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+       <file-context-menu (menuClicked)="contextMenuClicked($event)"></file-context-menu>
+
+      <div class="border p-2">
+        <span>> Root</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+
+.search-input {
+  width: 100%;
+  border: 1px solid lightgrey;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .spinner-border {
+    position: absolute;
+    right: 10px;
+  }
+
+  .close-icon {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+  }
+}
+
+.select-list {
+  height: 200px;
+  overflow: auto;
+  position: absolute;
+  top: 36px;
+  border-radius: 5px;
+  left: 0;
+  background-color: #fff;
+  z-index: 5;
+}
+
+.selected-list {
+  overflow: auto;
+  height: 160px;
+}
+
+.seleceted-item {
+  min-width: 100px;
+  width: 100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.delete-user {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+}
+
+.email-list {
+  height: 100px;
+  overflow: auto;
+}
+
+
+.cursor-pointer {
+  cursor: pointer;
+}
