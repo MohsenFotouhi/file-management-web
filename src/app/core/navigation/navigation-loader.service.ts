@@ -30,6 +30,13 @@ export class NavigationLoaderService {
             route: '/',
             icon: 'mat:insights',
             routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
+            label: 'پروفایل',
+            route: '/dashboard',
+            icon: 'mat:dashboard',
+            routerLinkActiveOptions: { exact: true }
           }
         ]
       },

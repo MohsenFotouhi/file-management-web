@@ -1,5 +1,5 @@
-<div class="mt-5 pt-5">
-  <div dir="ltr" class="card col-12 col-md-10 col-lg-10 mx-auto ">
+<div class="mt-1 pt-1">
+  <div dir="ltr" class=" mx-auto ">
     <div>
       <div class="border d-flex flex-wrap align-items-center gap-1 p-1 rounded">
         <button class="btn-toolbar" title="back" [disabled]="backButtonEnable" (click)="backButtonClicked()">
@@ -21,48 +21,48 @@
           <i class="fa-solid fa-paste"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="rename" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title=">تغییر نام" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
         <button class="btn-toolbar" title="edit" disabled="true">
           <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="btn-toolbar" title="delete" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="حذف" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
                 (click)="deleteButtonClicked()">
           <i class="fa-solid fa-trash"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="NewFile" (click)="addNewFolderButtonClicked()">
+        <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()">
           <i class="fa-solid fa-folder-plus"></i>
         </button>
-        <button class="btn-toolbar" title="NewFile" (click)="addNewFileButtonClicked()">
+        <button class="btn-toolbar" title="ایجاد پوشه جدید" (click)="addNewFileButtonClicked()">
           <i class="fa-solid fa-file-circle-plus"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="view" disabled=true>
+        <button class="btn-toolbar" title="نمایش" disabled=true>
           <i class="fa-solid fa-eye"></i>
         </button>
-        <button class="btn-toolbar" title="download"
+        <button class="btn-toolbar" title="دانلود"
                 [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
           <i class="fa-solid fa-cloud-arrow-down"></i>
         </button>
-        <button class="btn-toolbar" title="upload" (click)="uploadButtonClicked()">
+        <button class="btn-toolbar" title=">بارگذاری" (click)="uploadButtonClicked()">
           <i class="fa-solid fa-cloud-arrow-up"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="zip" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="آرشیو" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
                 (click)="zipdButtonClicked()">
           <i class="fa-solid fa-file-zipper"></i>
         </button>
-        <button class="btn-toolbar" title="unZip" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="استخراج" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
                 (click)="unZipdButtonClicked()">
           <i class="fa-solid fa-square-arrow-up-right"></i>
         </button>
-        <button class="btn-toolbar" title="SwitchView" (click)="SwitchView()">
+        <button class="btn-toolbar" title="تغیر حالت نمایش" (click)="SwitchView()">
           <i class="fa-solid fa-list-ul"></i>
         </button>
-        <input class="form-control form-control-sm search-input" placeholder="Search ..." matInput
+        <input class="form-control form-control-sm search-input" placeholder="جستجو ..." matInput
                [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
       </div>
 
@@ -79,10 +79,10 @@
           ></app-path>
         </div>
         <!-- (contextmenu)="onContextMenu($event , 'tree')" -->
-        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="file-container p-2 resizable"
+        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-9 file-container p-2 resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
           <div class="mx-0 row" (click)="onDivClick($event)">
-            <div class="p-2 border px-2 py-4 fileItem" id="myDiv"
+            <div class="border fileItem" id="myDiv"
                  [ngClass]="{ 'active':  isFolderInSelectedFiles(currentFolder)  }"
                  *ngFor="let currentFolder of folders"
                  (contextmenu)="onFolderContextMenu($event, currentFolder)"
@@ -94,7 +94,7 @@
               <div class="file-size"></div>
             </div>
 
-            <div class="p-2 border px-2 py-4 fileItem" id="myDiv"
+            <div class="border fileItem" id="myDiv"
                  [ngClass]="{ 'active': isFileInSelectedFiles( currentFile.file) }"
                  *ngFor="let currentFile of blobs let i = index"
                  (contextmenu)="onFileContextMenu($event, currentFile.file)"
@@ -182,7 +182,8 @@
        <file-context-menu (menuClicked)="contextMenuClicked($event)"></file-context-menu>
 
       <div class="border p-2">
-        <span>> Root</span>
+        <a style="cursor: pointer;"  *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i == 0 ? '' : path , i)"> >{{path }}</a>
+        <a style="cursor: pointer;"> {{currentPath.title }}</a>
       </div>
     </div>
   </div>

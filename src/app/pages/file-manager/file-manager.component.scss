@@ -42,7 +42,7 @@
 
 
   .file-container {
-    height: 50vh;
+    height: 80vh;
     overflow: auto;
     background-color: white;
     text-align: center;
@@ -161,15 +161,14 @@
 
   .list-view .fileItem {
     padding: 1px;
-    height: 0.01rem;
-    margin: 0.1rem;
+    margin: 3px;
+    height: 25px;
     background: rgb(246, 247, 249);
     border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
     overflow: hidden;
     display: flex;
-    padding: 0.1rem;
     align-items: center;
     border: 1px solid #00000000;
     cursor: pointer;
@@ -177,6 +176,7 @@
     align-items: center;
     width: fit-content;
     margin-right: 50%;
+    padding: 2px 8px;
   }
 
   .list-view .file-name {
@@ -186,6 +186,7 @@
 
   .list-view .file-size{
     margin-top: 1rem;
+    text-wrap: nowrap;
   }
 
   .grid-view .fileItem {
@@ -207,6 +208,11 @@
     cursor: pointer;
 
   }
+
+.list-view-file-image{
+  max-width: 20px;
+  max-height: 20px;
+}
 
   @media screen and (max-width: 768px) {
     .tree-holder, app-path {

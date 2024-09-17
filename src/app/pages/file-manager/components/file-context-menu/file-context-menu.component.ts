@@ -30,8 +30,8 @@ export class FileContextMenuComponent {
   show(event: MouseEvent, from: string) {
     event.preventDefault();
     this.visible = true;
-    this.x = event.clientX;
-    this.y = event.clientY;
+    this.x = event.clientX - 150;
+    this.y = event.clientY - 200;
     this.ShowFileMenu = from == "file";
     this.ShowTreeMenu = from == "tree";
     this.showEmptyArea = from == "emptyArea";

@@ -25,8 +25,8 @@
     (drop)="onDrop($event)">
     <div mat-dialog-content class="chooser-container">
         <input type="file" multiple (change)="onFileSelected($event)" hidden #fileInput>
-        <button class="dialog-button" (click)="fileInput.click()">Choose File</button>
-        <p class="file-chooser-p">Drag your file here or Click for select</p>
+        <button class="dialog-button" (click)="fileInput.click()">انتخاب فایل</button>
+        <p class="file-chooser-p">فایل خود را به اینجا بکشید یا برای انتخاب کلیک کنید</p>
     </div>
 </div>
 
@@ -48,5 +48,5 @@
 </div>
 
 <div mat-dialog-actions>
-    <button class="dialog-button" mat-button (click)="close()">close</button>
+    <button class="dialog-button" mat-button (click)="close()">بستن</button>
 </div>

@@ -1,30 +1,30 @@
-<div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px' }">
-  <ul *ngIf="ShowFileMenu">
+<div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px' , padding: '5px' }">
+  <ul  *ngIf="ShowFileMenu">
     <div class="menu-holder">
       <i class="fa-solid fa-trash"></i>
-      <li (click)="delete()">delete</li>
+      <li (click)="delete()">حذف</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-i-cursor"></i>
-      <li (click)="rename($event)">rename</li>
+      <li (click)="rename($event)">تغییر نام</li>
     </div>
 
     <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">upload</li>
+      <li (click)="upload()">بارگذاری</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-cloud-arrow-down"></i>
-      <li (click)="download()">download</li>
+      <li (click)="download()">دانلود</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-share-alt"></i>
-      <li (click)="share()">share</li>
+      <li (click)="share()">اشتراک گذاری</li>
     </div>
   </ul>
 
@@ -32,7 +32,7 @@
 
     <div class="menu-holder">
       <i class="fa-solid fa-folder-plus"></i>
-      <li (click)="createFolder()">createFolder
+      <li (click)="createFolder()">ایجاد پوشه
       </li>
     </div>
 
@@ -40,34 +40,34 @@
 
     <div class="menu-holder">
       <i class="fa-solid fa-trash"></i>
-      <li (click)="delete()">delete</li>
+      <li (click)="delete()">حذف</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-i-cursor"></i>
-      <li (click)="rename($event)">rename</li>
+      <li (click)="rename($event)">تغییر نام</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-scissors"></i>
-      <li (click)="cut()">cut</li>
+      <li (click)="cut()">برش</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-copy"></i>
-      <li (click)="copy()">copy</li>
+      <li (click)="copy()">کپی</li>
     </div>
 
     <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">upload</li>
+      <li (click)="upload()">بارگذاری</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-refresh"></i>
-      <li (click)="reload()">reload</li>
+      <li (click)="reload()">بازیابی</li>
     </div>
 
   </ul>
@@ -76,23 +76,23 @@
 
     <div class="menu-holder">
       <i class="fa-solid fa-folder-plus"></i>
-      <li (click)="createFolder()">createFolder
+      <li (click)="createFolder()">ایجاد پوشه
       </li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-download"></i>
-      <li (click)="paste()">paste</li>
+      <li (click)="paste()">چسباندن</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">upload</li>
+      <li (click)="upload()">بارگذاری</li>
     </div>
 
     <div class="menu-holder">
       <i class="fa-solid fa-share-alt"></i>
-      <li (click)="share()">share</li>
+      <li (click)="share()">اشتراک گذاری</li>
     </div>
   </ul>
 

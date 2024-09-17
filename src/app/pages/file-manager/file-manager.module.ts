@@ -19,7 +19,7 @@ const routes: Routes= [
     FormsModule,
     MatIconModule,
     PathComponent,
-    FileContextMenuComponent
+    FileContextMenuComponent,
   ]
 })
 export class FileManagerModule { }

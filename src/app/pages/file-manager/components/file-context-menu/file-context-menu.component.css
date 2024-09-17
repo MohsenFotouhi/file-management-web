@@ -3,7 +3,9 @@
   background-color: white;
   border: 1px solid #ccc;
   z-index: 1000;
-  width: 150px; /* تنظیم عرض منو به اندازه دلخواه */
+  width: 150px; 
+  direction: rtl;
+  border-style: inset;
 }
 
 .context-menu ul {

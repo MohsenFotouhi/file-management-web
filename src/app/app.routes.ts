@@ -18,7 +18,12 @@ export const appRoutes: VexRoutes = [
       {
         path: '',
         loadChildren: () => import('./pages/file-manager/file-manager.module').then(m => m.FileManagerModule)
-      }
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
+      },
+
     ]
   },
 

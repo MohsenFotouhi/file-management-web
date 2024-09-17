@@ -39,7 +39,7 @@ export interface ApexOptions {
 
 @Component({
   selector: 'vex-chart',
-  template: ` <div #chart></div> `,
+  template: ` <div class="d-flex justify-center items-center" #chart></div> `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true
 })

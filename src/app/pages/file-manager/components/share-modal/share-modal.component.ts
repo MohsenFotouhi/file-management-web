@@ -27,6 +27,7 @@ import {MatButtonModule} from "@angular/material/button";
 export class ShareModalComponent {
   isPublic = new FormControl(false);
   searchValue = new FormControl('');
+  expireDate = new FormControl('');
   emailValue = new FormControl('', Validators.pattern(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/));
 
   searchSub!: Subscription;
