@@ -18,6 +18,7 @@ import { MatRippleModule } from '@angular/material/core';
 })
 export class ToolbarUserComponent implements OnInit {
   dropdownOpen: boolean = false;
+ 
 
   constructor(
     private popover: VexPopoverService,

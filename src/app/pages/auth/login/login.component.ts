@@ -63,6 +63,8 @@ export class LoginComponent {
         if (res) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('userInfo', JSON.stringify(res.userInfo));
+          localStorage.setItem('username', res.userInfo.username);
+          localStorage.setItem('userGUID', res.userInfo.userGUID);
           this.authService.setUser();
           this.router.navigate(['/']);
           this.snackbar.open(

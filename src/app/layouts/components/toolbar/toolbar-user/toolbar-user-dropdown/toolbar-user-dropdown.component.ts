@@ -14,6 +14,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {AuthService} from "../../../../../pages/auth/auth.service";
 
 export interface OnlineStatus {
   id: 'online' | 'away' | 'dnd' | 'offline';
@@ -48,16 +49,16 @@ export class ToolbarUserDropdownComponent implements OnInit {
       label: 'پروفایل',
       description: '',
       colorClass: 'text-teal-600',
-      route: '/apps/social'
+      route: '/dashboard'
     },
-    {
-      id: '4',
-      icon: 'mat:table_chart',
-      label: 'گزارشات',
-      description: '',
-      colorClass: 'text-purple-600',
-      route: '/pages/pricing'
-    }
+    // {
+    //   id: '4',
+    //   icon: 'mat:table_chart',
+    //   label: 'گزارشات',
+    //   description: '',
+    //   colorClass: 'text-purple-600',
+    //   route: '/dashboard'
+    // }
   ];
 
   statuses: OnlineStatus[] = [
@@ -90,13 +91,23 @@ export class ToolbarUserDropdownComponent implements OnInit {
   activeStatus: OnlineStatus = this.statuses[0];
 
   trackById = trackById;
+  username: string = '';
+
 
   constructor(
     private cd: ChangeDetectorRef,
-    private popoverRef: VexPopoverRef<ToolbarUserDropdownComponent>
-  ) {}
+    private popoverRef: VexPopoverRef<ToolbarUserDropdownComponent>,
+    private authService: AuthService
+  ) {
+    this.authService.user$.subscribe(user => {
+      if (user) this.username = user.firstName + ' ' + user.lastName;
+    });
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.username = localStorage.getItem('username') ?? '';
+
+  }
 
   setStatus(status: OnlineStatus) {
     this.activeStatus = status;

@@ -1,4 +1,4 @@
-import { Component, HostListener, ElementRef, Renderer2, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, HostListener, ElementRef, Renderer2, ViewChild, EventEmitter, Output , Input} from '@angular/core';
 import { NgIf, NgStyle } from "@angular/common";
 
 @Component({
@@ -12,13 +12,24 @@ import { NgIf, NgStyle } from "@angular/common";
 
 export class FileContextMenuComponent {
 
+@Input() activeActionButtons  = false;  
+@Input() item = '';
+
+@Output() uploadlick =  new EventEmitter<string>();
+@Output() downloadClick =  new EventEmitter<string>();
+@Output() shareClick =  new EventEmitter<string>();
+@Output() createFolderClick =  new EventEmitter<string>();
+@Output() deleteClick =  new EventEmitter<string>();
+@Output() renameClick =  new EventEmitter<string>();
+@Output() cutClick =  new EventEmitter<string>();
+@Output() copyClick =  new EventEmitter<string>();
+@Output() reloadClick =  new EventEmitter<string>();
+@Output() pasteClick =  new EventEmitter<string>();
+
   visible = false;
   x = 0;
   y = 0;
 
-
-  @Output()
-  menuClicked = new EventEmitter<string>();
 
   constructor(private renderer: Renderer2) { }
 
@@ -30,8 +41,8 @@ export class FileContextMenuComponent {
   show(event: MouseEvent, from: string) {
     event.preventDefault();
     this.visible = true;
-    this.x = event.clientX - 150;
-    this.y = event.clientY - 200;
+    this.x = event.clientX - 100;
+    this.y = event.clientY - 150;
     this.ShowFileMenu = from == "file";
     this.ShowTreeMenu = from == "tree";
     this.showEmptyArea = from == "emptyArea";
@@ -48,44 +59,43 @@ export class FileContextMenuComponent {
 
 
   upload() {
-    this.menuClicked.emit("upload");
+    this.uploadlick.emit();
   }
 
   share() {
-    this.menuClicked.emit("share");
+    this.shareClick.emit();
   }
 
   download() {
-    this.menuClicked.emit("download");
+    this.downloadClick.emit();
   }
 
   delete() {
-    this.menuClicked.emit("delete");
+    this.deleteClick.emit();
   }
 
-  rename(event : any) {
-    this.menuClicked.emit("rename");
+  rename() {
+    this.renameClick.emit();
   }
 
   reload() {
-    this.menuClicked.emit("reload");
+    this.reloadClick.emit();
   }
 
   copy() {
-    this.menuClicked.emit("copy");
+    this.copyClick.emit();
   }
 
   cut() {
-    this.menuClicked.emit("cut");
+    this.cutClick.emit();
   }
 
   paste() {
-    this.menuClicked.emit("paste");
+    this.pasteClick.emit();
   }
 
   createFolder() {
-    this.menuClicked.emit("createFolder");
+    this.createFolderClick.emit();
   }
-
 
 }

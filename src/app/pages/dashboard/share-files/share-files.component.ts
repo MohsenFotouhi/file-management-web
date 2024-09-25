@@ -1,8 +1,10 @@
 import {Component, Input, SimpleChanges, ViewChild} from '@angular/core';
-import {MatPaginator} from "@angular/material/paginator";
+import {MatPaginator } from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {TableColumn} from "@vex/interfaces/table-column.interface";
 import {MatSort} from "@angular/material/sort";
+import { ShareDetailComponent } from './share-detail/share-detail.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'vex-share-files',
@@ -20,12 +22,13 @@ export class ShareFilesComponent {
   @ViewChild(MatPaginator, { static: true }) paginator?: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort?: MatSort;
 
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['columns']) {
+      console.log(this.columns)
       this.visibleColumns = this.columns.map((column) => column.property);
     }
 
@@ -43,4 +46,16 @@ export class ShareFilesComponent {
       this.dataSource.sort = this.sort;
     }
   }
+
+
+  openDetailModal(row : any) {
+    const dialogRef = this.dialog.open(ShareDetailComponent, {
+      data: row.sharedBy,
+      width: '500px'
+    });
+
+    return dialogRef.afterClosed().toPromise();
+  }
+
+
 }

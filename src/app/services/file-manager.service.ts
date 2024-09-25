@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {  Observable } from 'rxjs';
+import {  Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams,  } from '@angular/common/http';
 import {environment} from "../../environments/environment";
+import { CreateDownloadLinkCommand } from '../interface/share-models';
 
 
 @Injectable({
@@ -25,12 +26,6 @@ export class FileManagerService {
     return this.http.post<any>(url, formData);
   }
 
-
-  private logiURl = environment.api + '/api/Auth/login';
-  login(username: string, password: string): Observable<any> {
-    const loginData = { username, password };
-    return this.http.post(this.logiURl, loginData);
-  }
 
   uploadFileChunk(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}HgoApi1`, formData, {
@@ -87,5 +82,29 @@ export class FileManagerService {
     return this.http.post<any>(url, formData);
 
   }
+
+  // getSharedFiles(): Observable<any> {
+  //   var files = [
+  //     { CreateDate : '' , FileName: "text1.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
+  //     { CreateDate : '' , FileName: "text2.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
+  //     { CreateDate : '' , FileName: "text3.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
+  //     { CreateDate : '' , FileName: "text4.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
+  //     { CreateDate : '' , FileName: "text5.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''}
+  //   ];
+
+  //   return of(files);
+  // }
+
+  getSharedFiles(): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('id', this.id);
+    formData.append('command', "getSharedFiles");
+    formData.append('parameters', '');
+
+    const url = `${this.apiUrl}HgoApi1`;
+    return this.http.post<any>(url, formData);
+  }
+
+
 
 }

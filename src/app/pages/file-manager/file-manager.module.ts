@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import {PathComponent} from "./components/path/path.component";
 import {FileContextMenuComponent} from "./components/file-context-menu/file-context-menu.component";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { SharedFilesComponent } from './components/shared-files/shared-files.component';
 
 const routes: Routes= [
   {path: '', component: FileManagerComponent}
@@ -20,6 +22,8 @@ const routes: Routes= [
     MatIconModule,
     PathComponent,
     FileContextMenuComponent,
+    MatProgressSpinnerModule,
+    SharedFilesComponent,
   ]
 })
 export class FileManagerModule { }

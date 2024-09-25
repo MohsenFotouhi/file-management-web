@@ -4,39 +4,36 @@
       <div class="dropdown-heading-icon flex items-center justify-center">
         <mat-icon svgIcon="mat:person"></mat-icon>
       </div>
-      <div class="dropdown-heading">امیر عزیزیان</div>
+      <div class="dropdown-heading">{{username}}</div>
     </div>
 
     <button
-      [matMenuTriggerFor]="settingsMenu"
+      routerLink="/setting"
       mat-icon-button
-      matTooltip="Settings"
-      matTooltipPosition="before"
+      matTooltip="تنظیمات"
       type="button">
-      <mat-icon
-        class="notifications-header-icon"
-        svgIcon="mat:settings"></mat-icon>
+      <mat-icon class="notifications-header-icon" svgIcon="mat:settings"></mat-icon>
     </button>
   </div>
 
-  <div class="dropdown-content">
-    <a
-      (click)="close()"
-      *ngFor="let item of items; trackBy: trackById"
-      [routerLink]="item.route"
-      class="notification flex items-center gap-2"
-      matRipple>
-      <mat-icon
-        [ngClass]="item.colorClass"
-        [svgIcon]="item.icon"
-        class="notification-icon flex-none"></mat-icon>
-      <div class="flex-auto">
-        <div class="notification-label">{{ item.label }}</div>
-        <div class="notification-description">{{ item.description }}</div>
-      </div>
-      <mat-icon class="notification-chevron flex-none" svgIcon="mat:chevron_right"></mat-icon>
-    </a>
-  </div>
+  <!--  <div class="dropdown-content">-->
+  <!--    <a-->
+  <!--      (click)="close()"-->
+  <!--      *ngFor="let item of items; trackBy: trackById"-->
+  <!--      [routerLink]="item.route"-->
+  <!--      class="notification flex items-center gap-2"-->
+  <!--      matRipple>-->
+  <!--      <mat-icon-->
+  <!--        [ngClass]="item.colorClass"-->
+  <!--        [svgIcon]="item.icon"-->
+  <!--        class="notification-icon flex-none"></mat-icon>-->
+  <!--      <div class="flex-auto">-->
+  <!--        <div class="notification-label">{{ item.label }}</div>-->
+  <!--        <div class="notification-description">{{ item.description }}</div>-->
+  <!--      </div>-->
+  <!--      <mat-icon class="notification-chevron flex-none" svgIcon="mat:chevron_right"></mat-icon>-->
+  <!--    </a>-->
+  <!--  </div>-->
 
   <div class="dropdown-footer flex items-center justify-end">
     <a (click)="close()" [routerLink]="['/login']" color="warn" mat-button>خروج</a>
@@ -54,23 +51,23 @@
 </mat-menu>
 
 <mat-menu #settingsMenu="matMenu" xPosition="before" yPosition="below">
-  <button mat-menu-item>
+  <!-- <button mat-menu-item>
     <mat-icon svgIcon="mat:business"></mat-icon>
     <span>Change Address</span>
-  </button>
+  </button> -->
 
   <button mat-menu-item>
     <mat-icon svgIcon="mat:verified_user"></mat-icon>
-    <span>Change Username</span>
+    <span>تغییر نام کاربری</span>
   </button>
 
   <button mat-menu-item>
     <mat-icon svgIcon="mat:lock"></mat-icon>
-    <span>Change Password</span>
+    <span>تغییر رمز عبور</span>
   </button>
 
-  <button mat-menu-item>
+  <!-- <button mat-menu-item>
     <mat-icon svgIcon="mat:notifications_off"></mat-icon>
     <span>Disable Notifications</span>
-  </button>
+  </button> -->
 </mat-menu>

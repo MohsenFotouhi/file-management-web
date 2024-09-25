@@ -12,11 +12,9 @@
 }
 
 .upload-progress {
-  width: 80%;
-  margin-left: 10px;
+  margin-right: 10px;
   border-style: groove;
   border-radius: 10px;
-  height: 30px;
 }
 
 .preview-image {
@@ -78,7 +76,10 @@
   min-width: 80%;
   text-overflow: ellipsis;
   display: block;
-  max-width: 80%;
   overflow: hidden;
   text-wrap: nowrap;
+  margin-right: 1vh;
+  height: 20px;
+  min-width: max-content;
+  max-width: max-content
 }

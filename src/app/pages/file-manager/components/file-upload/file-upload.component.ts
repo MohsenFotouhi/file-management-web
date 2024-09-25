@@ -131,21 +131,21 @@ export class FileUploadComponent {
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
     var chunkfile = new File([chunk], file.name, { type: file.type });
-    // this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
-    //   response => {
-    //     if (lastIndex != index) {
+    this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
+      response => {
+        if (lastIndex != index) {
 
-    //       this.upload1(index + 1, file, fileIndex)
-    //       this.uploadProgress[fileIndex] = Math.round((100 * index) / totalChunks);
-    //     }
-    //     else {
-    //       this.uploadProgress[fileIndex] = 100;
-    //       console.log('Upload complete');
-    //     }
-    //   },
-    //   error => {
-    //     console.error('upload error:', error);
-    //   });
+          this.upload1(index + 1, file, fileIndex)
+          this.uploadProgress[fileIndex] = Math.round((100 * index) / totalChunks);
+        }
+        else {
+          this.uploadProgress[fileIndex] = 100;
+          console.log('Upload complete');
+        }
+      },
+      error => {
+        console.error('upload error:', error);
+      });
   }
 
 }

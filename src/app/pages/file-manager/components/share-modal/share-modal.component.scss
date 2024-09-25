@@ -70,3 +70,40 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
+.datepicker-container {
+  width: 100%;
+  border: 1px solid lightgrey;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  input {
+    width: 100%;
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .date-icon {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+  }
+}
+
+.dialog-button {
+  margin: 1px;
+  margin-left: 3px;
+  background-color: purple;
+  border-radius: 10px;
+  font-size: 16px;
+  padding: 5px;
+  color: white !important;
+  width: 80px;
+}

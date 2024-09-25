@@ -1,0 +1,30 @@
+/* Style for the triangle icon */
+.triangle-icon {
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  
+  /* Rotate the triangle when expanded */
+  .triangle-icon.rotate {
+    transform: rotate(90deg);
+  }
+  
+  /* Styling for the expanded details row */
+  .details-row {
+    background-color: #f9f9f9;
+  }
+  
+  .details-row table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+  }
+  
+  .details-row th,
+  .details-row td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  

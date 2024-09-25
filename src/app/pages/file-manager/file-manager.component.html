@@ -1,4 +1,5 @@
 <div class="mt-1 pt-1">
+
   <div dir="ltr" class=" mx-auto ">
     <div>
       <div class="border d-flex flex-wrap align-items-center gap-1 p-1 rounded">
@@ -12,7 +13,7 @@
                 (click)="copyButtonClicked()">
           <i class="fa-solid fa-copy"></i>
         </button>
-        <button class="btn-toolbar" title="Cut" [disabled]="selectedFiles.length == 0  && selectedFolders == undefined"
+        <button class="btn-toolbar" title="Cut" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
                 (click)="cutButtonClicked()">
           <i class="fa-solid fa-scissors"></i>
         </button>
@@ -25,7 +26,7 @@
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
-        <button class="btn-toolbar" title="edit" disabled="true">
+        <button class="btn-toolbar" title="edit" disabled="true" >
           <i class="fa-solid fa-file-pen"></i>
         </button>
         <button class="btn-toolbar" title="حذف" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
@@ -43,11 +44,10 @@
         <button class="btn-toolbar" title="نمایش" disabled=true>
           <i class="fa-solid fa-eye"></i>
         </button>
-        <button class="btn-toolbar" title="دانلود"
-                [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
+        <button class="btn-toolbar" title="دانلود" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
           <i class="fa-solid fa-cloud-arrow-down"></i>
         </button>
-        <button class="btn-toolbar" title=">بارگذاری" (click)="uploadButtonClicked()">
+        <button class="btn-toolbar" title="بارگذاری" (click)="upload()">
           <i class="fa-solid fa-cloud-arrow-up"></i>
         </button>
         <div class="horizontalLine">|</div>
@@ -63,27 +63,33 @@
           <i class="fa-solid fa-list-ul"></i>
         </button>
         <input class="form-control form-control-sm search-input" placeholder="جستجو ..." matInput
-               [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
+               [(ngModel)]="searchKeyWord" (keyup)="search()"/>
       </div>
 
-      <div class="row mx-0 border file-holder w-100 resizable-container" #resizableContainer>
-        <div class="col-2 border-end resizable tree-holder" style="min-width: 150px; overflow-x: auto;" #resizableDiv1
-             (contextmenu)="onContextMenu($event , 'tree')">
+      <div class=" file-holder resizable-container" #resizableContainer>
+        <div class="col-2 border-end resizable tree-holder" style="overflow-x: auto;" #resizableDiv1
+             (contextmenu)="onContextMenu($event , 'emptyArea')" >
           <div class="resizer" (mousedown)="onMouseDown($event, 'left')">
             <div class="resizer-icon"></div>
           </div>
-          <app-path [rootPath]="rootPath"
-                    (currentPathChanged)="pathChange($event)"
-                    (currentChildPathChanged)="pathChange($event)"
-                    (rightClickNodeChanged)="pathRighClick($event)"
-          ></app-path>
+          <div class="col-10">
+
+            <app-path class="app-path" [rootPath]="rootPath"
+            (currentPathChanged)="pathChange($event)"
+            (currentChildPathChanged)="pathChange($event)"
+            (rightClickNodeChanged)="pathRighClick($event)"
+            (contextmenu)="onContextMenu($event , 'tree')"
+            ></app-path>
+
+            <app-shared-files style="width: 100px; height: 100px;" (click)="loadShareFiles()"></app-shared-files>
+          </div>
         </div>
-        <!-- (contextmenu)="onContextMenu($event , 'tree')" -->
-        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-9 file-container p-2 resizable"
+
+        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-10 pl-2 file-container  resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
           <div class="mx-0 row" (click)="onDivClick($event)">
             <div class="border fileItem" id="myDiv"
-                 [ngClass]="{ 'active':  isFolderInSelectedFiles(currentFolder)  }"
+                 [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  *ngFor="let currentFolder of folders"
                  (contextmenu)="onFolderContextMenu($event, currentFolder)"
                  (click)="onFolderClick($event , currentFolder)">
@@ -95,10 +101,10 @@
             </div>
 
             <div class="border fileItem" id="myDiv"
-                 [ngClass]="{ 'active': isFileInSelectedFiles( currentFile.file) }"
-                 *ngFor="let currentFile of blobs let i = index"
+            *ngFor="let currentFile of blobs let i = index"
+            [ngClass]=" isFileInSelectedFiles(currentFile.file) ?  'active':  'inactive' "
                  (contextmenu)="onFileContextMenu($event, currentFile.file)"
-                 (click)="selectedFileChanged($event , currentFile.file)">
+                 (click)="onFileClick($event , currentFile.file)">
               <img *ngIf="currentFile.file.FileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image"/>
@@ -168,7 +174,7 @@
                     ! currentFile.file.FileName.endsWith('.png') &&
                     ! currentFile.file.FileName.endsWith('.img') &&
                     ! currentFile.file.FileName.endsWith('.jpeg')
-                    " src="img/file.png" alt="file.png"
+                    " src="assets/img/filesIcons/file.png" alt="file.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image"/>
               <span style="max-width: 100%;">
@@ -179,12 +185,25 @@
           </div>
         </div>
       </div>
-       <file-context-menu (menuClicked)="contextMenuClicked($event)"></file-context-menu>
+       <file-context-menu
+       (uploadlick) = upload()
+       (downloadClick) = download()
+       (shareClick) = openShareModal()
+       (createFolderClick) = addNewFolderButtonClicked()
+       (deleteClick) = delete()
+       (renameClick) = rename()
+       (cutClick) = cutButtonClicked()
+       (copyClick) = copyButtonClicked()
+       (reloadClick) = reload()
+       (pasteClick) = paste()
+       [activeActionButtons] ='selectedFiles.length != 0 && selectedFolders.length != 0'
+       ></file-context-menu>
 
       <div class="border p-2">
-        <a style="cursor: pointer;"  *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i == 0 ? '' : path , i)"> >{{path }}</a>
+        <a style="cursor: pointer;"  *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i == 0 ? '' : path , i)"> {{path }}></a>
         <a style="cursor: pointer;"> {{currentPath.title }}</a>
       </div>
     </div>
   </div>
 </div>
+

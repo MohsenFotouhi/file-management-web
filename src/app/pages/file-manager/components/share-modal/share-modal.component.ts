@@ -1,13 +1,21 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
-import {CommonModule} from "@angular/common";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {SearchService} from "../../../../services/search.service";
-import {Subscription} from "rxjs";
-import {SearchUser} from "../../../../interface/search-interface";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { SearchService } from "../../../../services/search.service";
+import { Subscription } from "rxjs";
+import { SearchUser } from "../../../../interface/search-interface";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { PersianCalendarComponent } from '../persian-calendar/persian-calendar.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ShareService } from 'src/app/services/share.service';
+import { User } from 'src/app/interface/shared-file';
+import { CreateDownloadLinkCommand } from 'src/app/interface/share-models';
+import { FileManagerService } from 'src/app/services/file-manager.service';
+import * as moment from 'jalali-moment';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'vex-share-modal',
@@ -19,13 +27,18 @@ import {MatButtonModule} from "@angular/material/button";
     CommonModule,
     MatCheckboxModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    PersianCalendarComponent,
+    MatFormFieldModule
   ],
   templateUrl: './share-modal.component.html',
   styleUrl: './share-modal.component.scss'
 })
 export class ShareModalComponent {
+
+  selectedDate!: Date;
   isPublic = new FormControl(false);
+  isPermanent = new FormControl(false);
   searchValue = new FormControl('');
   expireDate = new FormControl('');
   emailValue = new FormControl('', Validators.pattern(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/));
@@ -35,11 +48,32 @@ export class ShareModalComponent {
   userList: SearchUser[] = [];
   emailList: any[] = [];
   searchLoading = false;
+  fileName: string = '';
+  virtualPath: string = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-              private matDialog: MatDialog,
-              private searchService: SearchService) {
+    private dialog: MatDialog,
+    private searchService: SearchService,
+    private shareService: ShareService) {
+    this.virtualPath = data.VirtualPath
   }
+
+  openCalendar(): void {
+    const dialogRef = this.dialog.open(PersianCalendarComponent, {
+      width: '300px',
+      height: '320px',
+      data: { selectedDate: this.selectedDate }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      if (result) {
+        this.selectedDate = result;
+        this.expireDate.setValue(result);
+      }
+    });
+  }
+
 
   onSearch(): void {
     if (this.searchValue.value) {
@@ -81,16 +115,42 @@ export class ShareModalComponent {
   }
 
   closeModal(): void {
-    this.matDialog.closeAll();
+    this.dialog.closeAll();
   }
 
   createLink(): void {
-    const selectedUser = this.selectedUserList;
-    console.log(selectedUser);
-    console.log(this.emailList);
+    const selectedUser: User[] = [];
+    const selectedEmails: string[] = [];
+    this.selectedUserList.forEach(x => selectedUser.push({ userId: x.userGUID, username: x.username }));
+    this.emailList.forEach(x => selectedEmails.push(x.value));
 
-    var url2 = "https://localhost:7205/api/DownloadManager/CreateDownloadLink";
 
+    const jalaliDate = this.selectedDate; // تاریخ شمسی به فرمت YYYY/MM/DD
+    const gregorianDate = moment(jalaliDate, 'jYYYY/jMM/jDD').toDate();
+    
+    // فرمت خروجی به صورت YYYY-MM-DD
+
+    const shareObject: CreateDownloadLinkCommand = {
+      isPermanent: this.isPermanent.value !== null ? this.isPermanent.value : false,
+      isPublic: this.isPublic.value !== null ? this.isPublic.value : false,
+      expireDateTime: gregorianDate ,
+      virtualPath: this.virtualPath,
+      shareWithUsers: selectedUser,
+      shareWithEmails: selectedEmails,
+    };
+
+    this.shareService.createDownloadLink(shareObject) .subscribe({
+      next: (res) => console.log('Success', res),
+      error: (error) => {
+        console.error('There was an error:', error);
+        if (error.error.errors) {
+          console.log('Validation Errors:', error.error.errors);
+        }
+      }
+    });
+  
   }
 
+
 }
+

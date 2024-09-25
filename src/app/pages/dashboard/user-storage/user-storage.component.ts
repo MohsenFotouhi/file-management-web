@@ -14,8 +14,8 @@ export class UserStorageComponent {
     {
       series: [44, 55, 13, 43, 22],
       chart: {
-        width: '80%',
-        type: 'pie',
+        width: '78%',
+        type: 'donut',
       },
       fill: {
         type: 'gradient',
@@ -28,6 +28,9 @@ export class UserStorageComponent {
       },
       colors: ['#008ffb', '#f03343'],
       labels: ['فضای خالی', 'استفاده شده'],
+      dataLabels: {
+        enabled: true
+      },
       responsive: [{
         breakpoint: 480,
         options: {
@@ -35,10 +38,17 @@ export class UserStorageComponent {
             width: 200
           },
           legend: {
-            position: 'bottom'
+            position: 'left',
+
           }
         }
-      }]
+      }],
+      legend: {
+        show: true,
+        position: 'right',
+        horizontalAlign: 'right',
+        width: 100
+      },
     }
   );
 

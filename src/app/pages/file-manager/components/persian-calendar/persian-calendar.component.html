@@ -1,0 +1,23 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <button (click)="previousMonth()">ماه قبل</button>
+    <span>{{ currentDate.format('MMMM YYYY') }}</span>
+    <button (click)="nextMonth()">ماه بعد</button>
+  </div>
+
+  <div class="calendar-body">
+    <div class="day-names">
+      <span *ngFor="let day of daysOfWeek">{{ day }}</span>
+    </div>
+    <div class="days-grid">
+        <span *ngFor="let day of daysInMonth" (click)="selectDay(day)"
+              [class.selected-date]="day === selectedDay">
+          {{ day }}
+        </span>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button class="dialog-button" mat-button (click)="onCancel()">انصراف</button>
+    <button class="dialog-button" mat-button (click)="onConfirm()">تایید</button>
+  </div>
+</div>

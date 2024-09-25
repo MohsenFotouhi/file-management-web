@@ -7,6 +7,9 @@ import { FileManagerService } from 'src/app/services/file-manager.service';
 import { FileService } from "../../services/file.service";
 import { ShareModalComponent } from "./components/share-modal/share-modal.component";
 import { DialogService } from './dialog-service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'vex-file-manager',
@@ -30,11 +33,13 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   canPaste: boolean = false;
   fromPath: string = '';
   currentPathItems: string[] = [];
+  showShareFiles: boolean = false;
 
   constructor(private service: FileManagerService,
     private fileService: FileService,
     private dialog: MatDialog,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private spinner: NgxSpinnerService) {
   }
 
   ngOnInit(): void {
@@ -43,15 +48,21 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    console.log(this.resizableDiv2);
-    this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 15 + 'px';
+    const offsetX = this.resizableDiv1.nativeElement.style.width.clientX - this.lastDownX;
+
+    this.resizableDiv1.nativeElement.style.width = ` ${this.originalWidth1 + offsetX}px`;
+    this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 2 + 'px';
   }
 
   openShareModal(): void {
-    this.dialog.open(ShareModalComponent, { width: '500px' });
+   var virtualPath = this.selectedFiles.splice(0,1)[0];
+    this.dialog.open(ShareModalComponent, { width: '500px' , data :virtualPath });
   }
 
+  isLoading = false;
+
   async getPath() {
+    // this.spinner.show();
     const command = 'getFolderContent';
     this.selectedFiles = []
     await this.service.CallAPI(command, '').subscribe(
@@ -77,12 +88,15 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       },
       error => {
         console.error('API error:', error);
+      },
+      () => {
+
+        this.spinner.hide();
       }
     );
-    await this.previews();
   }
 
-  async getPaths(path: FilePath) {
+  getPaths(path: FilePath) {
     const command = 'getFolderContent';
     this.rootPath.childs.forEach(element => {
       if (path.parent != undefined)
@@ -91,8 +105,8 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     });
     this.folders = []
     this.files = [];
-
-    await this.service.CallAPI(command, path.fullTitle).subscribe(
+    this.spinner.show();
+    this.service.CallAPI(command, path.fullTitle).subscribe(
       response => {
         this.folders = response.Folders ?? [];
         this.files = response.Files ?? [];
@@ -119,10 +133,12 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
               childs: []
             });
         }
-
       },
       error => {
         console.error('API error:', error);
+      },
+      () => {
+        this.spinner.hide();
       }
     );
 
@@ -157,6 +173,21 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.onContextMenu(event, 'tree');
   }
 
+  loadShareFiles() {
+    this.spinner.show()
+    this.service.getSharedFiles().subscribe(response => {
+      this.files = response.Files,
+        this.folders = [],
+        this.previews();
+    },
+      error => {
+        console.error('API error:', error);
+      },
+      () => {
+
+        this.spinner.hide();
+      });
+  }
 
   backButtonClicked() {
     var path = this.previousPathes.splice(this.previousPathes.length - 1, 1)[0];
@@ -171,6 +202,9 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       this.previousPathes.push(this.currentPath);
       this.currentPath = this.previousPathes.find(x => x.fullTitle == this.currentPath.parent) ?? new FilePath();
       this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+      if (this.currentPath.fullTitle == '' || this.currentPath.fullTitle == undefined)
+        this.getPath();
+      else
       this.getPaths(this.currentPath);
     }
   }
@@ -240,7 +274,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       "Path": this.currentPath.fullTitle + "\\",
       "Items": Items
     };
-    this.callApi(this.actionName, JSON.stringify(data));
+    this.callApiWithResponse(this.actionName, JSON.stringify(data));
   }
 
 
@@ -248,11 +282,12 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async addNewFolderButtonClicked() {
     var folderName: any;
+    var path = this.fromcontext ? this.pathFolderContextMenu.fullTitle : this.currentPath.fullTitle;
     folderName = "NewFolder"
     folderName = await this.dialogService.openRenameDialog(folderName);
     if (folderName != undefined) {
       const data = {
-        Path: this.fromcontext ? this.pathFolderContextMenu.fullTitle : this.currentPath.fullTitle,
+        Path: path,
         FolderName: folderName
       };
       const jsonData = JSON.stringify(data);
@@ -282,11 +317,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   downloadButtonClicked() {
     this.download();
-  }
-
-  async uploadButtonClicked() {
-    await this.upload();
-
   }
 
   async zipdButtonClicked() {
@@ -347,30 +377,9 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.callApiWithResponse("search", jsonData);
   }
 
-  async contextMenuClicked(event: any) {
-    if (event.includes("upload")) {
-      this.upload();
-    } else if (event.includes("download")) {
-      this.download();
-    } else if (event.includes("rename")) {
-      this.rename();
-    } else if (event.includes("delete")) {
-      this.delete();
-    } else if (event.includes("reload")) {
-      this.pathChange(this.currentPath);
-    } else if (event.includes("copy")) {
-      this.copyButtonClicked();
-    } else if (event.includes("cut")) {
-      this.cutButtonClicked();
-    } else if (event.includes("createFolder")) {
-      this.addNewFolderButtonClicked();
-    } else if (event.includes("paste")) {
-      this.paste();
-    } else if (event.includes("reload")) {
-      this.getPaths(this.currentPath);
-    } else if (event.includes("share")) {
-      this.openShareModal();
-    }
+
+  reload() {
+    this.pathChange(this.currentPath);
   }
 
   async upload() {
@@ -378,7 +387,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     var path = this.currentPath.fullTitle;
     if (this.fromcontext == true)
       path = this.pathFolderContextMenu.fullTitle;
-    if (this.fromFolder == true)
+    else if (this.fromFolder == true)
       path = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0].VirtualPath;
     files = await this.dialogService.openUploadDialog(path);
     this.getPaths(this.currentPath);
@@ -417,7 +426,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async delete() {
 
-    const confirmed = await this.dialogService.openConfirmationDialog("Are you sure you want to delete selected items?");
+    const confirmed = await this.dialogService.openConfirmationDialog("آیا از حذف آیتم های انتخابی اطمینان دارید؟");
     if (confirmed) {
 
       var Items: string[] = [];
@@ -507,17 +516,22 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   callApi(command: string, parameters: string) {
+    this.spinner.show();
     this.service.CallAPI(command, parameters).subscribe(
       response => {
         this.getPaths(this.currentPath);
       },
       error => {
         console.error('API error:', error);
+      },
+      () => {
+        this.spinner.hide();
       }
     );
   }
 
   callApiWithResponse(command: string, parameters: string) {
+    this.spinner.show();
     this.service.CallAPI(command, parameters).subscribe(
       response => {
         this.folders = response.Folders ?? [];
@@ -526,11 +540,15 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       },
       error => {
         console.error('API error:', error);
+      },
+      () => {
+        this.spinner.hide();
       }
     );
   }
 
   selectedFileChanged(event: any, currentFile: file) {
+    this.fromContext = false;
     if (event != undefined && event.ctrlKey)
       this.selectedFiles.push(currentFile);
     else {
@@ -545,6 +563,20 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   clickTimer: any;
+
+  onFileClick(event: MouseEvent, file: file) {
+    if (this.clickTimer) {
+      this.fromContext = false;
+      clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+    } else {
+      this.clickTimer = setTimeout(() => {
+        this.selectedFileChanged(event, file);
+        this.clickTimer = null;
+        this.clickTimer = null;
+      }, 250);
+    }
+  }
 
 
   onFolderClick(event: MouseEvent, file: folder) {
@@ -629,11 +661,9 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.ShowFileMenu = from == "file";
     this.ShowTreeMenu = from == "tree";
     this.showEmptyArea = from == "emptyArea";
-    if (this.showEmptyArea) {
 
-      this.selectedFiles = [];
-      this.selectedFolders = [];
-    }
+    this.selectedFiles = [];
+    this.selectedFolders = [];
   }
 
   ShowFileMenu: boolean = false;
@@ -666,10 +696,13 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
 
-  onDivClick(event: Event) {
-    event.stopPropagation();
+  onDivClick(event: any) {
     if (this.fileMenu != undefined)
       this.fileMenu.hide();
+    if (event != undefined && event.ctrlKey)
+      return
+    this.selectedFiles = [];
+    this.selectedFolders = [];
   }
 
 

@@ -11,6 +11,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatTableModule} from "@angular/material/table";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSortModule} from "@angular/material/sort";
+import { ShareDetailComponent } from './share-files/share-detail/share-detail.component';
 
 const routes: Routes = [
   {path: '', component: DashboardComponent}
@@ -31,7 +32,9 @@ const routes: Routes = [
     MatIconModule,
     MatTableModule,
     MatTooltipModule,
-    MatSortModule
+    MatSortModule,
+    ShareDetailComponent
+    
   ]
 })
 export class DashboardModule {

@@ -42,27 +42,36 @@
 
 
   .file-container {
-    height: 80vh;
+    height: 78vh;
     overflow: auto;
     background-color: white;
     text-align: center;
     align-items: center;
+    width: 80%;
   }
 
   .tree-holder{
-    height: 50vh;
     overflow: auto;
-    width: 300px;
+    width: 15%;
+    display: block;
+    display: block !important;
   }
 
   .file-holder {
     background-color: rgb(242 242 243);
   }
 
-
+.app-path{
+  height: 65vh;
+  display: block !important;
+}
 
   .fileItem.active {
     background-color: rgba(46, 115, 252, 0.11) !important;
+  }
+
+  .fileItem.inactive {
+    background-color: rgb(246, 247, 249) !important;
   }
 
   .file {
@@ -214,8 +223,15 @@
   max-height: 20px;
 }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 500px) {
     .tree-holder, app-path {
       display: none;
+    }
+
+    ngx-spinner {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }

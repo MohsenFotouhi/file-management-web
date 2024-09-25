@@ -1,98 +1,99 @@
 <div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px' , padding: '5px' }">
   <ul  *ngIf="ShowFileMenu">
-    <div class="menu-holder">
+    <div class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
-      <li (click)="delete()">حذف</li>
+      <li >حذف</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder" (click)="rename()">
       <i class="fa-solid fa-i-cursor"></i>
-      <li (click)="rename($event)">تغییر نام</li>
+      <li >تغییر نام</li>
     </div>
 
     <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">بارگذاری</li>
+      <li >بارگذاری</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="download()">
       <i class="fa-solid fa-cloud-arrow-down"></i>
-      <li (click)="download()">دانلود</li>
+      <li >دانلود</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="share()">
       <i class="fa-solid fa-share-alt"></i>
-      <li (click)="share()">اشتراک گذاری</li>
+      <li >اشتراک گذاری</li>
     </div>
   </ul>
 
   <ul *ngIf="ShowTreeMenu">
 
-    <div class="menu-holder">
+    <div class="menu-holder" (click)="createFolder()">
       <i class="fa-solid fa-folder-plus"></i>
-      <li (click)="createFolder()">ایجاد پوشه
+      <li >ایجاد پوشه
       </li>
     </div>
 
     <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
 
-    <div class="menu-holder">
+    <div class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
-      <li (click)="delete()">حذف</li>
+      <li >حذف</li>
     </div>
 
-    <div class="menu-holder">
+    <!-- <div class="menu-holder" (click)="rename()">
       <i class="fa-solid fa-i-cursor"></i>
-      <li (click)="rename($event)">تغییر نام</li>
-    </div>
+      <li >تغییر نام</li>
+    </div> -->
 
-    <div class="menu-holder">
+    <!-- <div class="menu-holder"(click)="cut()">
       <i class="fa-solid fa-scissors"></i>
-      <li (click)="cut()">برش</li>
+      <li >برش</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="copy()">
       <i class="fa-solid fa-copy"></i>
-      <li (click)="copy()">کپی</li>
+      <li >کپی</li>
     </div>
 
     <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">بارگذاری</li>
-    </div>
+      <li >بارگذاری</li>
+    </div> -->
 
-    <div class="menu-holder">
+
+    <div class="menu-holder"(click)="reload()">
       <i class="fa-solid fa-refresh"></i>
-      <li (click)="reload()">بازیابی</li>
+      <li >بازیابی</li>
     </div>
 
   </ul>
 
   <ul *ngIf="showEmptyArea">
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="createFolder()">
       <i class="fa-solid fa-folder-plus"></i>
-      <li (click)="createFolder()">ایجاد پوشه
+      <li >ایجاد پوشه
       </li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="paste()">
       <i class="fa-solid fa-download"></i>
-      <li (click)="paste()">چسباندن</li>
+      <li >چسباندن</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li (click)="upload()">بارگذاری</li>
+      <li >بارگذاری</li>
     </div>
 
-    <div class="menu-holder">
+    <div class="menu-holder"(click)="share()">
       <i class="fa-solid fa-share-alt"></i>
-      <li (click)="share()">اشتراک گذاری</li>
+      <li >اشتراک گذاری</li>
     </div>
   </ul>
 
