@@ -1,5 +1,5 @@
-import { Component, HostListener, ElementRef, Renderer2, ViewChild, EventEmitter, Output , Input} from '@angular/core';
 import { NgIf, NgStyle } from "@angular/common";
+import { Component, EventEmitter, HostListener, Input, Output, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'file-context-menu',
@@ -10,21 +10,22 @@ import { NgIf, NgStyle } from "@angular/common";
 })
 
 
-export class FileContextMenuComponent {
+export class FileContextMenuComponent
+{
 
-@Input() activeActionButtons  = false;  
-@Input() item = '';
+  @Input() activeActionButtons = false;
+  @Input() item = '';
 
-@Output() uploadlick =  new EventEmitter<string>();
-@Output() downloadClick =  new EventEmitter<string>();
-@Output() shareClick =  new EventEmitter<string>();
-@Output() createFolderClick =  new EventEmitter<string>();
-@Output() deleteClick =  new EventEmitter<string>();
-@Output() renameClick =  new EventEmitter<string>();
-@Output() cutClick =  new EventEmitter<string>();
-@Output() copyClick =  new EventEmitter<string>();
-@Output() reloadClick =  new EventEmitter<string>();
-@Output() pasteClick =  new EventEmitter<string>();
+  @Output() uploadlick = new EventEmitter<string>();
+  @Output() downloadClick = new EventEmitter<string>();
+  @Output() shareClick = new EventEmitter<string>();
+  @Output() createFolderClick = new EventEmitter<string>();
+  @Output() deleteClick = new EventEmitter<string>();
+  @Output() renameClick = new EventEmitter<string>();
+  @Output() cutClick = new EventEmitter<string>();
+  @Output() copyClick = new EventEmitter<string>();
+  @Output() reloadClick = new EventEmitter<string>();
+  @Output() pasteClick = new EventEmitter<string>();
 
   visible = false;
   x = 0;
@@ -38,63 +39,83 @@ export class FileContextMenuComponent {
   ShowTreeMenu: boolean = false;
   showEmptyArea: boolean = false;
 
-  show(event: MouseEvent, from: string) {
+  show(event: MouseEvent, from: string)
+  {
     event.preventDefault();
-    this.visible = true;
+    // Calculate the height and width of the window
+    const windowHeight = window.innerHeight;
+
+    // Determine whether the click is on the top or bottom half of the screen
+    const isTopHalf = event.clientY < windowHeight / 2;
+    // Set the context menu position based on click location
     this.x = event.clientX - 100;
-    this.y = event.clientY - 150;
-    this.ShowFileMenu = from == "file";
-    this.ShowTreeMenu = from == "tree";
-    this.showEmptyArea = from == "emptyArea";
+    this.y = isTopHalf ? event.clientY + 10 : event.clientY - 200; // Adjust position based on click location
+
+    this.visible = true;
+    this.ShowFileMenu = from === "file";
+    this.ShowTreeMenu = from === "tree";
+    this.showEmptyArea = from === "emptyArea";
   }
 
-  hide() {
+  hide()
+  {
     this.visible = false;
   }
 
   @HostListener('document:click')
-  onDocumentClick() {
+  onDocumentClick()
+  {
     this.hide();
   }
 
 
-  upload() {
+  upload()
+  {
     this.uploadlick.emit();
   }
 
-  share() {
+  share()
+  {
     this.shareClick.emit();
   }
 
-  download() {
+  download()
+  {
     this.downloadClick.emit();
   }
 
-  delete() {
+  delete()
+  {
     this.deleteClick.emit();
   }
 
-  rename() {
+  rename()
+  {
     this.renameClick.emit();
   }
 
-  reload() {
+  reload()
+  {
     this.reloadClick.emit();
   }
 
-  copy() {
+  copy()
+  {
     this.copyClick.emit();
   }
 
-  cut() {
+  cut()
+  {
     this.cutClick.emit();
   }
 
-  paste() {
+  paste()
+  {
     this.pasteClick.emit();
   }
 
-  createFolder() {
+  createFolder()
+  {
     this.createFolderClick.emit();
   }
 

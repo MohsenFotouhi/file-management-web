@@ -35,3 +35,7 @@ html {
 .mat-mdc-dialog-container .mdc-dialog__content {
   font-family: 'Sahel', sans-serif !important;
 }
+
+.noselect {
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}

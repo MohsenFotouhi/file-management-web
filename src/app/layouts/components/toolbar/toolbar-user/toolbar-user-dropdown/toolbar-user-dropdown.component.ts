@@ -1,22 +1,25 @@
-import {
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import
+{
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   OnInit
 } from '@angular/core';
-import { MenuItem } from '../interfaces/menu-item.interface';
-import { trackById } from '@vex/utils/track-by';
-import { VexPopoverRef } from '@vex/components/vex-popover/vex-popover-ref';
-import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import {AuthService} from "../../../../../pages/auth/auth.service";
+import { Router, RouterLink } from '@angular/router';
+import { VexPopoverRef } from '@vex/components/vex-popover/vex-popover-ref';
+import { trackById } from '@vex/utils/track-by';
+import { AuthService } from "../../../../../pages/auth/auth.service";
+import { MenuItem } from '../interfaces/menu-item.interface';
 
-export interface OnlineStatus {
+export interface OnlineStatus
+{
   id: 'online' | 'away' | 'dnd' | 'offline';
   label: string;
   icon: string;
@@ -41,7 +44,9 @@ export interface OnlineStatus {
     NgIf
   ]
 })
-export class ToolbarUserDropdownComponent implements OnInit {
+export class ToolbarUserDropdownComponent implements OnInit
+{
+  router = inject(Router);
   items: MenuItem[] = [
     {
       id: '1',
@@ -98,23 +103,35 @@ export class ToolbarUserDropdownComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private popoverRef: VexPopoverRef<ToolbarUserDropdownComponent>,
     private authService: AuthService
-  ) {
-    this.authService.user$.subscribe(user => {
+  )
+  {
+    this.authService.user$.subscribe(user =>
+    {
       if (user) this.username = user.firstName + ' ' + user.lastName;
     });
   }
 
-  ngOnInit() {
+  ngOnInit()
+  {
     this.username = localStorage.getItem('username') ?? '';
 
   }
 
-  setStatus(status: OnlineStatus) {
+  setStatus(status: OnlineStatus)
+  {
     this.activeStatus = status;
     this.cd.markForCheck();
   }
 
-  close() {
+  close()
+  {
     this.popoverRef.close();
+  }
+
+  logout()
+  {
+    localStorage.removeItem('token');
+    this.close;
+    this.router.navigate(['/login']);
   }
 }
