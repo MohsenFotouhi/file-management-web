@@ -1,4 +1,16 @@
-<div  class="w-100 d-flex flex-column justify-content-center align-items-center" style="height: 80vh">
-  <h4 class="mb-3">با گوشی اسکن کنید</h4>
-  <qrcode  [qrdata]="otpQrCode"  errorCorrectionLevel="M"></qrcode>
+<div *ngIf="otp$ | async; let otp" >
+  <div  class="w-100 d-flex flex-column justify-content-center align-items-center" style="height: 80vh">
+    <h4 class="mb-3">با گوشی اسکن کنید</h4>
+    <qrcode  [qrdata]="otp.totpConfig"  errorCorrectionLevel="M"></qrcode>
+    <mat-form-field appearance="outline" class="w-50 mt-3">
+      <mat-label>کیو آر کد</mat-label>
+      <input readonly [value]="otp.totpConfig" matInput placeholder="Placeholder">
+       <button
+      mat-icon-button
+      matPrefix
+      (click)="clickEvent(otp.totpConfig)" >
+      <mat-icon>file_copy</mat-icon>
+    </button>
+    </mat-form-field>
+  </div>
 </div>
