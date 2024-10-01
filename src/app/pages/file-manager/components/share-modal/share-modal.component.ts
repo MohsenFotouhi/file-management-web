@@ -6,6 +6,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogContent, MatDialogTitle } from "@angular/material/dialog";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import * as moment from 'jalali-moment';
 import { Subscription } from "rxjs";
 import { CreateDownloadLinkCommand } from 'src/app/interface/share-models';
@@ -27,7 +28,8 @@ import { PersianCalendarComponent } from '../persian-calendar/persian-calendar.c
     MatIconModule,
     MatButtonModule,
     PersianCalendarComponent,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './share-modal.component.html',
   styleUrl: './share-modal.component.scss'
@@ -49,6 +51,7 @@ export class ShareModalComponent
   searchLoading = false;
   fileName: string = '';
   virtualPath: string = '';
+  sharedLink: string = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
@@ -57,6 +60,12 @@ export class ShareModalComponent
   {
     this.virtualPath = data.VirtualPath;
   }
+
+  clickEvent(link: string)
+  {
+    navigator.clipboard.writeText(link);
+  }
+
 
   openCalendar(): void
   {
@@ -157,7 +166,10 @@ export class ShareModalComponent
     };
 
     this.shareService.createDownloadLink(shareObject).subscribe({
-      next: (res) => console.log('Success', res),
+      next: (res: any) =>
+      {
+        this.sharedLink = res.link;
+      },
       error: (error) =>
       {
         console.error('There was an error:', error);

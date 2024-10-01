@@ -1,7 +1,6 @@
-import { LayoutComponent } from './layouts/layout/layout.component';
 import { VexRoutes } from '@vex/interfaces/vex-route.interface';
-import {authGuard} from "./gaurds/auth.guard";
-import { SettingComponent } from './pages/setting/setting.component';
+import { authGuard } from "./gaurds/auth.guard";
+import { LayoutComponent } from './layouts/layout/layout.component';
 import { FileManagerComponent } from './pages/file-manager/file-manager.component';
 import { OTPComponent } from './pages/OTPs/otp/otp.component';
 import { VerifyOtpComponentComponent } from './pages/OTPs/verify-otp-component/verify-otp-component.component';
@@ -34,9 +33,18 @@ export const appRoutes: VexRoutes = [
         path: 'setting', component: OTPComponent
       },
       { path: 'verify-otp', component: VerifyOtpComponentComponent },
-      {path: 'fileManagement/showShareFiles', component:FileManagerComponent}
+      { path: 'fileManagement/showShareFiles', component: FileManagerComponent }
       //{ path: '**', component: PageNotFoundComponent },
     ]
   },
-
+  {
+    'path': 'download',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/link-download/link-download.component').then((m) => m.LinkDownloadComponent),
+      },
+    ]
+  },
 ];

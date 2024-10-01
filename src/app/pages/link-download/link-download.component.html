@@ -1,0 +1,30 @@
+<div class="row mx-0 row-cols-1 row-cols-md-2 pt-5" >
+  <div class="col mt-2">
+    <h2 class="title flex-auto">شناسه کاربری یا ایمیل خود را وارد نمایید</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="token.length && !step3">
+    <mat-form-field appearance="outline">
+        <mat-label>شناسه کاربری یا ایمیل </mat-label>
+        <input matInput placeholder="Enter your username" formControlName="username">
+        <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+        این فیلد الزامی است
+        </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" class="mr-2" [disabled]="loginForm.invalid">
+            دانلود فایل
+    </button>
+    </form>
+
+    <div *ngIf="step3">
+        <mat-form-field appearance="outline">
+        <mat-label>شناسه او تی پی </mat-label>
+        <input [(ngModel)]="otp" matInput placeholder="شناسه او تی پی" formControlName="username">
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="button" class="mr-2" [disabled]="!otp.length" (click)="getDownloadLink(otp)">
+        دانلود فایل
+        </button>
+    </div>
+    
+  </div>
+</div>
