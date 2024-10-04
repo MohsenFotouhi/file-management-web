@@ -1,0 +1,6 @@
+<div class="canvas-container">
+  <canvas #canvasElement (mousedown)="startDrawing($event)" 
+          (mouseup)="endDrawing($event)" 
+          (mousemove)="drawSquare($event)">
+  </canvas>
+</div>
