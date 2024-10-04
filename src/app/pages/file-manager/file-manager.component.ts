@@ -90,6 +90,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
         this.currentPath = this.rootPath;
         this.previews();
         this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+        this.currentPathItems = this.currentPathItems.filter(item => !!item);
       },
       error =>
       {
@@ -125,6 +126,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
         var parentTitle: string = "";
         this.currentPath.childs = [];
         this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+        this.currentPathItems = this.currentPathItems.filter(item => !!item);
         for (let i = 0; i < this.folders.length; i++)
         {
           parentTitle = "";
@@ -159,12 +161,18 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
-  getPathContent(path: string, i: number)
+  getPathContent(i: number)
   {
+    // currentPath.title
+    console.log('i', i);
+    console.log('his.currentPathItems ', this.currentPathItems);
+    // this.currentPath.title = this.currentPathItems[i];
+    // this.currentPathItems = this.removeFromCurrentPath(i);
     this.currentPath.fullTitle.split("\\");
     if (i == 0)
       this.getPath();
     var fullPath = this.currentPath.fullTitle.split("\\").splice(0, i + 1).join("\\").toString();
+    console.log('fullPath', fullPath);
     this.rootPath.childs.find(x => x.fullTitle == fullPath);
     var navigate = this.rootPath.childs.find(x => x.fullTitle == fullPath);
     if (navigate != undefined)
@@ -173,11 +181,18 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
+  removeFromCurrentPath(index: number): string[]
+  {
+    return index > -1 ? this.currentPathItems.slice(0, index) : [];
+  }
+
+
   pathChange(path: FilePath)
   {
     this.previousPathes.push(this.currentPath);
     this.currentPath = path;
     this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+    this.currentPathItems = this.currentPathItems.filter(item => !!item);
     this.getPaths(path);
     this.backButtonEnable = false;
   }
@@ -215,6 +230,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     var path = this.previousPathes.splice(this.previousPathes.length - 1, 1)[0];
     this.currentPath = path;
     this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+    this.currentPathItems = this.currentPathItems.filter(item => !!item);
     this.getPaths(this.currentPath);
     this.backButtonEnable = this.previousPathes.length == 0;
   }
@@ -226,6 +242,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       this.previousPathes.push(this.currentPath);
       this.currentPath = this.previousPathes.find(x => x.fullTitle == this.currentPath.parent) ?? new FilePath();
       this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+      this.currentPathItems = this.currentPathItems.filter(item => !!item);
       if (this.currentPath.fullTitle == '' || this.currentPath.fullTitle == undefined)
         this.getPath();
       else

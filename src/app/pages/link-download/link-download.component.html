@@ -12,17 +12,18 @@
     </mat-form-field>
 
     <button mat-raised-button color="primary" type="submit" class="mr-2" [disabled]="loginForm.invalid">
-            دانلود فایل
+           1 دانلود فایل
     </button>
     </form>
 
     <div *ngIf="step3">
         <mat-form-field appearance="outline">
         <mat-label>شناسه او تی پی </mat-label>
-        <input [(ngModel)]="otp" matInput placeholder="شناسه او تی پی" formControlName="username">
+        <input [(ngModel)]="otp" matInput placeholder="شناسه او تی پی" />
         </mat-form-field>
+        {{otp}}
         <button mat-raised-button color="primary" type="button" class="mr-2" [disabled]="!otp.length" (click)="getDownloadLink(otp)">
-        دانلود فایل
+        2 دانلود فایل
         </button>
     </div>
     

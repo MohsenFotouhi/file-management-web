@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {RouterOutlet} from '@angular/router';
 import {NgxSpinnerModule} from "ngx-spinner";
 
@@ -6,7 +7,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
   selector: 'vex-root',
   templateUrl: './app.component.html',
   standalone: true,
-  imports: [RouterOutlet, NgxSpinnerModule]
+  imports: [RouterOutlet, NgxSpinnerModule, MatSnackBarModule]
 })
 export class AppComponent {
 }

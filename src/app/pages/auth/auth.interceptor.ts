@@ -2,20 +2,30 @@ import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/comm
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) =>
 {
   const router = inject(Router);
+  const snackBar = inject(MatSnackBar);  // Inject MatSnackBar
   const token = localStorage.getItem('token');
 
   if (token) req = setToken(req, token);
   return next(req).pipe(
     catchError((error: HttpErrorResponse) =>
     {
-      if ([401, 500, 0].includes(error.status))
+      if ([401].includes(error.status))
       {
         localStorage.removeItem('token');
         router.navigate(['/login']);
+      }
+      else
+      {
+        snackBar.open(error.message, 'Close', {
+          duration: 3000, // Duration in milliseconds
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+        });
       }
       return throwError(error);
     })

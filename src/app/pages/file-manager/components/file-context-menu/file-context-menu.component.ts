@@ -1,12 +1,13 @@
 import { NgIf, NgStyle } from "@angular/common";
 import { Component, EventEmitter, HostListener, Input, Output, Renderer2 } from '@angular/core';
+import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
   selector: 'file-context-menu',
   standalone: true,
-  imports: [NgStyle, NgIf],
+  imports: [NgStyle, NgIf, MatDividerModule],
   templateUrl: './file-context-menu.component.html',
-  styleUrls: ['./file-context-menu.component.css'],
+  styleUrls: ['./file-context-menu.component.scss'],
 })
 
 
@@ -48,8 +49,11 @@ export class FileContextMenuComponent
     // Determine whether the click is on the top or bottom half of the screen
     const isTopHalf = event.clientY < windowHeight / 2;
     // Set the context menu position based on click location
-    this.x = event.clientX - 100;
-    this.y = isTopHalf ? event.clientY + 10 : event.clientY - 200; // Adjust position based on click location
+    // this.x = event.clientX - 100;
+    const ySpace = isTopHalf ? 0 : 164; // Adjust position based on click location
+    this.x = event.clientX;
+    this.y = event.clientY - 67 - ySpace; // Adjust position based on click location
+
 
     this.visible = true;
     this.ShowFileMenu = from === "file";
