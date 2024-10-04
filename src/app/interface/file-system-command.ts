@@ -5,7 +5,7 @@ export enum FileSystemCommand {
     Move = "Move",
     Copy = "Copy",
     Remove = "Remove",
-    UploadChunk = "UploadChunk",
+    UploadChunk = "upload",
     AbortUpload = "AbortUpload",
     Download = "Download",
     DownloadChunk = "DownloadChunk",
