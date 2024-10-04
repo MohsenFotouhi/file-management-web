@@ -443,7 +443,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       path = this.pathFolderContextMenu.fullTitle;
     else if (this.fromFolder == true)
       path = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0].VirtualPath;
-     path = path.replace("Root\\" , "");
     files = await this.dialogService.openUploadDialog(path);
     this.getPaths(this.currentPath);
   }
@@ -526,10 +525,8 @@ export class FileManagerComponent implements OnInit, AfterViewInit
 
     this.selectedFiles.forEach(selectedFile =>
     {
-      // this.service.downloadFile("download",
-      //   (this.currentPath.fullTitle + "\\" + selectedFile.FileName)
-      var path = this.currentPath.fullTitle.replace("Root\\" , "");
-      this.service.downloadFileDecrypt(path , selectedFile.FileName
+      this.service.downloadFile("download",
+        (this.currentPath.fullTitle + "\\" + selectedFile.FileName)
       ).subscribe((response: Blob) =>
       {
         const a = document.createElement('a');

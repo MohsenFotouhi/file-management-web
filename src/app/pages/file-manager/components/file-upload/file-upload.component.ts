@@ -131,8 +131,7 @@ export class FileUploadComponent {
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
     var chunkfile = new File([chunk], file.name, { type: file.type });
-    // this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
-      this.service.uploadFileEncrypt(this.data.currentPath, chunkfile, index, totalChunks, file.size ).subscribe(
+    this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
       response => {
         if (lastIndex != index) {
 

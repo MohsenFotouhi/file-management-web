@@ -83,8 +83,8 @@ export class FileManagerService {
     formData.append('arguments', argumentsData);
     formData.append('command', 'UploadChunk');
 
-    // const url = `${this.apiUrl}HgoApi1`;
-    const url = `http://localhost:13153/api/file-manager-file-system-images`;
+    const url = `${this.apiUrl}HgoApi1`;
+    // const url = `http://localhost:13153/api/file-manager-file-system-images`;
     return this.http.post<any>(url, formData);
   }
 
