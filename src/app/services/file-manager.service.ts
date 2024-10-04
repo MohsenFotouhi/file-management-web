@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import {  Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams,  } from '@angular/common/http';
-import {environment} from "../../environments/environment";
+import { concat, Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams, } from '@angular/common/http';
+import { environment } from "../../environments/environment";
 import { CreateDownloadLinkCommand } from '../interface/share-models';
+import { FileSystemCommand } from '../interface/file-system-command';
 
 
 @Injectable({
@@ -34,16 +35,7 @@ export class FileManagerService {
   }
 
 
-  downloadFile(command: string, parameters: string): Observable<any> {
 
-    const formData: FormData = new FormData();
-    formData.append('id', this.id);
-    formData.append('command', command);
-    formData.append('parameters', parameters);
-
-    const url = `${this.apiUrl}HgoApi1`;
-    return this.http.post(url, formData, { responseType: 'blob' });
-  }
 
 
 
@@ -55,7 +47,7 @@ export class FileManagerService {
     formData = formData.set('parameters', parameters);
 
     const url = `${this.apiUrl}HgoApi2`;
-  return this.http.get(url, { params: formData ,responseType: 'blob' });
+    return this.http.get(url, { params: formData, responseType: 'blob' });
   }
 
   uploadFile(command: string, parameters: string, file: File): Observable<any> {
@@ -68,6 +60,59 @@ export class FileManagerService {
 
     const url = `${this.apiUrl}HgoApi1`;
     return this.http.post<any>(url, formData);
+  }
+
+  uploadFileEncrypt(currentPath: string, file: File, index: number, totalCount: number, fileSize: number): Observable<any> {
+
+    const destinationPathInfo = [{ key: currentPath, name: currentPath }];
+    const chunkMetadata =
+    {
+      UploadId: "2feabfc4-9473-7c29-fc56-4deac56c3f84",
+      FileName: file.name,
+      Index: index,
+      TotalCount: totalCount,
+      FileSize: fileSize
+    }
+    const argumentsData = JSON.stringify({
+      destinationPathInfo: destinationPathInfo,
+      chunkMetadata: chunkMetadata
+    });
+
+    const formData = new FormData();
+    formData.append('chunk', file);
+    formData.append('arguments', argumentsData);
+    formData.append('command', 'UploadChunk');
+
+    // const url = `${this.apiUrl}HgoApi1`;
+    const url = `http://localhost:13153/api/file-manager-file-system-images`;
+    return this.http.post<any>(url, formData);
+  }
+
+  downloadFileDecrypt(currentPath: string, fileName: string): Observable<any> {
+    const pathInfoList = [
+      [{ key: currentPath, name: currentPath }],
+      [{ key: currentPath + "\\" + fileName, name: fileName }]
+    ];
+
+    const payload = {
+      pathInfoList,
+      command: FileSystemCommand.Download
+    };
+
+
+    const url = `http://localhost:13153/api/file-manager-file-system-images`;
+    return this.http.post<any>(url, payload);
+  }
+
+  downloadFile(command: string, parameters: string): Observable<any> {
+
+    const formData: FormData = new FormData();
+    formData.append('id', this.id);
+    formData.append('command', command);
+    formData.append('parameters', parameters);
+
+    const url = `${this.apiUrl}HgoApi1`;
+    return this.http.post(url, formData, { responseType: 'blob' });
   }
 
 

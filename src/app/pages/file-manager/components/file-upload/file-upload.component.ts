@@ -23,7 +23,7 @@ import { FileManagerService } from 'src/app/services/file-manager.service';
 })
 export class FileUploadComponent {
   files: File[] = [];
-  chunkSize = 10000000; // 200MB
+  chunkSize = 262144; // 200MB
 
   previews: string[] = [];
   uploadProgress: number[] = [];
@@ -131,7 +131,8 @@ export class FileUploadComponent {
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
     var chunkfile = new File([chunk], file.name, { type: file.type });
-    this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
+    // this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
+      this.service.uploadFileEncrypt(this.data.currentPath, chunkfile, index, totalChunks, file.size ).subscribe(
       response => {
         if (lastIndex != index) {
 
