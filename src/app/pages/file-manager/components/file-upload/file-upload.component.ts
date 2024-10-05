@@ -122,7 +122,7 @@ export class FileUploadComponent {
     this.upload1(0, file, fileIndex);
   }
 
-  upload1(index: number, file: File, fileIndex: number) {
+ async upload1(index: number, file: File, fileIndex: number) {
     let totalChunks = Math.ceil(file.size / this.chunkSize);
 
     let lastIndex: number = totalChunks - 1;
@@ -131,7 +131,7 @@ export class FileUploadComponent {
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
     var chunkfile = new File([chunk], file.name, { type: file.type });
-    this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
+   await this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
       response => {
         if (lastIndex != index) {
 
