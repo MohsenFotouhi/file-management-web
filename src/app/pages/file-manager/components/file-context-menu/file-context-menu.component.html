@@ -1,4 +1,4 @@
-<div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px' , padding: '5px' }">
+<div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px'}">
   <ul  *ngIf="ShowFileMenu">
     <div class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
@@ -10,7 +10,8 @@
       <li >تغییر نام</li>
     </div>
 
-    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
+    <!-- <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div> -->
+    <mat-divider></mat-divider>
 
     <div class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -36,8 +37,8 @@
       </li>
     </div>
 
-    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
-
+    <!-- <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div> -->
+    <mat-divider></mat-divider>
     <div class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
       <li >حذف</li>

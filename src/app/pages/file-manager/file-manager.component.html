@@ -69,9 +69,7 @@
       <div class=" file-holder resizable-container" #resizableContainer>
         <div class="col-2 border-end resizable tree-holder" style="overflow-x: auto;" #resizableDiv1
              (contextmenu)="onContextMenu($event , 'emptyArea')" >
-          <div class="resizer" (mousedown)="onMouseDown($event, 'left')">
-            <div class="resizer-icon"></div>
-          </div>
+          
           <div class="col-10">
 
             <app-path class="app-path" [rootPath]="rootPath"
@@ -84,6 +82,10 @@
             <app-shared-files style="width: 100px; height: 100px;" (click)="loadShareFiles()"></app-shared-files>
           </div>
         </div>
+
+        <div class="resizer gutter gutter-horizontal" (mousedown)="onMouseDown($event, 'left')">
+            <div class="resizer-icon"></div>
+          </div>
 
         <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-10 p-2 file-container  resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
@@ -200,8 +202,10 @@
        ></file-context-menu>
 
       <div class="border p-2">
-        <a style="cursor: pointer;"  *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i == 0 ? '' : path , i)"> {{path }}></a>
-        <a style="cursor: pointer;"> {{currentPath.title }}</a>
+        <a class="first-link" *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i)"> 
+          <span>{{path }}</span>
+          > </a>
+        <a class="second-link"> {{currentPath.title }}</a>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +11,7 @@ import { DownloadManagerService } from 'src/app/services/download-manager.servic
   selector: 'vex-link-download',
   standalone: true,
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     CommonModule,
     MatFormFieldModule,
@@ -39,7 +40,7 @@ export class LinkDownloadComponent implements OnInit
     this.downloadManagerService.donwloadLink(this.linkid).subscribe(res =>
     {
       console.log('res', res);
-      this.token = res;
+      this.token = res.grantedToken;
     }, error =>
     {
       console.log('error', error);
@@ -52,11 +53,7 @@ export class LinkDownloadComponent implements OnInit
     {
       this.downloadManagerService.sendUserOptForToken({ tokenId: this.token, usernameOrEmail: this.loginForm.value.username }).subscribe(res =>
       {
-        console.log('value', res);
-        if (res === this.token)
-        {
-         this.step3 = true;
-        }
+        this.step3 = true;
       }, error =>
       {
         console.log('error', error);
@@ -67,10 +64,12 @@ export class LinkDownloadComponent implements OnInit
 
   getDownloadLink(otp: string)
   {
-    this.downloadManagerService.downloadFromLinkWith2FA({ tokenId: this.token, twoFAcode: otp }).subscribe((res) => {
-      console.log('res', res)
-    }, (error => {
-      console.log('error', error)
-    }))
+    this.downloadManagerService.downloadFromLinkWith2FA({ tokenId: this.token, twoFAcode: otp }).subscribe((res) =>
+    {
+      console.log('res', res);
+    }, (error =>
+    {
+      console.log('error', error);
+    }));
   }
 }
