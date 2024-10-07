@@ -24,9 +24,6 @@
 
 .chooser-container {
   background-color: white;
-  border: purple;
-  border-style: groove;
-  border-width: thin;
   display: flex;
   height: 100px;
   min-width: 480px;
@@ -82,4 +79,22 @@
   height: 20px;
   min-width: max-content;
   max-width: max-content
+}
+
+:host ::ng-deep {
+  .mdc-linear-progress__bar-inner {
+    right: 0;
+  }
+  .progress-completed {
+    .mdc-linear-progress__bar-inner {
+      border-color: green;
+    }
+  }
+}
+
+.text-field {
+  width: 400px;                 /* Set the fixed width */
+  white-space: nowrap;          /* Prevent the text from wrapping */
+  overflow: hidden;             /* Hide the overflow text */
+  text-overflow: ellipsis;      /* Display an ellipsis (...) for overflowed text */
 }

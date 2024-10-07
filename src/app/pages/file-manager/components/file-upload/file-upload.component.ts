@@ -1,33 +1,36 @@
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgFor, NgIf } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { firstValueFrom } from 'rxjs'; // Import for converting observable to promise
 import { FileManagerService } from 'src/app/services/file-manager.service';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
   imports: [
+    CommonModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     NgFor,
-    NgIf
+    NgIf,
+    MatProgressBarModule,
   ],
   templateUrl: './file-upload.component.html',
-  styleUrl: './file-upload.component.css'
+  styleUrls: ['./file-upload.component.css'] // Fixed typo here
 })
-export class FileUploadComponent {
+export class FileUploadComponent
+{
   files: File[] = [];
-  chunkSize = 262144; // 200MB
-
+  chunkSize = 262144; // 256KB chunk size for upload
   previews: string[] = [];
   uploadProgress: number[] = [];
-
 
   constructor(
     public dialogRef: MatDialogRef<FileUploadComponent>,
@@ -35,120 +38,105 @@ export class FileUploadComponent {
     private service: FileManagerService
   ) { }
 
-  close(): void {
+  close(): void
+  {
     this.dialogRef.close(false);
   }
 
-  upload(): void {
+  async upload(): Promise<void>
+  {
+    // Call uploadFileInChunks for each file in sequence using for...of loop with await
+    for (let i = 0; i < this.files.length; i++)
+    {
+      this.uploadProgress[i] = 0; // Initialize upload progress for each file
+      await this.uploadFileInChunks(this.files[i], i);
+    }
+
+    // Close the dialog after all files are uploaded
     this.dialogRef.close(this.files);
   }
 
-  onDragOver(event: DragEvent): void {
+  onDragOver(event: DragEvent): void
+  {
     event.preventDefault();
     event.stopPropagation();
     const dropzone = event.currentTarget as HTMLElement;
     dropzone.classList.add('dragover');
   }
 
-  onDrop(event: DragEvent): void {
+  onDrop(event: DragEvent): void
+  {
     event.preventDefault();
     event.stopPropagation();
     const dropzone = event.currentTarget as HTMLElement;
     dropzone.classList.remove('dragover');
 
-    if (event.dataTransfer?.files) {
-      for (let i = 0; i < event.dataTransfer.files.length; i++) {
+    if (event.dataTransfer?.files)
+    {
+      for (let i = 0; i < event.dataTransfer.files.length; i++)
+      {
         this.files.push(event.dataTransfer.files[i]);
         this.previews.push(URL.createObjectURL(event.dataTransfer.files[i]));
-        this.uploadFileInChunks(event.dataTransfer.files[i], this.files.indexOf(event.dataTransfer.files[i]));
+        this.uploadProgress.push(0); // Initialize upload progress for each file
       }
+
+      // Start uploading files after drop
+      this.upload();
     }
   }
 
-  onFileSelected(event: Event): void {
+
+  onFileSelected(event: Event): void
+  {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      for (let i = 0; i < input.files.length; i++) {
+    if (input.files)
+    {
+      for (let i = 0; i < input.files.length; i++)
+      {
         this.files.push(input.files[i]);
-        const fileType = input.files[i].type;
-
-        if (fileType === "image/png" ||
-          fileType === "image/jpeg" ||
-          fileType === "image/gif" ||
-          fileType === "image/svg+xml" ||
-          fileType === "image/webp") {
-          this.previews.push(URL.createObjectURL(input.files[i]));
-        }
-        else if (input.files[i].name.endsWith("dll"))
-          this.previews.push("img/dll.png");
-        else if (input.files[i].name.endsWith("css"))
-          this.previews.push("img/css.png");
-        else if (input.files[i].name.endsWith("exe"))
-          this.previews.push("img/exe.png");
-        else if (input.files[i].name.endsWith("file"))
-          this.previews.push("img/file.png");
-        else if (input.files[i].name.endsWith("folder"))
-          this.previews.push("img/folder.png");
-        else if (input.files[i].name.endsWith("folder"))
-          this.previews.push("img/folder.png");
-        else if (input.files[i].name.endsWith("html"))
-          this.previews.push("img/html.png");
-        else if (input.files[i].name.endsWith("js"))
-          this.previews.push("img/js.png");
-        else if (input.files[i].name.endsWith("json"))
-          this.previews.push("img/json.png");
-        else if (input.files[i].name.endsWith("MP3"))
-          this.previews.push("img/MP3.png");
-        else if (input.files[i].name.endsWith("MP4"))
-          this.previews.push("img/MP4.png");
-        else if (input.files[i].name.endsWith("pdf"))
-          this.previews.push("img/pdf.png");
-        else if (input.files[i].name.endsWith("php"))
-          this.previews.push("img/php.png");
-        else if (input.files[i].name.endsWith("txt"))
-          this.previews.push("img/txt.png");
-        else if (input.files[i].name.endsWith("zip"))
-          this.previews.push("img/zip.png");
-        else
-          this.previews.push("");
-        this.uploadProgress.push(0);
-        this.uploadFileInChunks(input.files[i], this.files.indexOf(input.files[i]));
+        this.uploadProgress.push(0); // Initialize upload progress for each file
       }
+
+      // Start uploading files after selection
+      this.upload();
     }
   }
 
-
-  private uploadFileInChunks(file: File, fileIndex: number) {
-    this.upload1(0, file, fileIndex);
+  // Upload the entire file in chunks synchronously
+  private async uploadFileInChunks(file: File, fileIndex: number): Promise<void>
+  {
+    await this.uploadChunks(0, file, fileIndex); // Start uploading the file from chunk 0
   }
 
- async upload1(index: number, file: File, fileIndex: number) {
-    let totalChunks = Math.ceil(file.size / this.chunkSize);
-
-    let lastIndex: number = totalChunks - 1;
+  // Recursive function to upload each chunk one after another
+  private async uploadChunks(index: number, file: File, fileIndex: number): Promise<void>
+  {
+    const totalChunks = Math.ceil(file.size / this.chunkSize);
+    const lastIndex = totalChunks - 1;
 
     const start = index * this.chunkSize;
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
-    var chunkfile = new File([chunk], file.name, { type: file.type });
-   await this.service.uploadFile("upload", this.data.currentPath, chunkfile).subscribe(
-      response => {
-        if (lastIndex != index) {
+    const chunkFile = new File([chunk], file.name, { type: file.type });
 
-          this.upload1(index + 1, file, fileIndex)
-          this.uploadProgress[fileIndex] = Math.round((100 * index) / totalChunks);
-        }
-        else {
-          this.uploadProgress[fileIndex] = 100;
-          console.log('Upload complete');
-        }
-      },
-      error => {
-        console.error('upload error:', error);
-      });
+    try
+    {
+      // Use firstValueFrom to convert observable to promise and wait for it to complete
+      await firstValueFrom(this.service.uploadFile("upload", this.data.currentPath, chunkFile));
+
+      // Update the progress after successful upload of each chunk
+      if (index < lastIndex)
+      {
+        this.uploadProgress[fileIndex] = Math.round((100 * index) / totalChunks);
+        await this.uploadChunks(index + 1, file, fileIndex); // Recursively upload next chunk
+      } else
+      {
+        this.uploadProgress[fileIndex] = 100; // Upload complete
+        console.log(`Upload complete for file: ${ file.name }`);
+      }
+    } catch (error)
+    {
+      console.error('Upload error:', error);
+    }
   }
-
 }
-
-
-

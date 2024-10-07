@@ -645,11 +645,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       {
         console.error('API error:', error);
       },
-      () =>
-      {
-        this.spinner.hide();
-      }
-    );
+    ).add(() =>
+    {
+      this.spinner.hide();
+    });
   }
 
   selectedFileChanged(event: any, currentFile: file)
@@ -853,4 +852,8 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
   }
 
+  getContainerWidth(): number | undefined
+  {
+    return document.getElementById("files-container")?.offsetWidth;
+  }
 }

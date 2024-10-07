@@ -63,7 +63,7 @@
           <i class="fa-solid fa-list-ul"></i>
         </button>
         <input class="form-control form-control-sm search-input" placeholder="جستجو ..." matInput
-               [(ngModel)]="searchKeyWord" (keyup)="search()"/>
+               [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
       </div>
 
       <div class=" file-holder resizable-container" #resizableContainer>
@@ -89,7 +89,7 @@
 
         <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-10 p-2 file-container  resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
-          <div class="mx-0 row" (click)="onDivClick($event)">
+          <div id="files-container" class="mx-0 row" (click)="onDivClick($event)">
             <div class="border fileItem" id="myDiv"
                  [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  *ngFor="let currentFolder of folders"

@@ -8,17 +8,14 @@
     </div>
 </div>
 
-<div *ngIf="files.length > 0" style="margin-top:20px; display: contents;  max-height: 50px;">
-    <ul style="overflow-y: auto; max-height: 150px; direction: ltr;">
-        <li *ngFor="let file of files; let i = index" style="height: 20px; margin-top: 2px;">
-            <div class="file-preview-container">
-                <img [src]="previews[i]" *ngIf="previews[i]" alt="Preview" class="preview-image" />
-                <div class="dz-progress " style=" display: flex;" > 
-                    <span class="file-name">
-                        <p>{{ file.name}} </p>
-                       </span>
-                    <span class="upload-progress " 
-                     style="background-color: rgb(205, 205, 205); width: 15%; height: 20px;" [style.width.%]="uploadProgress[i]+1">{{uploadProgress[i]}} % </span>
+<div *ngIf="files.length > 0">
+    <ul class="mx-2 px-0">
+        <li *ngFor="let file of files; let i = index">
+            <div class="rtl font-mono">
+                <div class=""> 
+                    <div class="d-flex flex-row align-items-center">
+                       <mat-progress-bar [ngClass]="{'progress-completed': uploadProgress[i] === 100}" [dir]="'ltr'" mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar> <p class="text-left mb-0 pr-2 text-field" dir="ltr">{{ file.name}} </p>
+                    </div>
                  </div>
             </div>
         </li>
