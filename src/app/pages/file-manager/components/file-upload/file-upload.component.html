@@ -8,13 +8,13 @@
     </div>
 </div>
 
-<div *ngIf="files.length > 0">
-    <ul class="mx-2 px-0">
+<div dir="ltr">
+    <ul class="max-h-[67vh] overflow-y-auto overflow-x-hidden mx-2 px-0">
         <li *ngFor="let file of files; let i = index">
-            <div class="rtl font-mono">
+            <div class="font-mono">
                 <div class=""> 
                     <div class="d-flex flex-row align-items-center">
-                       <mat-progress-bar [ngClass]="{'progress-completed': uploadProgress[i] === 100}" [dir]="'ltr'" mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar> <p class="text-left mb-0 pr-2 text-field" dir="ltr">{{ file.name}} </p>
+                      <p class="text-left mb-0 pr-2 text-field">{{ file.name}}  </p>  <mat-progress-bar [ngClass]="{'progress-completed': uploadProgress[i] === 100}" [dir]="'ltr'" mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar> 
                     </div>
                  </div>
             </div>
