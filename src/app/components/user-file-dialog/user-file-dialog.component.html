@@ -2,14 +2,14 @@
 <h4 class="px-4 py-2 mb-0">جزئیات فایل</h4>
 <mat-divider></mat-divider>
 <ul class="px-4 py-2 mb-0" dir="rtl">
-    <li class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
+    <li *ngIf="data.FileName.length" lass="flex items-center space-x-3 my-2 rtl:space-x-reverse">
         <span>اسم فایل: 
             <span class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">{{data.FileName}}</span></span>
     </li>
-    <li class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
-        <span>تاریخ ساخت: <span class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">{{data.FileName}}</span></span>
+    <li *ngIf="data.CreateDate.length" class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
+        <span>تاریخ ساخت: <span class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">{{data.CreateDate}}</span></span>
     </li>
-    <li class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
+    <li *ngIf="data.ExpireDate.length" class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
         <span> تاریخ انقضا: <span class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">{{data.ExpireDate}}</span></span>
     </li>
     <li class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
@@ -22,10 +22,10 @@
         <mat-icon *ngIf="data.IsPublic" class="text-green-600">check</mat-icon>
         <mat-icon *ngIf="!data.IsPublic" class="text-red-600">block</mat-icon>
     </li>
-    <li class="relative group w-100">
+    <li *ngIf="data.VirtualPath.length" class="relative group w-100">
         <span> آدرس مجاری: <span dir="ltr" class="text-left rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm block max-w-full truncate cursor-pointer group-hover:whitespace-normal group-hover:overflow-visible">{{data.VirtualPath}}</span></span>
     </li>
-    <li class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
+    <li *ngIf="data.ShareWithUsers.length" class="flex items-center space-x-3 my-2 rtl:space-x-reverse">
         <span> به اشتراک گذاری شده با:
             <span *ngFor="let user of data.ShareWithUsers" class="rounded-md bg-slate-800 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">{{user}}</span>
         </span>
