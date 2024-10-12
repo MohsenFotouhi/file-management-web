@@ -1,5 +1,5 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { FilePath } from './file-path';
 
 @Component({

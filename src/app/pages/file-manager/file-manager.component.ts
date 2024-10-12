@@ -16,6 +16,11 @@ import { DialogService } from './dialog-service';
 })
 export class FileManagerComponent implements OnInit, AfterViewInit
 {
+  tabChange(event: any)
+  {
+    console.log('event', event);
+    this.loadShareFiles();
+  }
   rootPath: FilePath = new FilePath();
   currentPath: FilePath = new FilePath();
   folders: folder[] = [];

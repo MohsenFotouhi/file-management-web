@@ -49,8 +49,12 @@
              جزئیات
             </th>
          <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
-           <span class="mat-mdc-button-touch-target" (click)="openDetailModal(row)">
+           <span class="mat-mdc-button-touch-target">
               {{ row[column.property] }}
+              
+              <div class="cursor-pointer" (click)="showFileDetails(row)">
+                <mat-icon>info</mat-icon>
+              </div>
             </span> 
           </td>
 

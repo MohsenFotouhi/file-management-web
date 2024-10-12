@@ -1,29 +1,29 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule, Routes} from "@angular/router";
-import {DashboardComponent} from "./dashboard.component";
-import {UserStorageComponent} from "./user-storage/user-storage.component";
-import {ShareFilesComponent} from "./share-files/share-files.component";
-import {VexChartComponent} from "@vex/components/vex-chart/vex-chart.component";
-import {MatPaginatorModule} from "@angular/material/paginator";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatTableModule} from "@angular/material/table";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatSortModule} from "@angular/material/sort";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { RouterModule, Routes } from "@angular/router";
+import { VexChartComponent } from "@vex/components/vex-chart/vex-chart.component";
+import { DashboardComponent } from "./dashboard.component";
 import { ShareDetailComponent } from './share-files/share-detail/share-detail.component';
+import { ShareFilesComponent } from "./share-files/share-files.component";
+import { UserStorageComponent } from "./user-storage/user-storage.component";
 
 const routes: Routes = [
-  {path: '', component: DashboardComponent}
-]
+  { path: '', component: DashboardComponent }
+];
 
 @NgModule({
   declarations: [
     DashboardComponent,
     UserStorageComponent,
-    ShareFilesComponent
   ],
   imports: [
+    ShareFilesComponent,
     CommonModule,
     RouterModule.forChild(routes),
     VexChartComponent,
@@ -34,8 +34,9 @@ const routes: Routes = [
     MatTooltipModule,
     MatSortModule,
     ShareDetailComponent
-    
+
   ]
 })
-export class DashboardModule {
+export class DashboardModule
+{
 }
