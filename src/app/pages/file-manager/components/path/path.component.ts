@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FilePath } from './file-path';
 
 @Component({
@@ -9,7 +9,13 @@ import { FilePath } from './file-path';
   templateUrl: './path.component.html',
   styleUrl: './path.component.css'
 })
-export class PathComponent {
+export class PathComponent implements OnInit
+{
+
+  ngOnInit(): void
+  {
+    this.setSharedFileStatus(false);
+  }
 
 
   @Input()
@@ -22,43 +28,59 @@ export class PathComponent {
   currentChildPathChanged = new EventEmitter<FilePath>();
 
   @Output()
-   rightClickNodeChanged = new EventEmitter< [MouseEvent, FilePath]>()
+  rightClickNodeChanged = new EventEmitter<[MouseEvent, FilePath]>();
 
-  constructor() {
+  @Output()
+  fileShareStatus = new EventEmitter<boolean>();
+  constructor()
+  {
   }
 
-  hasChilds(node: FilePath): boolean {
+  hasChilds(node: FilePath): boolean
+  {
     return node.childs && node.childs.length > 0;
   }
 
 
-  isObject(val: any) {
+  isObject(val: any)
+  {
     return typeof val === 'object' && !Array.isArray(val) && val !== null;
   }
 
 
-  onNodeClick(value: FilePath) {
+  onNodeClick(value: FilePath)
+  {
     this.currentPathChanged.emit(value);
+    this.setSharedFileStatus(false);
   }
 
-  onChildClick(event: MouseEvent, value: FilePath) {
+  onChildClick(event: MouseEvent, value: FilePath)
+  {
     event.stopPropagation();
     this.currentPathChanged.emit(value);
+    this.setSharedFileStatus(false);
   }
 
-  onRightClick(event: MouseEvent, value: FilePath) {
+  onRightClick(event: MouseEvent, value: FilePath)
+  {
     event.stopPropagation();
     event.preventDefault();
-    this.rightClickNodeChanged.emit( [event,value]);
+    this.rightClickNodeChanged.emit([event, value]);
   }
 
-   checked: boolean | undefined;
+  setSharedFileStatus(sharedStatus: boolean)
+  {
+    this.fileShareStatus.emit(sharedStatus);
+  }
+
+  checked: boolean | undefined;
 
 
-   @HostListener('document:mouseup')
-   onMouseUp() {
-     
-   }
+  @HostListener('document:mouseup')
+  onMouseUp()
+  {
+
+  }
 
 }
 

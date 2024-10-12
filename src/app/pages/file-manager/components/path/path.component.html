@@ -1,4 +1,4 @@
-<ul class="tree">
+<ul class="tree" (click)="setSharedFileStatus(false)">
   <li class="tree-li" (click)="onChildClick($event, rootPath)" (contextmenu)="onRightClick($event, rootPath)">
     <div class="d-flex">
       <img class="tree-image" src="assets/img/filesIcons/treeicon.png" alt="Folder Icon"/>
@@ -9,7 +9,7 @@
       <li *ngFor="let child of rootPath.childs" (click)="onChildClick($event, child)"
           (contextmenu)="onRightClick($event, child)">
 
-        <app-path [rootPath]="child" (currentPathChanged)="currentPathChanged.emit($event)"
+        <app-path [rootPath]="child" (currentPathChanged)="currentPathChanged.emit($event); fileShareStatus.emit(false)"
                   (rightClickNodeChanged)="rightClickNodeChanged.emit($event)"></app-path>
       </li>
     </ul>

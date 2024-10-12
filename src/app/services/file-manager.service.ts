@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { concat, Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams, } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from "../../environments/environment";
-import { CreateDownloadLinkCommand } from '../interface/share-models';
 import { FileSystemCommand } from '../interface/file-system-command';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class FileManagerService {
+export class FileManagerService
+{
 
   constructor(private http: HttpClient) { }
 
@@ -17,19 +17,21 @@ export class FileManagerService {
   id: string = 'HgoApi1';
 
 
-  CallAPI(command: string, parameters: string): Observable<any> {
+  CallAPI(command: string, parameters: string): Observable<any>
+  {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
     return this.http.post<any>(url, formData);
   }
 
 
-  uploadFileChunk(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}HgoApi1`, formData, {
+  uploadFileChunk(formData: FormData): Observable<any>
+  {
+    return this.http.post<any>(`${ this.apiUrl }HgoApi1`, formData, {
       headers: new HttpHeaders({ 'enctype': 'multipart/form-data' })
     });
   }
@@ -39,18 +41,20 @@ export class FileManagerService {
 
 
 
-  preview(command: string, parameters: string): Observable<any> {
+  preview(command: string, parameters: string): Observable<any>
+  {
 
     let formData = new HttpParams();
     formData = formData.set('id', this.id);
     formData = formData.set('command', command);
     formData = formData.set('parameters', parameters);
 
-    const url = `${this.apiUrl}HgoApi2`;
+    const url = `${ this.apiUrl }HgoApi2`;
     return this.http.get(url, { params: formData, responseType: 'blob' });
   }
 
-  uploadFile(command: string, parameters: string, file: File): Observable<any> {
+  uploadFile(command: string, parameters: string, file: File): Observable<any>
+  {
 
     const formData: FormData = new FormData();
     formData.append('id', this.id);
@@ -58,11 +62,12 @@ export class FileManagerService {
     formData.append('parameters', parameters);
     formData.append('file', file, file.name);
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
     return this.http.post<any>(url, formData);
   }
 
-  uploadFileEncrypt(currentPath: string, file: File, index: number, totalCount: number, fileSize: number): Observable<any> {
+  uploadFileEncrypt(currentPath: string, file: File, index: number, totalCount: number, fileSize: number): Observable<any>
+  {
 
     const destinationPathInfo = [{ key: currentPath, name: currentPath }];
     const chunkMetadata =
@@ -72,7 +77,7 @@ export class FileManagerService {
       Index: index,
       TotalCount: totalCount,
       FileSize: fileSize
-    }
+    };
     const argumentsData = JSON.stringify({
       destinationPathInfo: destinationPathInfo,
       chunkMetadata: chunkMetadata
@@ -83,12 +88,13 @@ export class FileManagerService {
     formData.append('arguments', argumentsData);
     formData.append('command', 'UploadChunk');
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
     // const url = `http://localhost:13153/api/file-manager-file-system-images`;
     return this.http.post<any>(url, formData);
   }
 
-  downloadFileDecrypt(currentPath: string, fileName: string): Observable<any> {
+  downloadFileDecrypt(currentPath: string, fileName: string): Observable<any>
+  {
     const pathInfoList = [
       [{ key: currentPath, name: currentPath }],
       [{ key: currentPath + "\\" + fileName, name: fileName }]
@@ -104,26 +110,49 @@ export class FileManagerService {
     return this.http.post<any>(url, payload);
   }
 
-  downloadFile(command: string, parameters: string): Observable<any> {
+  downloadFile(command: string, parameters: string): Observable<any>
+  {
 
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
+    return this.http.post(url, formData, { responseType: 'blob' });
+  }
+  downloadFileAsync(command: string, parameters: string): Observable<any>
+  {
+
+    const formData: FormData = new FormData();
+    formData.append('id', this.id);
+    formData.append('command', command);
+    formData.append('parameters', parameters);
+
+    const url = `${ this.apiUrl }api/DownloadFile/DownloadFileAsync`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
 
+  downloadShareFiles(downloadId: string, VirtualPath: string): Observable<any>
+  {
 
-  pasteFile(actionName: string, data: string): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('downloadId', downloadId);
+    formData.append('virtualPath', VirtualPath);
+
+    const url = `${ this.apiUrl }api/ShareFile/DownloadShareFiles`;
+    return this.http.post(url, formData, { responseType: 'blob' });
+  }
+
+  pasteFile(actionName: string, data: string): Observable<any>
+  {
 
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', actionName);
     formData.append('parameters', data);
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
     return this.http.post<any>(url, formData);
 
   }
@@ -140,13 +169,14 @@ export class FileManagerService {
   //   return of(files);
   // }
 
-  getSharedFiles(): Observable<any> {
+  getSharedFiles(): Observable<any>
+  {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', "getSharedFiles");
     formData.append('parameters', '');
 
-    const url = `${this.apiUrl}HgoApi1`;
+    const url = `${ this.apiUrl }HgoApi1`;
     return this.http.post<any>(url, formData);
   }
 

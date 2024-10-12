@@ -4,6 +4,7 @@ export class file {
     FileSize!: string;
     ModifiedDate!: string;
     VirtualPath!: string;
+    DownloadId! : string;
 }
 
 
