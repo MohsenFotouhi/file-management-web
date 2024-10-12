@@ -1,5 +1,5 @@
-<div class="row mx-0 row-cols-1 row-cols-md-2 pt-5" >
-  <div class="col mt-2">
+<div class="row mx-0 row-cols-1 row-cols-md-2" >
+  <div class="col mt-2" *ngIf="!hasError">
     <h2 class="title flex-auto">شناسه کاربری یا ایمیل خود را وارد نمایید</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="token.length && !step3">
@@ -28,4 +28,7 @@
     </div>
     
   </div>
+   <div class="col mt-2" *ngIf="hasError">
+      <h2  class="title text-red-600">لینک دانلود صحیح نمیباشد مجددا تلاش کنید</h2>
+   </div>
 </div>

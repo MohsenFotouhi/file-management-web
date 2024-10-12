@@ -33,20 +33,21 @@ export const appRoutes: VexRoutes = [
       {
         path: 'setting', component: OTPComponent
       },
+      {
+        'path': 'download',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/link-download/link-download.component').then((m) => m.LinkDownloadComponent),
+          },
+        ]
+      },
+
       { path: 'verify-otp', component: VerifyOtpComponentComponent },
       { path: 'fileManagement/showShareFiles', component: FileManagerComponent },
       { path: 'shared-items', component: SharedItemsComponent }
       //{ path: '**', component: PageNotFoundComponent },
     ]
-  },
-  {
-    'path': 'download',
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./pages/link-download/link-download.component').then((m) => m.LinkDownloadComponent),
-      },
-    ]
-  },
+  }
 ];
