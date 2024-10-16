@@ -27,6 +27,7 @@ export class FileContextMenuComponent
   @Output() copyClick = new EventEmitter<string>();
   @Output() reloadClick = new EventEmitter<string>();
   @Output() pasteClick = new EventEmitter<string>();
+  @Output() openOfficeViewer = new EventEmitter<string>();
 
   visible = false;
   x = 0;
@@ -121,6 +122,10 @@ export class FileContextMenuComponent
   createFolder()
   {
     this.createFolderClick.emit();
+  }
+
+  edit(){
+    this.openOfficeViewer.emit();
   }
 
 }
