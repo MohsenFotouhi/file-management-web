@@ -46,13 +46,17 @@ export class FileContextMenuComponent
     event.preventDefault();
     // Calculate the height and width of the window
     const windowHeight = window.innerHeight;
-
+    const windowWidth = window.innerWidth;
     // Determine whether the click is on the top or bottom half of the screen
     const isTopHalf = event.clientY < windowHeight / 2;
+    const isRightHalf = event.clientX < windowWidth / 2;
     // Set the context menu position based on click location
     // this.x = event.clientX - 100;
     const ySpace = isTopHalf ? 0 : 164; // Adjust position based on click location
-    this.x = event.clientX;
+    const xSpace = isRightHalf ? 12 : 160; // Adjust position based on click location
+    console.log('xSpace', xSpace, 'event.clientX', event.clientX, 'isRightHalf', isRightHalf);
+
+    this.x = event.clientX - 0 - xSpace;
     this.y = event.clientY - 67 - ySpace; // Adjust position based on click location
 
 

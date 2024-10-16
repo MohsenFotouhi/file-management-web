@@ -1,12 +1,13 @@
-import { mergeDeep } from '../utils/merge-deep';
-import {
-  VexColorScheme,
-  VexConfig,
-  VexConfigName,
-  VexConfigs,
-  VexTheme
-} from './vex-config.interface';
 import deepClone from '@vex/utils/deep-clone';
+import { mergeDeep } from '../utils/merge-deep';
+import
+  {
+    VexColorScheme,
+    VexConfig,
+    VexConfigName,
+    VexConfigs,
+    VexTheme
+  } from './vex-config.interface';
 
 const baseConfig: VexConfig = {
   id: VexConfigName.apollo,
@@ -40,7 +41,7 @@ const baseConfig: VexConfig = {
     search: {
       visible: false
     },
-    state: 'expanded'
+    state: 'collapsed'
   },
   toolbar: {
     fixed: true,
