@@ -332,6 +332,20 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
+  officeUrl: string = 'https://www.office.com/launch/'; 
+
+  // متد برای باز کردن لینک در تب جدید
+  openOfficeViewer() {
+    if (this.selectedFiles[0].FileName.endsWith('docx')) {
+      window.open(`${this.officeUrl}Word/`, '_blank'); 
+    }
+    
+    if (this.selectedFiles[0].FileName.endsWith('xlsx')) {
+      window.open(`${this.officeUrl}Excel/`, '_blank'); 
+    }
+  }
+
+
   fromcontext: boolean | undefined;
 
   async addNewFolderButtonClicked()
