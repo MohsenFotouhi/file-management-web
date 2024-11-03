@@ -128,17 +128,6 @@ export class FileManagerService {
 
   }
 
-  // getSharedFiles(): Observable<any> {
-  //   var files = [
-  //     { CreateDate : '' , FileName: "text1.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text2.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text3.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text4.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text5.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''}
-  //   ];
-
-  //   return of(files);
-  // }
 
   getSharedFiles(): Observable<any> {
     const formData: FormData = new FormData();
@@ -150,6 +139,14 @@ export class FileManagerService {
     return this.http.post<any>(url, formData);
   }
 
+  getSharedFoldersContent(path: any, DownloadId: string) {
+    const formData: FormData = new FormData();
+    formData.append('id', this.id);
+    formData.append('command', "getSharedFolderContents");
+    formData.append('parameters', path +'//'+ DownloadId);
 
+    const url = `${this.apiUrl}HgoApi1`;
+    return this.http.post<any>(url, formData);
+  }
 
 }

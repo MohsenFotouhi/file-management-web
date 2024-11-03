@@ -211,7 +211,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     this.service.getSharedFiles().subscribe(response =>
     {
       this.files = response.Files,
-        this.folders = [],
+        this.folders = response.Folders,
         this.previews();
     },
       error =>
@@ -860,12 +860,32 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
-  doubleClick(file: folder)
-  {
-    if (this.currentPath.childs.find(x => x.title == file.FolderName) != undefined)
-      this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
+  doubleClick(file: folder) {
+    if (file.DownloadId == undefined || file.DownloadId == "") {
+
+      if (this.currentPath.childs.find(x => x.title == file.FolderName) != undefined)
+        this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
+    }
+    else
+      this.sharedFolderPathChange(file.VirtualPath, file.DownloadId);
+
   }
 
+  sharedFolderPathChange(path: string, DownloadId: string) {
+    this.spinner.show();
+    this.service.getSharedFoldersContent(path, DownloadId).subscribe(
+      response => {
+        this.files = response.Files,
+        this.folders = response.Folders
+        this.preview();
+      },
+      error => {
+        console.error('API error:', error);
+      },
+  ).add(() => {
+    this.spinner.hide();
+  });
+  }
   getContainerWidth(): number | undefined
   {
     return document.getElementById("files-container")?.offsetWidth;

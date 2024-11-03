@@ -12,6 +12,7 @@ export class folder {
     FolderName!: string;
     ModifiedDate!: string;
     VirtualPath!: string;
+    DownloadId! : string;
 }
 
 
