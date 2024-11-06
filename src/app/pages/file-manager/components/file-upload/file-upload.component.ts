@@ -23,7 +23,7 @@ import { FileManagerService } from 'src/app/services/file-manager.service';
     MatProgressBarModule,
   ],
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css'] // Fixed typo here
+  styleUrls: ['./file-upload.component.scss'] // Fixed typo here
 })
 export class FileUploadComponent
 {

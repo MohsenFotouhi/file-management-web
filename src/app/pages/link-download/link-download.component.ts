@@ -22,6 +22,7 @@ import { DownloadManagerService } from 'src/app/services/download-manager.servic
 })
 export class LinkDownloadComponent implements OnInit
 {
+  hasError = false;
   loginForm: FormGroup;
   linkid: string = '';
   token: string = '';
@@ -43,6 +44,7 @@ export class LinkDownloadComponent implements OnInit
       this.token = res.grantedToken;
     }, error =>
     {
+      this.hasError = true;
       console.log('error', error);
     });
   }

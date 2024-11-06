@@ -16,6 +16,10 @@ import { DialogService } from './dialog-service';
 })
 export class FileManagerComponent implements OnInit, AfterViewInit
 {
+  setSharedFile(status: boolean)
+  {
+    this.showShareFiles = status;
+  }
   rootPath: FilePath = new FilePath();
   currentPath: FilePath = new FilePath();
   folders: folder[] = [];
@@ -207,6 +211,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
 
   loadShareFiles()
   {
+    this.showShareFiles = true;
     this.spinner.show();
     this.service.getSharedFiles().subscribe(response =>
     {
@@ -539,24 +544,47 @@ export class FileManagerComponent implements OnInit, AfterViewInit
 
   async download()
   {
-
-    this.selectedFiles.forEach(selectedFile =>
+    if (this.showShareFiles)
     {
-      this.service.downloadFile("download",
-        (this.currentPath.fullTitle + "\\" + selectedFile.FileName)
-      ).subscribe((response: Blob) =>
+      this.selectedFiles.forEach(selectedFile =>
       {
-        const a = document.createElement('a');
-        const objectUrl = URL.createObjectURL(response);
-        a.href = objectUrl;
-        a.download = selectedFile.FileName;
-        a.click();
-        URL.revokeObjectURL(objectUrl);
-      }, error =>
-      {
-        console.error('File download error:', error);
+        console.log('selectedFIle', selectedFile);
+        this.service.downloadShareFiles(selectedFile.DownloadId, selectedFile.VirtualPath
+        ).subscribe((response: Blob) =>
+        {
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(response);
+          a.href = objectUrl;
+          a.download = selectedFile.FileName;
+          a.click();
+          URL.revokeObjectURL(objectUrl);
+        }, error =>
+        {
+          console.error('File download error:', error);
+        });
       });
-    });
+    } else
+    {
+      this.selectedFiles.forEach(selectedFile =>
+      {
+        this.service.downloadFileAsync("download",
+          (this.currentPath.fullTitle + "\\" + selectedFile.FileName)
+        ).subscribe((response: Blob) =>
+        {
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(response);
+          a.href = objectUrl;
+          a.download = selectedFile.FileName;
+          a.click();
+          URL.revokeObjectURL(objectUrl);
+        }, error =>
+        {
+          console.error('File download error:', error);
+        });
+      });
+    }
+
+
   }
 
 

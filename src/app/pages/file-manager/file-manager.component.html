@@ -9,35 +9,35 @@
         <button class="btn-toolbar" title="up" [disabled]="upButtonEnable" (click)="upButtonClicked()">
           <i class="fa-solid fa-turn-up"></i>
         </button>
-        <button class="btn-toolbar" title="copy" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="copy" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="copyButtonClicked()">
           <i class="fa-solid fa-copy"></i>
         </button>
-        <button class="btn-toolbar" title="Cut" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="Cut" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="cutButtonClicked()">
           <i class="fa-solid fa-scissors"></i>
         </button>
-        <button class="btn-toolbar" title="paste" [disabled]="canPaste == false"
+        <button class="btn-toolbar" title="paste" [disabled]="canPaste == false || showShareFiles"
                 (click)="pasteButtonClicked()">
           <i class="fa-solid fa-paste"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title=">تغییر نام" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title=">تغییر نام" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
         <button class="btn-toolbar" title="edit" disabled="true" >
           <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="btn-toolbar" title="حذف" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="حذف" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="deleteButtonClicked()">
           <i class="fa-solid fa-trash"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()">
+        <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()" [disabled]="showShareFiles">
           <i class="fa-solid fa-folder-plus"></i>
         </button>
-        <button class="btn-toolbar" title="ایجاد پوشه جدید" (click)="addNewFileButtonClicked()">
+        <button class="btn-toolbar" title="ایجاد پوشه جدید" (click)="addNewFileButtonClicked()" [disabled]="showShareFiles">
           <i class="fa-solid fa-file-circle-plus"></i>
         </button>
         <div class="horizontalLine">|</div>
@@ -47,15 +47,15 @@
         <button class="btn-toolbar" title="دانلود" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
           <i class="fa-solid fa-cloud-arrow-down"></i>
         </button>
-        <button class="btn-toolbar" title="بارگذاری" (click)="upload()">
+        <button class="btn-toolbar" title="بارگذاری" [disabled]="showShareFiles" (click)="upload()">
           <i class="fa-solid fa-cloud-arrow-up"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="آرشیو" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="آرشیو" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="zipdButtonClicked()">
           <i class="fa-solid fa-file-zipper"></i>
         </button>
-        <button class="btn-toolbar" title="استخراج" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+        <button class="btn-toolbar" title="استخراج" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="unZipdButtonClicked()">
           <i class="fa-solid fa-square-arrow-up-right"></i>
         </button>
@@ -67,25 +67,38 @@
       </div>
 
       <div class=" file-holder resizable-container" #resizableContainer>
-        <div class="col-2 border-end resizable tree-holder" style="overflow-x: auto;" #resizableDiv1
-             (contextmenu)="onContextMenu($event , 'emptyArea')" >
-          
-          <div class="col-10">
 
-            <app-path class="app-path" [rootPath]="rootPath"
-            (currentPathChanged)="pathChange($event)"
-            (currentChildPathChanged)="pathChange($event)"
-            (rightClickNodeChanged)="pathRighClick($event)"
-            (contextmenu)="onContextMenu($event , 'tree')"
-            ></app-path>
+        <div class="border-end resizable tree-holder" style="overflow-x: auto; min-width: 187px;" #resizableDiv1
+            (contextmenu)="onContextMenu($event , 'emptyArea')" >
+        <mat-tab-group animationDuration="0ms" mat-stretch-tabs="true" mat-align-tabs="start">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon">folder_open</mat-icon>
+            </ng-template> 
+              <div class="" (click)="setSharedFile(false)">
+                <app-path class="app-path" [rootPath]="rootPath"
+                (currentPathChanged)="pathChange($event)"
+                (currentChildPathChanged)="pathChange($event)"
+                (rightClickNodeChanged)="pathRighClick($event)"
+                (contextmenu)="onContextMenu($event , 'tree')"
+                (fileShareStatus)="setSharedFile($event)"
+                ></app-path>
+            </div>
+          </mat-tab>
 
-            <app-shared-files style="width: 100px; height: 100px;" (click)="loadShareFiles()"></app-shared-files>
-          </div>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="example-tab-icon">share</mat-icon>
+            </ng-template> 
+                <app-shared-files style="width: 100px; height: 100px;" (click)="loadShareFiles()"></app-shared-files>
+          </mat-tab>
+        </mat-tab-group>
         </div>
 
+        
         <div class="resizer gutter gutter-horizontal" (mousedown)="onMouseDown($event, 'left')">
-            <div class="resizer-icon"></div>
-          </div>
+          <div class="resizer-icon"></div>
+        </div>
 
         <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-10 p-2 file-container  resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
@@ -199,6 +212,7 @@
        (reloadClick) = reload()
        (pasteClick) = paste()
        [activeActionButtons] ='selectedFiles.length != 0 && selectedFolders.length != 0'
+       [isSharedFile]="showShareFiles"
        ></file-context-menu>
 
       <div class="border p-2">

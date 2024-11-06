@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
 import { SummerizePipe } from 'src/app/pipes/summerize.pipe';
 import { CanvasSquareComponent } from '../../components/canvas-square/canvas-square.component';
@@ -28,6 +28,7 @@ const routes: Routes = [
     MatProgressSpinnerModule,
     SharedFilesComponent,
     SummerizePipe,
+    MatTabsModule
   ]
 })
 export class FileManagerModule { }

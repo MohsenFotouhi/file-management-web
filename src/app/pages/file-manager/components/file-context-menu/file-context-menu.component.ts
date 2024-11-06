@@ -16,6 +16,7 @@ export class FileContextMenuComponent
 
   @Input() activeActionButtons = false;
   @Input() item = '';
+  @Input() isSharedFile = false;
 
   @Output() uploadlick = new EventEmitter<string>();
   @Output() downloadClick = new EventEmitter<string>();

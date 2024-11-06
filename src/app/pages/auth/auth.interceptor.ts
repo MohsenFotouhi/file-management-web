@@ -21,7 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) =>
       }
       else
       {
-        snackBar.open(error.message, 'Close', {
+        snackBar.open(error.error, 'Close', {
           duration: 3000, // Duration in milliseconds
           horizontalPosition: 'right',
           verticalPosition: 'top',

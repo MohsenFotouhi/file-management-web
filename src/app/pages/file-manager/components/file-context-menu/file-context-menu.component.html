@@ -1,29 +1,32 @@
 <div class="context-menu" *ngIf="visible" [ngStyle]="{ top: y + 'px', left: x + 'px'}">
-  <ul  *ngIf="ShowFileMenu">
-    <div class="menu-holder" (click)="delete()">
+  <!-- <pre>isSharedFile{{isSharedFile}}</pre>
+    <pre>showEmptyArea{{showEmptyArea}}</pre>
+        <pre>ShowFileMenu{{ShowFileMenu}}</pre>
+                <pre>ShowTreeMenu{{ShowTreeMenu}}</pre> -->
+  <ul>
+    <div   *ngIf="!ShowFileMenu && !showEmptyArea" class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
       <li >حذف</li>
     </div>
 
-    <div class="menu-holder" (click)="rename()">
+    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder" (click)="rename()">
       <i class="fa-solid fa-i-cursor"></i>
       <li >تغییر نام</li>
     </div>
 
-    <!-- <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div> -->
     <mat-divider></mat-divider>
 
-    <div class="menu-holder"(click)="upload()">
+    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
       <li >بارگذاری</li>
     </div>
 
-    <div class="menu-holder"(click)="download()">
+    <div  *ngIf="!showEmptyArea" class="menu-holder"(click)="download()">
       <i class="fa-solid fa-cloud-arrow-down"></i>
       <li >دانلود</li>
     </div>
 
-    <div class="menu-holder"(click)="share()">
+    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder"(click)="share()">
       <i class="fa-solid fa-share-alt"></i>
       <li >اشتراک گذاری</li>
     </div>
@@ -37,35 +40,11 @@
       </li>
     </div>
 
-    <!-- <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div> -->
     <mat-divider></mat-divider>
     <div class="menu-holder" (click)="delete()">
       <i class="fa-solid fa-trash"></i>
       <li >حذف</li>
     </div>
-
-    <!-- <div class="menu-holder" (click)="rename()">
-      <i class="fa-solid fa-i-cursor"></i>
-      <li >تغییر نام</li>
-    </div> -->
-
-    <!-- <div class="menu-holder"(click)="cut()">
-      <i class="fa-solid fa-scissors"></i>
-      <li >برش</li>
-    </div>
-
-    <div class="menu-holder"(click)="copy()">
-      <i class="fa-solid fa-copy"></i>
-      <li >کپی</li>
-    </div>
-
-    <div style="min-height: 1px; border: 1px; border-color: #a39d9d;  border-style: double"></div>
-
-    <div class="menu-holder"(click)="upload()">
-      <i class="fa-solid fa-cloud-arrow-up"></i>
-      <li >بارگذاری</li>
-    </div> -->
-
 
     <div class="menu-holder"(click)="reload()">
       <i class="fa-solid fa-refresh"></i>
@@ -81,21 +60,23 @@
       <li >ایجاد پوشه
       </li>
     </div>
-
-    <div class="menu-holder"(click)="paste()">
-      <i class="fa-solid fa-download"></i>
-      <li >چسباندن</li>
-    </div>
-
+    
     <div class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
       <li >بارگذاری</li>
     </div>
 
+<!-- 
+    <div class="menu-holder"(click)="paste()">
+      <i class="fa-solid fa-download"></i>
+      <li >چسباندن</li>
+    </div>
+
+
     <div class="menu-holder"(click)="share()">
       <i class="fa-solid fa-share-alt"></i>
       <li >اشتراک گذاری</li>
-    </div>
+    </div> -->
   </ul>
 
 </div>
