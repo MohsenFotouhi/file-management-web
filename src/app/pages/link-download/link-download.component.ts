@@ -27,6 +27,7 @@ export class LinkDownloadComponent implements OnInit
   linkid: string = '';
   token: string = '';
   step3: boolean = false;
+  fileName: string = '';
   otp: string = '';
   constructor(private downloadManagerService: DownloadManagerService, private fb: FormBuilder, private route: ActivatedRoute)
   {
@@ -42,6 +43,17 @@ export class LinkDownloadComponent implements OnInit
     {
       console.log('res', res);
       this.token = res.grantedToken;
+      this.fileName = res.fileName;
+      if (res.email != null && res.email != "" ) {
+        this.loginForm.value.username = res.email;
+        this.downloadManagerService.sendUserOptForToken({ tokenId: this.token, usernameOrEmail: this.loginForm.value.username }).subscribe(res => {
+          this.step3 = true;
+        }, error => {
+          console.log('error', error);
+
+        });
+        console.log('Form Submitted', this.loginForm.value);
+      }
     }, error =>
     {
       this.hasError = true;
@@ -66,12 +78,16 @@ export class LinkDownloadComponent implements OnInit
 
   getDownloadLink(otp: string)
   {
-    this.downloadManagerService.downloadFromLinkWith2FA({ tokenId: this.token, twoFAcode: otp }).subscribe((res) =>
-    {
-      console.log('res', res);
-    }, (error =>
-    {
-      console.log('error', error);
-    }));
+    this.downloadManagerService.downloadFromLinkWith2FA({ tokenId: this.token, twoFAcode: otp }).subscribe((response: Blob) => {
+      const a = document.createElement('a');
+      const objectUrl = URL.createObjectURL(response);
+      a.href = objectUrl;
+      a.download = this.fileName;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    }, error => {
+      this.hasError = true;
+      console.error('File download error:', error);
+    });
   }
 }
