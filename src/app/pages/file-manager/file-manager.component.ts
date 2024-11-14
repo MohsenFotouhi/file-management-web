@@ -63,6 +63,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   openShareModal(): void
   {
     var virtualPath = this.selectedFiles.splice(0, 1)[0];
+    
     this.dialog.open(ShareModalComponent, { width: '500px', data: virtualPath });
   }
 
@@ -483,18 +484,22 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     if (newName != undefined)
     {
       var Items: string[] = [];
+      var ListId: string[] = [];
       this.selectedFiles.forEach(selectedFile =>
       {
         Items.push(this.currentPath.title + "\\" + selectedFile.FileName);
+        ListId.push(selectedFile.FileId);
       });
       this.selectedFolders.forEach(selectedFile =>
       {
         Items.push(this.currentPath.title + "\\" + selectedFile.FolderName);
+        ListId.push(selectedFile.FileId);
       });
       const data = {
         Path: this.currentPath.title,
         Items: Items,
-        NewName: newName
+        NewName: newName,
+        ListId: ListId
       };
       const jsonData = JSON.stringify(data);
       this.callApiWithResponse("rename", jsonData);
@@ -512,6 +517,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     {
 
       var Items: string[] = [];
+      var ListId: string[] = [];
       if (this.fromcontext == true)
       {
         Items.push(this.pathFolderContextMenu.fullTitle);
@@ -519,15 +525,18 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       for (let i = 0; i < this.selectedFolders.length; i++)
       {
         Items.push(this.selectedFolders[i].VirtualPath);
+        ListId.push(this.selectedFiles[i].FileId);
       }
       for (let i = 0; i < this.selectedFiles.length; i++)
       {
         Items.push(this.currentPath.fullTitle + "\\" + this.selectedFiles[i].FileName);
+        ListId.push(this.selectedFiles[i].FileId);
       }
 
       const data = {
         Path: this.currentPath.fullTitle,
         Items: Items,
+        ListId: ListId
       };
 
       if (this.fromcontext == true || this.selectedFolders.length > 0)

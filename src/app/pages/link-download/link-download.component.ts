@@ -44,6 +44,20 @@ export class LinkDownloadComponent implements OnInit
       console.log('res', res);
       this.token = res.grantedToken;
       this.fileName = res.fileName;
+      if (res.linkDownload != null && res.linkDownload != "") {
+        this.downloadManagerService.downloadFileAsync("download",
+          res.linkDownload
+        ).subscribe((response: Blob) => {
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(response);
+          a.href = objectUrl;
+          a.download = this.fileName;
+          a.click();
+          URL.revokeObjectURL(objectUrl);
+        }, error => {
+          console.error('File download error:', error);
+        });
+      }else     
       if (res.email != null && res.email != "" ) {
         this.loginForm.value.username = res.email;
         this.downloadManagerService.sendUserOptForToken({ tokenId: this.token, usernameOrEmail: this.loginForm.value.username }).subscribe(res => {
@@ -60,6 +74,7 @@ export class LinkDownloadComponent implements OnInit
       console.log('error', error);
     });
   }
+
 
   onSubmit(): void
   {

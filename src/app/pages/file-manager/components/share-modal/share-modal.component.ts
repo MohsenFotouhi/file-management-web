@@ -52,6 +52,7 @@ export class ShareModalComponent
   fileName: string = '';
   virtualPath: string = '';
   sharedLink: string = '';
+  fileID: string = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
@@ -59,6 +60,7 @@ export class ShareModalComponent
     private shareService: ShareService)
   {
     this.virtualPath = data.VirtualPath;
+    this.fileID = data.FileId;
   }
 
   clickEvent(link: string)
@@ -163,6 +165,7 @@ export class ShareModalComponent
       virtualPath: this.virtualPath,
       shareWithUsers: selectedUser,
       shareWithEmails: this.emailList,
+      FileID: this.fileID,
     };
 
     this.shareService.createDownloadLink(shareObject).subscribe({

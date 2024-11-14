@@ -1,18 +1,42 @@
 export class file {
     CreateDate!: string;
-    FileName!: string;
+  FileName!: string;
+  FarsiName!: string;
     FileSize!: string;
     ModifiedDate!: string;
     VirtualPath!: string;
-    DownloadId! : string;
+  DownloadId!: string;
+  FileId!: string;
+  CheckSum!: string;
+  ViewCount!: number;
+  ShareCount!: number;
+  DownLoadCount!: number;
+
+  CanDownLoad!: boolean;
+  CanView!: boolean;
+  CanShare!: boolean;
+  IsPrivate!: boolean;
 }
 
 
 export class folder {
     CreateDate!: string;
-    FolderName!: string;
+  FolderName!: string;
+  FarsiName!: string;
+
     ModifiedDate!: string;
-    VirtualPath!: string;
+  VirtualPath!: string;
+  DownloadId!: string;
+  FileId!: string;
+  CheckSum!: string;
+  ViewCount!: number;
+  ShareCount!: number;
+  DownLoadCount!: number;
+
+  CanDownLoad!: boolean;
+  CanView!: boolean;
+  CanShare!: boolean;
+  IsPrivate!: boolean;
 }
 
 
