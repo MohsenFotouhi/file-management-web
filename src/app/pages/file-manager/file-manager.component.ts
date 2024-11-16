@@ -525,7 +525,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       for (let i = 0; i < this.selectedFolders.length; i++)
       {
         Items.push(this.selectedFolders[i].VirtualPath);
-        ListId.push(this.selectedFiles[i].FileId);
+        ListId.push(this.selectedFolders[i].FileId);
       }
       for (let i = 0; i < this.selectedFiles.length; i++)
       {
