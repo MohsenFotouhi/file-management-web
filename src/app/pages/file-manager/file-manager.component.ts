@@ -62,8 +62,14 @@ export class FileManagerComponent implements OnInit, AfterViewInit
 
   openShareModal(): void
   {
-    var virtualPath = this.selectedFiles.splice(0, 1)[0];
-    
+    var virtualPath: any;
+    if (this.selectedFiles.length == 0 && this.selectedFolders.length == 0) return;
+    if (this.selectedFiles.length > 0)
+       virtualPath = this.selectedFiles.splice(0, 1)[0];
+    else if (this.selectedFolders.length > 0)
+      virtualPath = this.selectedFolders.splice(0, 1)[0];
+
+    console.log(virtualPath);
     this.dialog.open(ShareModalComponent, { width: '500px', data: virtualPath });
   }
 
@@ -217,7 +223,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     this.service.getSharedFiles().subscribe(response =>
     {
       this.files = response.Files,
-        this.folders = [],
+        this.folders = response.Folders,
         this.previews();
     },
       error =>
@@ -558,9 +564,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit
       this.selectedFiles.forEach(selectedFile =>
       {
         console.log('selectedFIle', selectedFile);
-        this.service.downloadShareFiles(selectedFile.DownloadId, selectedFile.VirtualPath
+        this.service.downloadShareFiles(selectedFile.FileId, selectedFile.VirtualPath
         ).subscribe((response: Blob) =>
         {
+          console.log(response);
           const a = document.createElement('a');
           const objectUrl = URL.createObjectURL(response);
           a.href = objectUrl;
