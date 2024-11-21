@@ -4,6 +4,7 @@ export interface LoginModel {
 }
 
 export interface LoginResponse {
+  refreshToken: string;
   token: string,
   userInfo: User;
 }
