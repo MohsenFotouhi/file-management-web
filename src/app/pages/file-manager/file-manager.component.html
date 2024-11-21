@@ -26,12 +26,20 @@
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
-        <button class="btn-toolbar" title="edit" disabled="true" >
+        <button class="btn-toolbar" title="edit" disabled="true">
           <i class="fa-solid fa-file-pen"></i>
         </button>
         <button class="btn-toolbar" title="حذف" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="deleteButtonClicked()">
           <i class="fa-solid fa-trash"></i>
+        </button>
+
+        <button class="btn-toolbar" title="سطل زباله" (click)="RecycleBin()">
+          <i class="fa-solid fa-trash-restore"></i>
+        </button>
+        <button class="btn-toolbar" title="بازگرداندن از سطل زباله" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+                (click)="RecycleFromRecycleBin()">
+          <i class="fa-solid fa-recycle"></i>
         </button>
         <div class="horizontalLine">|</div>
         <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()" [disabled]="showShareFiles">
@@ -63,7 +71,7 @@
           <i class="fa-solid fa-list-ul"></i>
         </button>
         <input class="form-control form-control-sm search-input" placeholder="جستجو ..." matInput
-               [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
+               [(ngModel)]="searchKeyWord" (keyup.enter)="search()" />
       </div>
 
       <div class=" file-holder resizable-container" #resizableContainer>

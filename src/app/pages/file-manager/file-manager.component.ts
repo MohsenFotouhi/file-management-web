@@ -37,7 +37,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   fromPath: string = '';
   currentPathItems: string[] = [];
   showShareFiles: boolean = false;
-
+  
   constructor(private service: FileManagerService,
     private fileService: FileService,
     private dialog: MatDialog,
@@ -319,6 +319,44 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     await this.delete();
   }
 
+  
+  async RecycleBin() {
+    // this.spinner.show();
+    const command = 'RecycleBin';
+    this.selectedFiles = [];
+    await this.service.CallAPI(command, '').subscribe(
+      response => {
+        // this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 10 + 'px';
+        this.rootPath.title = response.CurrentPath;
+        this.rootPath.fullTitle = response.CurrentPath;
+        this.folders = response.Folders;
+        this.rootPath.childs = [];
+        for (let i = 0; i < this.folders.length; i++)
+          this.rootPath.childs.push(
+
+            {
+              title: this.folders[i].FolderName,
+              fullTitle: this.folders[i].VirtualPath,
+              parent: this.folders[i].VirtualPath.split("\\")[0] + "\\",
+              childs: []
+            });
+        this.files = response.Files;
+        this.currentPath = this.rootPath;
+        this.previews();
+        this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
+        this.currentPathItems = this.currentPathItems.filter(item => !!item);
+      },
+      error => {
+        console.error('API error:', error);
+      },
+      () => {
+
+        this.spinner.hide();
+      }
+    );
+  }
+
+
   async paste()
   {
     const exists = this.files.map(x => x.FileName).some(item => this.selectedFiles.map(i => i.FileName).includes(item));
@@ -514,6 +552,44 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     }
 
   }
+  
+
+  async RecycleFromRecycleBin() {
+
+    const confirmed = await this.dialogService.openConfirmationDialog("آیا از بازگردانی آیتم های انتخابی اطمینان دارید؟");
+    if (confirmed) {
+
+      var Items: string[] = [];
+      var ListId: string[] = [];
+      if (this.fromcontext == true) {
+        Items.push(this.pathFolderContextMenu.fullTitle);
+      }
+      for (let i = 0; i < this.selectedFolders.length; i++) {
+        Items.push(this.selectedFolders[i].VirtualPath);
+        ListId.push(this.selectedFolders[i].FileId);
+      }
+      for (let i = 0; i < this.selectedFiles.length; i++) {
+        Items.push(this.currentPath.fullTitle + "\\" + this.selectedFiles[i].FileName);
+        ListId.push(this.selectedFiles[i].FileId);
+      }
+
+      const data = {
+        Path: this.currentPath.fullTitle,
+        Items: Items,
+        ListId: ListId
+      };
+
+      if (this.fromcontext == true || this.selectedFolders.length > 0) {
+
+        await this.callApi("RecycleFromRecycleBin", JSON.stringify(data));
+        this.getPaths(this.currentPath);
+      } else
+
+        this.callApiWithResponse("RecycleFromRecycleBin", JSON.stringify(data));
+    }
+  }
+
+
 
   async delete()
   {
@@ -894,6 +970,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   {
     if (this.currentPath.childs.find(x => x.title == file.FolderName) != undefined)
       this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
+    
   }
 
   getContainerWidth(): number | undefined
