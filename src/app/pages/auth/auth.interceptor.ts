@@ -97,6 +97,12 @@ export class AuthInterceptor implements HttpInterceptor
 
   private handle400Error(snackBar: MatSnackBar, error: HttpErrorResponse)
   {
+    if (error.error === 'Invalid token')
+    {
+      this.authService.logout();
+      return;
+    }
+
     snackBar.open(error.error, 'Close', {
       duration: 3000, // Duration in milliseconds
       horizontalPosition: 'right',
