@@ -107,6 +107,17 @@
   background: var(--vex-sidenav-section-divider-color);
 }
 
+/** VEX SIDENAV Storage */
+.vux-sidebar-storage__container {
+  background: var(--vex-sidenav-toolbar-background);
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  @apply px-2 py-3;
+}
+
 /** VEX SIDENAV USER */
 .vex-sidenav-user__container {
   background: var(--vex-sidenav-toolbar-background);
