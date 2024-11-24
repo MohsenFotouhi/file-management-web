@@ -185,6 +185,9 @@ export class ShareModalComponent
 
   }
 
+  test() {
+    console.log();
+  }
 
 }
 
