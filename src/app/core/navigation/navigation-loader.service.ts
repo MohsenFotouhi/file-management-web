@@ -37,6 +37,13 @@ export class NavigationLoaderService
           },
           {
             type: 'link',
+            label: 'همرسانی شده',
+            route: '/shared-with-me',
+            icon: 'mat:group',
+            routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
             label: 'پروفایل',
             route: '/dashboard',
             icon: 'mat:dashboard',
