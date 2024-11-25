@@ -65,7 +65,8 @@ export class LayoutComponent {
   constructor(
     private readonly layoutService: VexLayoutService,
     private readonly configService: VexConfigService
-  ) {}
+  ) {
+  }
 
   onSidenavClosed(): void {
     this.layoutService.closeSidenav();
