@@ -19,7 +19,7 @@ export class file {
 }
 
 
-export class folder {
+export class Folder {
     CreateDate!: string;
   FolderName!: string;
   FarsiName!: string;
