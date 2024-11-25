@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild }
 import { MatDialog } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FileManagerService } from 'src/app/services/file-manager.service';
-import { file, fileBlob, folder } from '../../interface/files';
+import { file, fileBlob, Folder } from '../../interface/files';
 import { FileService } from "../../services/file.service";
 import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
 import { FilePath } from './components/path/file-path';
@@ -22,10 +22,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
   rootPath: FilePath = new FilePath();
   currentPath: FilePath = new FilePath();
-  folders: folder[] = [];
+  folders: Folder[] = [];
   files: file[] = [];
   selectedFiles: file[] = [];
-  selectedFolders: folder[] = [];
+  selectedFolders: Folder[] = [];
   previousPathes: FilePath[] = [];
   searchKeyWord: undefined;
   isListView: boolean = false;
@@ -37,7 +37,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   fromPath: string = '';
   currentPathItems: string[] = [];
   showShareFiles: boolean = false;
-  
+
   constructor(private service: FileManagerService,
     private fileService: FileService,
     private dialog: MatDialog,
@@ -95,6 +95,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
               title: this.folders[i].FolderName,
               fullTitle: this.folders[i].VirtualPath,
               parent: this.folders[i].VirtualPath.split("\\")[0] + "\\",
+              fileId: this.folders[i].FileId,
               childs: []
             });
         this.files = response.Files;
@@ -155,6 +156,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
               title: this.folders[i].FolderName,
               fullTitle: this.folders[i].VirtualPath,
               parent: parentTitle,
+              fileId: this.folders[i].FileId,
               childs: []
             });
         }
@@ -277,7 +279,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   {
     if (this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) != undefined)
     {
-      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new folder());
+      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new Folder());
       this.fromPathContext = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title)?.VirtualPath;
     }
   }
@@ -296,7 +298,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   {
     if (this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) != undefined)
     {
-      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new folder());
+      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new Folder());
       this.fromPathContext = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title)?.VirtualPath;
     }
   }
@@ -319,7 +321,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     await this.delete();
   }
 
-  
+
   async RecycleBin() {
     // this.spinner.show();
     const command = 'RecycleBin';
@@ -338,6 +340,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
               title: this.folders[i].FolderName,
               fullTitle: this.folders[i].VirtualPath,
               parent: this.folders[i].VirtualPath.split("\\")[0] + "\\",
+              fileId: this.folders[i].FileId,
               childs: []
             });
         this.files = response.Files;
@@ -552,7 +555,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     }
 
   }
-  
+
 
   async RecycleFromRecycleBin() {
 
@@ -822,7 +825,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
-  onFolderClick(event: MouseEvent, file: folder)
+  onFolderClick(event: MouseEvent, file: Folder)
   {
     if (this.clickTimer)
     {
@@ -841,7 +844,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     }
   }
 
-  selectedFolderChanged(event: any, currentFile: folder)
+  selectedFolderChanged(event: any, currentFile: Folder)
   {
     this.fromContext = false;
     if (event != undefined && event.ctrlKey)
@@ -854,7 +857,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     }
   }
 
-  isFolderInSelectedFiles(file: folder): boolean
+  isFolderInSelectedFiles(file: Folder): boolean
   {
     return this.selectedFolders.includes(file);
   }
@@ -966,11 +969,11 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
 
-  doubleClick(file: folder)
+  doubleClick(file: Folder)
   {
     if (this.currentPath.childs.find(x => x.title == file.FolderName) != undefined)
       this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
-    
+
   }
 
   getContainerWidth(): number | undefined
