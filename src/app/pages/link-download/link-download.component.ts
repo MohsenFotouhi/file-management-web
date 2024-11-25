@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -16,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { catchError, concatMap, finalize, map, of, tap } from 'rxjs';
 import { DownloadManagerService } from 'src/app/services/download-manager.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 enum Steps {
   EMAIL = 1,
@@ -60,7 +61,7 @@ export class LinkDownloadComponent implements OnInit {
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private toastService: ToastService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required]
@@ -126,14 +127,6 @@ export class LinkDownloadComponent implements OnInit {
           this.spinner.hide();
         })
       );
-    // .subscribe(
-    //   // (res) => {
-    //   //   this.step3 = true;
-    //   // }
-    //   // (error) => {
-    //   //   console.log('error', error);
-    //   // },
-    // );
   }
 
   createImgSrc() {
@@ -205,7 +198,7 @@ export class LinkDownloadComponent implements OnInit {
         }),
         catchError(async (err) => {
           const message = await err.error.text();
-          this.showErrorSnackBar(message);
+          this.toastService.open(message);
           return of(err);
         }),
         finalize(() => {
@@ -223,11 +216,11 @@ export class LinkDownloadComponent implements OnInit {
       );
   }
 
-  showErrorSnackBar(error: string) {
-    this.snackBar.open(error, 'Close', {
-      duration: 3000, // Duration in milliseconds
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
-  }
+  // showErrorSnackBar(error: string) {
+  //   this.snackBar.open(error, 'Close', {
+  //     duration: 3000, // Duration in milliseconds
+  //     horizontalPosition: 'right',
+  //     verticalPosition: 'top'
+  //   });
+  // }
 }

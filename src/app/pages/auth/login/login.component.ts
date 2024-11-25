@@ -1,9 +1,8 @@
-import
-  {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component
-  } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -18,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthService } from '../auth.service';
 import { LoginModel } from 'src/app/interface/auth-interface';
 import { error } from 'console';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'vex-login',
@@ -39,9 +39,7 @@ import { error } from 'console';
     MatSnackBarModule
   ]
 })
-export class LoginComponent
-{
-
+export class LoginComponent {
   form = this.fb.group<any>({
     username: ['', Validators.required],
     password: ['', Validators.required]
@@ -54,60 +52,46 @@ export class LoginComponent
     private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private snackbar: MatSnackBar,
-    private authService: AuthService
-  )
-  {
-  }
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {}
 
-  send()
-  {
-    if (this.form.valid)
-    {
-      const obj: any = { username: this.form.value['username'], password: this.form.value['password'] };
+  send() {
+    if (this.form.valid) {
+      const obj: any = {
+        username: this.form.value['username'],
+        password: this.form.value['password']
+      };
 
       this.authService.login(obj).subscribe({
-        next: (res) =>
-        {
-          if (res)
-          {
+        next: (res) => {
+          if (res) {
             this.authService.setUser();
             this.router.navigate(['/']);
-            this.snackbar.open(
-              "ورود با موفقیت انجام شد",
-              '',
-              { duration: 1000, verticalPosition: 'top', direction: 'rtl' }
+            this.toastService.open('ورود با موفقیت انجام شد');
+          } else {
+            this.toastService.open(
+              'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
             );
-          } else
-          {
-            this.snackbar.open(
-              "متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.",
-              '',
-              { duration: 1000, verticalPosition: 'top', direction: 'rtl' }
-            );
+            
           }
-        }, error: (error) =>
-        {
-          this.snackbar.open(
-            "متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.",
-            '',
-            { duration: 1000, verticalPosition: 'top', direction: 'rtl' }
+        },
+        error: (error) => {
+          this.toastService.open(
+            'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
           );
+
         }
       });
-
     }
   }
 
-  toggleVisibility()
-  {
-    if (this.visible)
-    {
+  toggleVisibility() {
+    if (this.visible) {
       this.inputType = 'password';
       this.visible = false;
       this.cd.markForCheck();
-    } else
-    {
+    } else {
       this.inputType = 'text';
       this.visible = true;
       this.cd.markForCheck();
