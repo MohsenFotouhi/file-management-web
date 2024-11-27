@@ -44,6 +44,13 @@ export class NavigationLoaderService
           },
           {
             type: 'link',
+            label: 'حذف شده ها',
+            route: '/trash',
+            icon: 'mat:delete',
+            routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
             label: 'پروفایل',
             route: '/dashboard',
             icon: 'mat:dashboard',
