@@ -1,17 +1,16 @@
-export class file {
-    CreateDate!: string;
+export class File {
+  CreateDate!: string;
   FileName!: string;
   FarsiName!: string;
-    FileSize!: string;
-    ModifiedDate!: string;
-    VirtualPath!: string;
+  FileSize!: string;
+  ModifiedDate!: string;
+  VirtualPath!: string;
   DownloadId!: string;
   FileId!: string;
   CheckSum!: string;
   ViewCount!: number;
   ShareCount!: number;
   DownLoadCount!: number;
-
   CanDownLoad!: boolean;
   CanView!: boolean;
   CanShare!: boolean;
@@ -20,11 +19,10 @@ export class file {
 
 
 export class Folder {
-    CreateDate!: string;
+  CreateDate!: string;
   FolderName!: string;
   FarsiName!: string;
-
-    ModifiedDate!: string;
+  ModifiedDate!: string;
   VirtualPath!: string;
   DownloadId!: string;
   FileId!: string;
@@ -40,7 +38,7 @@ export class Folder {
 }
 
 
-export class fileBlob {
-    file!: file;
-    content!: string;
+export class FileBlob {
+  file!: File;
+  content!: string;
 }
