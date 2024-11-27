@@ -18,6 +18,8 @@ import { AuthService } from '../auth.service';
 import { LoginModel } from 'src/app/interface/auth-interface';
 import { error } from 'console';
 import { ToastService } from 'src/app/services/toast.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'vex-login',
@@ -53,7 +55,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private spinner: NgxSpinnerService
   ) {}
 
   send() {
@@ -62,27 +65,29 @@ export class LoginComponent {
         username: this.form.value['username'],
         password: this.form.value['password']
       };
+      this.spinner.show();
 
-      this.authService.login(obj).subscribe({
-        next: (res) => {
-          if (res) {
-            this.authService.setUser();
-            this.router.navigate(['/']);
-            this.toastService.open('ورود با موفقیت انجام شد');
-          } else {
+      this.authService
+        .login(obj)
+        .pipe(finalize(() => this.spinner.hide()))
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.authService.setUser();
+              this.router.navigate(['/']);
+              this.toastService.open('ورود با موفقیت انجام شد');
+            } else {
+              this.toastService.open(
+                'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
+              );
+            }
+          },
+          error: (error) => {
             this.toastService.open(
               'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
             );
-            
           }
-        },
-        error: (error) => {
-          this.toastService.open(
-            'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
-          );
-
-        }
-      });
+        });
     }
   }
 
