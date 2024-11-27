@@ -11,6 +11,7 @@ import { FileContextMenuComponent } from "./components/file-context-menu/file-co
 import { PathComponent } from "./components/path/path.component";
 import { SharedFilesComponent } from './components/shared-files/shared-files.component';
 import { FileManagerComponent } from './file-manager.component';
+import { MatInputModule } from '@angular/material/input';
 
 const routes: Routes = [
   { path: '', component: FileManagerComponent }
@@ -28,7 +29,8 @@ const routes: Routes = [
     MatProgressSpinnerModule,
     SharedFilesComponent,
     SummerizePipe,
-    MatTabsModule
+    MatTabsModule,
+    MatInputModule
   ]
 })
 export class FileManagerModule { }
