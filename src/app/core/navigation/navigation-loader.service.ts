@@ -49,6 +49,13 @@ export class NavigationLoaderService
             icon: 'mat:share',
             routerLinkActiveOptions: { exact: true }
           },
+          {
+            type: 'link',
+            label: 'تنظیمات',
+            route: '/settings',
+            icon: 'mat:settings',
+            routerLinkActiveOptions: { exact: true }
+          },
         ]
       },
     ]);

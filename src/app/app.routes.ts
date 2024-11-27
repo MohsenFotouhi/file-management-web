@@ -45,6 +45,14 @@ export const appRoutes: VexRoutes = [
             (m) => m.DashboardModule
           )
       },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./pages/settings/settings.component').then(
+            (m) => m.SettingsComponent
+          )
+      },
+
       // {
       //   path: 'setting', component: SettingComponent
       // },
