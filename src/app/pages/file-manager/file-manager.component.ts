@@ -1,3 +1,4 @@
+import { firstValueFrom } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DialogService } from './dialog-service';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +8,6 @@ import { FileManagerService } from 'src/app/services/file-manager.service';
 import { ShareModalComponent } from './components/share-modal/share-modal.component';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'vex-file-manager',
@@ -50,8 +50,8 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('resizableDiv1', { static: false }) resizableDiv1!: ElementRef;
   @ViewChild('resizableDiv2', { static: false }) resizableDiv2!: ElementRef;
-  @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
   @ViewChild(FileContextMenuComponent) contextMenu!: FileContextMenuComponent;
+  @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
   @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
 
   constructor(private service: FileManagerService,
@@ -111,22 +111,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.currentPath = this.rootPath;
     this.currentPathItems = this.currentPath.parent ?
       this.currentPath.parent.split('\\').filter(item => !!item) : [];
-  }
-
-  async loadShareFiles() {
-    try {
-      this.showShareFiles = true;
-      await this.spinner.show();
-      const response = await firstValueFrom(this.service.getSharedFiles());
-
-      this.files = response.Files;
-      this.folders = response.Folders;
-      await this.previews();
-    } catch (error) {
-      console.error('API error:', error);
-    } finally {
-      await this.spinner.hide();
-    }
   }
 
   async getPaths(path: FilePath) {
@@ -404,20 +388,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async RecycleBin() {
-    try {
-      this.selectedFiles = [];
-      const response = await firstValueFrom(
-        this.service.CallAPI('RecycleBin', '')
-      );
-      await this.bindingData(response);
-    } catch (error) {
-      console.error('API error:', error);
-    } finally {
-      await this.spinner.hide();
-    }
-  }
-
   async addNewFolderButtonClicked() {
     let folderName: any;
     let path = this.fromcontext ? this.pathFolderContextMenu.fullTitle : this.currentPath.fullTitle;
@@ -564,38 +534,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
     await this.dialogService.openUploadDialog(path);
     await this.getPaths(this.currentPath);
-  }
-
-  async RecycleFromRecycleBin() {
-    const confirmed = await this.dialogService.openConfirmationDialog('آیا از بازگردانی آیتم های انتخابی اطمینان دارید؟');
-    if (confirmed) {
-      let Items: string[] = [];
-      let ListId: string[] = [];
-      if (this.fromcontext) {
-        Items.push(this.pathFolderContextMenu.fullTitle);
-      }
-      for (const folder of this.selectedFolders) {
-        Items.push(folder.VirtualPath);
-        ListId.push(folder.FileId);
-      }
-
-      for (const file of this.selectedFiles) {
-        Items.push(this.currentPath.fullTitle + '\\' + file.FileName);
-        ListId.push(file.FileId);
-      }
-
-      const data = {
-        Path: this.currentPath.fullTitle,
-        Items: Items,
-        ListId: ListId
-      };
-
-      if (this.fromcontext || this.selectedFolders.length) {
-        await this.callApi('RecycleFromRecycleBin', JSON.stringify(data));
-      } else {
-        await this.callApiWithResponse('RecycleFromRecycleBin', JSON.stringify(data));
-      }
-    }
   }
 
   onContextMenu(event: MouseEvent, from: string) {
