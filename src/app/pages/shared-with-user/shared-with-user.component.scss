@@ -47,13 +47,11 @@
   background-color: white;
   text-align: center;
   align-items: center;
-  width: 80%;
+  flex: 1 1 auto;
 }
 
 .tree-holder{
   overflow: auto;
-  display: block;
-  display: block !important;
 }
 
 .file-holder {
@@ -77,10 +75,8 @@
   white-space: nowrap;
   margin: 0 auto;
   font-size: 14px;
-  display: block;
   max-width: 100%;
   text-wrap: nowrap;
-  font-size: 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -149,7 +145,6 @@
   height: auto;
   cursor: col-resize;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==);
-  background-position: 10%;
   background-color: #eee;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -163,7 +158,6 @@
 
 
 .list-view .fileItem {
-  padding: 1px;
   margin: 3px;
   height: 25px;
   background: rgb(246, 247, 249);
@@ -174,9 +168,7 @@
   display: flex;
   align-items: center;
   border: 1px solid #00000000;
-  cursor: pointer;
   flex-direction: row;
-  align-items: center;
   width: fit-content;
   margin-right: 50%;
   padding: 2px 8px;
@@ -193,7 +185,6 @@
 }
 
 .grid-view .fileItem {
-  padding: 1px;
   height: 170px;
   width: 150px;
   margin: 3px;
@@ -208,7 +199,6 @@
   padding: 8px;
   align-items: center;
   border: 1px solid #00000000;
-  cursor: pointer;
 
 }
 

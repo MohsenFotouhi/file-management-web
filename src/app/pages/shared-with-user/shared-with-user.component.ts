@@ -1,16 +1,16 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { file, fileBlob, Folder } from '../../interface/files';
-import { FilePath } from '../file-manager/components/path/file-path';
-import { FileManagerService } from '../../services/file-manager.service';
-import { DialogService } from '../file-manager/dialog-service';
+import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-import { FileContextMenuComponent } from '../file-manager/components/file-context-menu/file-context-menu.component';
-import { SharedFilesComponent } from '../file-manager/components/shared-files/shared-files.component';
+import { DialogService } from '../file-manager/dialog-service';
+import { File, FileBlob, Folder } from '../../interface/files';
+import { FilePath } from '../file-manager/components/path/file-path';
+import { FileManagerService } from '../../services/file-manager.service';
 import { NgClass, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 import { PathComponent } from '../file-manager/components/path/path.component';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { SharedFilesComponent } from '../file-manager/components/shared-files/shared-files.component';
+import { FileContextMenuComponent } from '../file-manager/components/file-context-menu/file-context-menu.component';
 
 @Component({
   selector: 'vex-shared-with-user',
@@ -34,13 +34,13 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   lastDownX = 0;
   clickCount = 0;
   clickTimeout: any;
-  files: file[] = [];
+  files: File[] = [];
   isResizing = false;
   folders: Folder[] = [];
-  blobs: fileBlob[] = [];
+  blobs: FileBlob[] = [];
   searchKeyWord: undefined;
   fromFile: boolean = false;
-  selectedFiles: file[] = [];
+  selectedFiles: File[] = [];
   fromFolder: boolean = false;
   isListView: boolean = false;
   originalWidthTreeSidebar = 0;
@@ -66,13 +66,13 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
               private spinner: NgxSpinnerService) {
   }
 
+  @ViewChild('mainContainer', { static: false }) mainContainer!: ElementRef;
   @ViewChild('treeSidebarSection', { static: false }) treeSidebarSection!: ElementRef;
   @ViewChild('folderContent', { static: false }) folderContent!: ElementRef;
-  @ViewChild('mainContainer', { static: false }) mainContainer!: ElementRef;
   @ViewChild(FileContextMenuComponent) contextMenu!: FileContextMenuComponent;
 
   async ngOnInit(): Promise<void> {
-    await this.getSharedFiles();
+    await this.getPath();
   }
 
   ngAfterViewInit(): void {
@@ -82,89 +82,88 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     this.folderContent.nativeElement.style.width = this.mainContainer.nativeElement.offsetWidth - this.treeSidebarSection.nativeElement.offsetWidth - 2 + 'px';
   }
 
-  async getSharedFiles() {
+  async getPath() {
     await this.spinner.show();
+
+    this.selectedFiles = [];
     try {
       const response = await firstValueFrom(this.service.getSharedFiles());
-      await this.bindingDataFiles(response);
+      this.rootPath.title = response.CurrentPath;
+      this.rootPath.fullTitle = response.CurrentPath;
+      this.folders = response.Folders || [];
+      this.files = response.Files || [];
+      this.rootPath.childs = [];
+      for (const folder of this.folders) {
+        this.rootPath.childs.push(
+          {
+            title: folder.FolderName,
+            fullTitle: folder.VirtualPath,
+            parent: folder.VirtualPath.split('\\')[0] + '\\',
+            fileId: folder.FileId,
+            childs: []
+          });
+      }
+      await this.previews();
+      this.currentPath = this.rootPath;
+      this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split('\\') : [];
+      this.currentPathItems = this.currentPathItems.filter(item => !!item);
     } catch (error) {
       console.error('API error:', error);
     } finally {
       await this.spinner.hide();
     }
-  }
-
-  async bindingDataFiles(data: any) {
-    this.rootPath.title = data.CurrentPath;
-    this.rootPath.fullTitle = data.CurrentPath;
-    this.folders = data.Folders || [];
-    this.files = data.Files || [];
-    this.rootPath.childs = [];
-    for (const folder of this.folders) {
-      this.rootPath.childs.push(
-        {
-          title: folder.FolderName,
-          fullTitle: folder.VirtualPath,
-          parent: folder.VirtualPath.split('\\')[0] + '\\',
-          fileId: folder.FileId,
-          childs: []
-        });
-    }
-    await this.previews();
-    this.currentPath = this.rootPath;
-    this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split('\\') : [];
-    this.currentPathItems = this.currentPathItems.filter(item => !!item);
   }
 
   async getPaths(path: FilePath) {
-    const command = 'GetContentById';
-    this.rootPath.childs.forEach(element => {
-      if (path.parent && !path.parent.startsWith(element.fullTitle))
-        element.childs = [];
-    });
+    if (path.parent) {
+      const command = 'GetContentById';
+      this.rootPath.childs.forEach(element => {
+        if (path.parent && !path.parent.startsWith(element.fullTitle))
+          element.childs = [];
+      });
 
-    this.files = [];
-    this.folders = [];
-    await this.spinner.show();
-    try {
-      const response = await firstValueFrom(
-        this.service.CallAPI(command, JSON.stringify({
-          FilePath: path.fullTitle,
-          FileId: path.fileId
-        }))
-      );
+      this.files = [];
+      this.folders = [];
+      await this.spinner.show();
+      try {
+        const response = await firstValueFrom(
+          this.service.CallAPI(command, path.fileId)
+        );
 
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
-      await this.previews();
+        this.folders = response.Folders || [];
+        this.files = response.Files || [];
+        await this.previews();
 
-      let parentTitle: string = '';
-      this.currentPath.childs = [];
-      this.currentPathItems = this.currentPath.parent ?
-        this.currentPath.parent.split('\\').filter(item => !!item) : [];
+        let parentTitle: string = '';
+        this.currentPath.childs = [];
+        this.currentPathItems = this.currentPath.parent ?
+          this.currentPath.parent.split('\\').filter(item => !!item) : [];
 
-      for (const folder of this.folders) {
-        parentTitle = '';
-        let parents = folder.VirtualPath.split('\\').splice(-1);
+        for (const folder of this.folders) {
+          parentTitle = '';
+          let parents = folder.VirtualPath.split('\\');
+          parents.splice(-1);
+          parents.forEach(element => {
+            if (parentTitle.trim().length > 0)
+              parentTitle += '\\';
+            parentTitle += element;
+          });
 
-        parents.forEach(element => {
-          if (parentTitle.trim().length > 0)
-            parentTitle += '\\';
-          parentTitle += element;
-        });
-
-        this.currentPath.childs.push({
-          title: folder.FolderName,
-          fullTitle: folder.VirtualPath,
-          parent: parentTitle,
-          fileId: folder.FileId,
-          childs: []
-        });
+          this.currentPath.childs.push({
+            title: folder.FolderName,
+            fullTitle: folder.VirtualPath,
+            parent: parentTitle,
+            fileId: folder.FileId,
+            childs: []
+          });
+        }
+      } catch (error) {
+        console.error('API error:', error);
+      } finally {
+        await this.spinner.hide();
       }
-    } catch (error) {
-      console.error('API error:', error);
-    } finally {
-      await this.spinner.hide();
+    } else {
+      await this.getPath();
     }
   }
 
@@ -187,24 +186,18 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async getPath() {
-    await this.spinner.show();
-
-    this.selectedFiles = [];
-    try {
-      const response = await firstValueFrom(this.service.getSharedFiles());
-      await this.bindingDataFiles(response);
-    } catch (error) {
-      console.error('API error:', error);
-    } finally {
-      await this.spinner.hide();
-    }
+  async pathChange(path: FilePath) {
+    this.previousPaths.push(this.currentPath);
+    this.currentPath = path;
+    this.currentPathItems = this.currentPath.parent ?
+      this.currentPath.parent.split('\\').filter(item => !!item) : [];
+    await this.getPaths(path);
+    this.backButtonDisable = false;
   }
 
-  /***************-Start Content Event-*****************/
+  /***************-Content Event-*****************/
   onFolderContentClick(event: any) {
-    if (event != undefined && event.ctrlKey)
-      return;
+    if (event && event.ctrlKey) return;
     this.selectedFiles = [];
     this.selectedFolders = [];
   }
@@ -212,9 +205,9 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   onFolderClick(event: MouseEvent, Folder: Folder) {
     if (this.clickTimeout) return;
     this.clickTimeout = setTimeout(() => {
-      if (event != undefined && event.ctrlKey)
+      if (event && event.ctrlKey) {
         this.selectedFolders.push(Folder);
-      else {
+      } else {
         this.unselectedAllFolderFile();
         this.selectedFolders.push(Folder);
       }
@@ -229,17 +222,69 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     if (child) await this.pathChange(child);
   }
 
-  async pathChange(path: FilePath) {
-    this.previousPaths.push(this.currentPath);
-    this.currentPath = path;
-    this.currentPathItems = this.currentPath.parent ?
-      this.currentPath.parent.split('\\').filter(item => !!item) : [];
-    await this.getPaths(path);
-    this.backButtonDisable = false;
+  isFolderInSelectedFiles(file: Folder): boolean {
+    return this.selectedFolders.includes(file);
   }
 
-  /****************-End Content Event-******************/
-  /***************-Start Toolbar Event-*****************/
+  isFileInSelectedFiles(currentFile: File): boolean {
+    return this.selectedFiles.includes(currentFile);
+  }
+
+  onFileClick(event: MouseEvent, file: File) {
+    this.clickCount++;
+    setTimeout(() => {
+      if (this.clickCount === 1) {
+        if (this.clickTimeout) {
+          clearTimeout(this.clickTimeout);
+          this.clickTimeout = null;
+        } else {
+          this.clickTimeout = setTimeout(() => {
+            this.selectedFileChanged(event, file);
+            this.clickTimeout = null;
+            this.clickTimeout = null;
+          }, 250);
+        }
+      } else if (this.clickCount === 2) {
+        console.log('double click');
+      }
+      this.clickCount = 0;
+    }, 250);
+  }
+
+  getPathContent(i: number) {
+    // currentPath.title
+    console.log('i', i);
+    console.log('his.currentPathItems ', this.currentPathItems);
+    // this.currentPath.title = this.currentPathItems[i];
+    // this.currentPathItems = this.removeFromCurrentPath(i);
+    this.currentPath.fullTitle.split('\\');
+    if (i == 0)
+      this.getPath();
+    var fullPath = this.currentPath.fullTitle.split('\\').splice(0, i + 1).join('\\').toString();
+    console.log('fullPath', fullPath);
+    this.rootPath.childs.find(x => x.fullTitle == fullPath);
+    var navigate = this.rootPath.childs.find(x => x.fullTitle == fullPath);
+    if (navigate != undefined)
+      this.getPaths(navigate);
+
+  }
+
+  selectedFileChanged(event: any, currentFile: File) {
+    if (event != undefined && event.ctrlKey)
+      this.selectedFiles.push(currentFile);
+    else {
+      this.selectedFiles = [];
+      this.selectedFolders = [];
+      this.selectedFiles.push(currentFile);
+    }
+  }
+
+  unselectedAllFolderFile() {
+    this.selectedFolders = [];
+    this.selectedFiles = [];
+  }
+
+  /***************-Toolbar Event-*****************/
   async backButtonClicked() {
     this.currentPath = this.previousPaths.splice(this.previousPaths.length - 1, 1)[0];
     this.currentPathItems = this.currentPath.parent ?
@@ -305,16 +350,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /****************-End Toolbar Event-******************/
-  ResizeWindow(event: MouseEvent) {
-    this.isResizing = true;
-    this.lastDownX = event.clientX;
-    this.originalWidthTreeSidebar = this.treeSidebarSection.nativeElement.offsetWidth;
-    this.originalWidthFolderContent = this.folderContent.nativeElement.offsetWidth;
-
-    event.preventDefault();
-  }
-
+  /****************-Context Event-******************/
   pathRightClick([event, path]: [MouseEvent, FilePath]) {
     this.pathFolderContextMenu = path;
     this.onContextMenu(event, 'tree');
@@ -337,20 +373,12 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     this.selectedFolders = [];
   }
 
-  onFolderContextMenu(event: MouseEvent, currentFile: any) {
+  onFolderContextMenu(event: MouseEvent, _currentFile: any) {
     event.preventDefault();
     this.fromFolder = true;
     this.fromFile = true;
     // this.selectedFolderChanged(undefined, currentFile);
     this.contextMenu.show(event, 'file');
-  }
-
-  isFolderInSelectedFiles(file: Folder): boolean {
-    return this.selectedFolders.includes(file);
-  }
-
-  isFileInSelectedFiles(currentFile: file): boolean {
-    return this.selectedFiles.includes(currentFile);
   }
 
   onFileContextMenu(event: MouseEvent, currentFile: any) {
@@ -361,58 +389,33 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     this.contextMenu.show(event, 'file');
   }
 
-  onFileClick(event: MouseEvent, file: file) {
-    this.clickCount++;
-    setTimeout(() => {
-      if (this.clickCount === 1) {
-        if (this.clickTimeout) {
-          clearTimeout(this.clickTimeout);
-          this.clickTimeout = null;
-        } else {
-          this.clickTimeout = setTimeout(() => {
-            this.selectedFileChanged(event, file);
-            this.clickTimeout = null;
-            this.clickTimeout = null;
-          }, 250);
-        }
-      } else if (this.clickCount === 2) {
-        console.log('double click');
-      }
-      this.clickCount = 0;
-    }, 250);
+  /**********************-Resize Event-************************/
+  ResizeWindow(event: MouseEvent) {
+    this.isResizing = true;
+    this.lastDownX = event.clientX;
+    this.originalWidthTreeSidebar = this.treeSidebarSection.nativeElement.offsetWidth;
+    this.originalWidthFolderContent = this.folderContent.nativeElement.offsetWidth;
+
+    event.preventDefault();
   }
 
-  getPathContent(i: number) {
-    // currentPath.title
-    console.log('i', i);
-    console.log('his.currentPathItems ', this.currentPathItems);
-    // this.currentPath.title = this.currentPathItems[i];
-    // this.currentPathItems = this.removeFromCurrentPath(i);
-    this.currentPath.fullTitle.split('\\');
-    if (i == 0)
-      this.getPath();
-    var fullPath = this.currentPath.fullTitle.split('\\').splice(0, i + 1).join('\\').toString();
-    console.log('fullPath', fullPath);
-    this.rootPath.childs.find(x => x.fullTitle == fullPath);
-    var navigate = this.rootPath.childs.find(x => x.fullTitle == fullPath);
-    if (navigate != undefined)
-      this.getPaths(navigate);
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (!this.isResizing) return;
 
-  }
-  
-  selectedFileChanged(event: any, currentFile: file) {
-    if (event != undefined && event.ctrlKey)
-      this.selectedFiles.push(currentFile);
-    else {
-      this.selectedFiles = [];
-      this.selectedFolders = [];
-      this.selectedFiles.push(currentFile);
-    }
+    const offsetX = event.clientX - this.lastDownX;
+
+    this.treeSidebarSection.nativeElement.style.width = ` ${this.originalWidthTreeSidebar + offsetX}px`;
+    this.folderContent.nativeElement.style.width = this.mainContainer.nativeElement.offsetWidth - this.treeSidebarSection.nativeElement.offsetWidth - 10 + 'px';
   }
 
-  unselectedAllFolderFile() {
-    this.selectedFolders = [];
-    this.selectedFiles = [];
+  @HostListener('document:mouseup')
+  onMouseUp() {
+    this.isResizing = false;
   }
 
+  @HostListener('window:resize', ['$event'])
+  windowsResize() {
+    this.folderContent.nativeElement.style.width = this.mainContainer.nativeElement.offsetWidth - this.treeSidebarSection.nativeElement.offsetWidth - 10 + 'px';
+  }
 }

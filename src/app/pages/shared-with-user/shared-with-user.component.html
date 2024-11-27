@@ -25,7 +25,7 @@
       <div #mainContainer class=" file-holder resizable-container">
         <div
           #treeSidebarSection
-          class="border-end resizable tree-holder"
+          class="border-end resizable tree-holder hidden md:block"
           style="overflow-x: auto; min-width: 187px;"
           (contextmenu)="onContextMenu($event , 'emptyArea')">
           <app-path class="app-path"
@@ -36,7 +36,7 @@
                     (contextmenu)="onContextMenu($event , 'tree')"
           ></app-path>
         </div>
-        <div class="resizer gutter gutter-horizontal" (mousedown)="ResizeWindow($event)">
+        <div class="resizer gutter gutter-horizontal hidden md:block" (mousedown)="ResizeWindow($event)">
           <div class="resizer-icon"></div>
         </div>
         <div #folderContent
@@ -54,7 +54,7 @@
                    alt="img/folder.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <p class="file-name">{{ currentFolder.FolderName }}</p>
+              <p class="file-name truncate">{{ currentFolder.FolderName }}</p>
               <div class="file-size"></div>
             </div>
             <div class="border fileItem"
@@ -135,7 +135,7 @@
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
               <span style="max-width: 100%;">
-                        <p class="file-name">{{ currentFile.file.FileName }}</p>
+                        <p class="file-name truncate">{{ currentFile.file.FileName }}</p>
                     </span>
               <div class="file-size">{{ currentFile.file.FileSize }}</div>
             </div>
