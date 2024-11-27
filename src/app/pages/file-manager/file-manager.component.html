@@ -19,7 +19,7 @@
                 (click)="cutButtonClicked()">
           <i class="fa-solid fa-scissors"></i>
         </button>
-        <button class="btn-toolbar" title="paste" [disabled]="canPaste == false || showShareFiles"
+        <button class="btn-toolbar" title="paste" [disabled]="!canPaste || showShareFiles"
                 (click)="pasteButtonClicked()">
           <i class="fa-solid fa-paste"></i>
         </button>
@@ -29,7 +29,7 @@
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
-        <button class="btn-toolbar" title="edit" disabled="true">
+        <button class="btn-toolbar" title="edit" disabled>
           <i class="fa-solid fa-file-pen"></i>
         </button>
         <button class="btn-toolbar" title="حذف"
@@ -56,7 +56,7 @@
           <i class="fa-solid fa-file-circle-plus"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="نمایش" disabled=true>
+        <button class="btn-toolbar" title="نمایش" disabled>
           <i class="fa-solid fa-eye"></i>
         </button>
         <button class="btn-toolbar" title="دانلود" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
@@ -166,7 +166,7 @@
               <img *ngIf="currentFile.file.FileName.endsWith('.MP3')" src="assets/img/filesIcons/MP3.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/MP4.png" alt=""
+              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/mp4.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.php')" src="assets/img/filesIcons/php.png" alt=""
