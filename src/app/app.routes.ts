@@ -52,6 +52,13 @@ export const appRoutes: VexRoutes = [
             (m) => m.SettingsComponent
           )
       },
+      {
+        path: 'global-settings',
+        loadComponent: () =>
+          import('./pages/global-settings/global-settings.component').then(
+            (m) => m.GlobalSettingsComponent
+          )
+      },
 
       // {
       //   path: 'setting', component: SettingComponent

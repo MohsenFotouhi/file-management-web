@@ -4,34 +4,21 @@
   <vex-page-layout-content class="container">
     <div *ngIf="settingsData$ | async as settingsData" class="card">
       <mat-tab-group>
-        <mat-tab label="محل ذخیره">
+        <mat-tab label="ذخیره سازی">
           <div class="p-6">
             <settings-storage
               [data]="settingsData"
               (submitForm)="onStorageSubmit($event)"></settings-storage>
           </div>
         </mat-tab>
+
         <mat-tab label="سطل زباله">
           <div class="p-6">
             <settings-recycle-bin
               [data]="settingsData"
               (formSubmit)="onRecycleBinSubmit($event)"></settings-recycle-bin>
-            <!-- <vex-page-layout-demo></vex-page-layout-demo> -->
           </div>
         </mat-tab>
-
-        <!-- <mat-tab label="Extra Tab">
-          <div class="p-6">
-          </div>
-        </mat-tab>
-        <mat-tab label="Additional Tab">
-          <div class="p-6">
-          </div>
-        </mat-tab>
-        <mat-tab label="Another Tab">
-          <div class="p-6">
-          </div>
-        </mat-tab> -->
       </mat-tab-group>
     </div>
   </vex-page-layout-content>
