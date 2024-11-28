@@ -8,18 +8,17 @@
         <mat-label>فضای ذخیره کاربر</mat-label>
         <input
           matInput
-          formControlName="maxUserStorage"
+          formControlName="UserMaxStorage"
           type="number"
           placeholder="حداکثر فضای ذخیره کاربر(مگابایت)&hellip;"
           required />
-        <mat-error *ngIf="form.get('maxUserStorage')?.invalid"
+        <mat-error *ngIf="form.get('UserMaxStorage')?.invalid"
           >این فیلد اجباری است
         </mat-error>
       </mat-form-field>
     </div>
 
     <div class="flex items-center justify-end gap-2">
-      <!-- <button mat-button type="button">لغو</button> -->
       <button color="primary" mat-flat-button type="submit">ذخیره</button>
     </div>
   </form>

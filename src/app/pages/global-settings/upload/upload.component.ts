@@ -1,5 +1,4 @@
-import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,13 +8,15 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+
 import { CreateUserSetting } from 'src/app/interface/auth-interface';
 
 @Component({
-  selector: 'global-settings-storage',
-  templateUrl: './storage.component.html',
-  styleUrl: './storage.component.scss',
+  selector: 'global-settings-upload',
+  templateUrl: './upload.component.html',
+  styleUrl: './upload.component.scss',
   standalone: true,
   animations: [fadeInUp400ms],
   imports: [
@@ -23,14 +24,24 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    NgIf
+    MatSelectModule
   ]
 })
-export class GlobalSettingsStorageComponent implements OnInit {
+export class GlobalSettingsUploadComponenet {
   @Input() data: CreateUserSetting;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
+  options = ['Option1', 'Option2', 'Option3', 'Option4', 'Option5'];
   form: FormGroup = this.fb.group({
-    UserMaxStorage: [null, Validators.required]
+    MaxByteUpload: [null, Validators.required],
+    MaxDataUpload: [null, Validators.required],
+    CountUploadPerDay: [null, Validators.required],
+    CountUploadPerMonth: [null, Validators.required],
+    // StartTimeUpload: [null],
+    // EndTimeUpload: [null],
+    AllowExtestionUpload: ['', Validators.required],
+    DenyExtestionUpload: ['', Validators.required],
+    AllowDayUpload: ['', Validators.required],
+    DenyDayUpload: ['', Validators.required]
   });
 
   constructor(private fb: FormBuilder) {}

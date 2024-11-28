@@ -17,11 +17,15 @@
         </mat-tab>
 
         <mat-tab [label]="tabs.EmailGlobalSetting">
-          <div class="p-6"></div>
+          <div class="p-6">
+            <global-settings-email></global-settings-email>
+          </div>
         </mat-tab>
 
         <mat-tab [label]="tabs.LDAPSetting">
-          <div class="p-6"></div>
+          <div class="p-6">
+            <global-settings-ldap></global-settings-ldap>
+          </div>
         </mat-tab>
 
         <mat-tab [label]="tabs.DownloadGlobalSetting">
@@ -31,7 +35,9 @@
         </mat-tab>
 
         <mat-tab [label]="tabs.UploadGlobalSetting">
-          <div class="p-6"></div>
+          <div class="p-6">
+            <global-settings-upload></global-settings-upload>
+          </div>
         </mat-tab>
       </mat-tab-group>
     </div>

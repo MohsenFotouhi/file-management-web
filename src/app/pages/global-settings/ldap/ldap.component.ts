@@ -13,9 +13,9 @@ import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { CreateUserSetting } from 'src/app/interface/auth-interface';
 
 @Component({
-  selector: 'global-settings-storage',
-  templateUrl: './storage.component.html',
-  styleUrl: './storage.component.scss',
+  selector: 'global-settings-ldap',
+  templateUrl: './ldap.component.html',
+  styleUrl: './ldap.component.scss',
   standalone: true,
   animations: [fadeInUp400ms],
   imports: [
@@ -26,11 +26,16 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     NgIf
   ]
 })
-export class GlobalSettingsStorageComponent implements OnInit {
+export class GlobalSettingsLDAPComponent implements OnInit {
   @Input() data: CreateUserSetting;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    UserMaxStorage: [null, Validators.required]
+    Server: ['', Validators.required],
+    Port: [null, Validators.required],
+    DomainName: ['', Validators.required],
+    DC: ['', Validators.required],
+    Username: ['', Validators.required],
+    Password: ['', Validators.required]
   });
 
   constructor(private fb: FormBuilder) {}

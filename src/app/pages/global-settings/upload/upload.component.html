@@ -1,0 +1,180 @@
+<div @fadeInUp class="card flex-auto">
+  <form
+    [formGroup]="form"
+    class="px-6 py-4 flex flex-col"
+    (ngSubmit)="onSubmit()">
+    <div class="flex flex-col sm:grid sm:grid-cols-2 sm:gap-4">
+      <mat-form-field class="flex-auto">
+        <mat-label>حجم آپلود در روز</mat-label>
+        <input
+          matInput
+          formControlName="MaxByteUpload"
+          type="number"
+          placeholder="حداکثر حجم آپلود در روز(بایت)&hellip;"
+          required />
+        @if (form.get("MaxByteUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>حجم آپلود در ماه</mat-label>
+        <input
+          matInput
+          formControlName="MaxDataUpload"
+          type="number"
+          placeholder="حداکثر حجم آپلود در ماه(بایت)&hellip;"
+          required />
+        @if (form.get("MaxDataUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>تعداد آپلود در روز</mat-label>
+        <input
+          matInput
+          formControlName="CountUploadPerDay"
+          type="number"
+          placeholder="حداکثر تعداد آپلود در روز(بایت)&hellip;"
+          required />
+        @if (form.get("CountUploadPerDay")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>تعداد آپلود در ماه</mat-label>
+        <input
+          matInput
+          formControlName="CountUploadPerMonth"
+          type="number"
+          placeholder="حداکثر تعداد آپلود در ماه(بایت)&hellip;"
+          required />
+        @if (form.get("CountUploadPerMonth")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- <app-timepicker
+        label="زمان شروع آپلود"
+        placeholder="زمان شروع آپلود را انتخاب کنید&hellip;"
+        controlName="StartTimeDownLoad"
+        [form]="form"></app-timepicker>
+
+      <app-timepicker
+        label="زمان پایان آپلود"
+        placeholder="زمان پایان آپلود را انتخاب کنید&hellip;"
+        controlName="EndTimeDownLoad"
+        [form]="form"></app-timepicker> -->
+
+      <mat-form-field class="flex-auto">
+        <mat-label>افزونه های قابل آپلود </mat-label>
+        <mat-select formControlName="AllowExtestionUpload" multiple>
+          <mat-select-trigger>
+            {{ form.get("AllowExtestionUpload")?.value[0] || "" }}
+            @if ((form.get("AllowExtestionUpload")?.value?.length || 0) > 1) {
+              <span class="example-additional-selection">
+                (+{{
+                  (form.get("AllowExtestionUpload")?.value?.length || 0) - 1
+                }}
+                {{
+                  form.get("AllowExtestionUpload")?.value?.length === 2
+                    ? "other"
+                    : "others"
+                }})
+              </span>
+            }
+          </mat-select-trigger>
+          @for (option of options; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get("AllowExtestionUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>افزونه های غیر قابل آپلود</mat-label>
+        <mat-select formControlName="DenyExtestionUpload" multiple>
+          <mat-select-trigger>
+            {{ form.get("DenyExtestionUpload")?.value[0] || "" }}
+            @if ((form.get("DenyExtestionUpload")?.value?.length || 0) > 1) {
+              <span class="example-additional-selection">
+                (+{{
+                  (form.get("DenyExtestionUpload")?.value?.length || 0) - 1
+                }}
+                {{
+                  form.get("DenyExtestionUpload")?.value?.length === 2
+                    ? "other"
+                    : "others"
+                }})
+              </span>
+            }
+          </mat-select-trigger>
+          @for (option of options; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get("DenyExtestionUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>روز های مجاز برای آپلود</mat-label>
+        <mat-select formControlName="AllowDayUpload" multiple>
+          <mat-select-trigger>
+            {{ form.get("AllowDayUpload")?.value[0] || "" }}
+            @if ((form.get("AllowDayUpload")?.value?.length || 0) > 1) {
+              <span class="example-additional-selection">
+                (+{{ (form.get("AllowDayUpload")?.value?.length || 0) - 1 }}
+                {{
+                  form.get("AllowDayUpload")?.value?.length === 2
+                    ? "other"
+                    : "others"
+                }})
+              </span>
+            }
+          </mat-select-trigger>
+          @for (option of options; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get("AllowDayUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>روز های غیر مجاز برای آپلود</mat-label>
+        <mat-select formControlName="DenyDayUpload" multiple>
+          <mat-select-trigger>
+            {{ form.get("DenyDayUpload")?.value[0] || "" }}
+            @if ((form.get("DenyDayUpload")?.value?.length || 0) > 1) {
+              <span class="example-additional-selection">
+                (+{{ (form.get("DenyDayUpload")?.value?.length || 0) - 1 }}
+                {{
+                  form.get("DenyDayUpload")?.value?.length === 2
+                    ? "other"
+                    : "others"
+                }})
+              </span>
+            }
+          </mat-select-trigger>
+          @for (option of options; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get("DenyDayUpload")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+      <button color="primary" mat-flat-button type="submit">ذخیره</button>
+    </div>
+  </form>
+</div>

@@ -12,6 +12,9 @@ import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page
 import { SettingsRecycleBinComponent } from '../settings/recycle-bin/recycle-bin.component';
 import { GlobalSettingsStorageComponent } from './storage/storage.component';
 import { GlobalSettingsDownloadComponenet } from './download/download.component';
+import { GlobalSettingsUploadComponenet } from './upload/upload.component';
+import { GlobalSettingsLDAPComponent } from './ldap/ldap.component';
+import { GlobalSettingsEmailComponent } from './email/email.component';
 
 enum GlobalSettingsTabs {
   GeneralGlobalSetting = 'ذخیره سازی',
@@ -39,7 +42,10 @@ enum GlobalSettingsTabs {
     MatButtonModule,
     SettingsRecycleBinComponent,
     GlobalSettingsStorageComponent,
-    GlobalSettingsDownloadComponenet
+    GlobalSettingsDownloadComponenet,
+    GlobalSettingsUploadComponenet,
+    GlobalSettingsLDAPComponent,
+    GlobalSettingsEmailComponent,
     // AsyncPipe,
     // NgIf
   ]
