@@ -26,14 +26,11 @@
         <div
           #treeSidebarSection
           class="border-end resizable tree-holder hidden md:block"
-          style="overflow-x: auto; min-width: 187px;"
-          (contextmenu)="onContextMenu($event , 'emptyArea')">
+          style="overflow-x: auto; min-width: 187px;">
           <app-path class="app-path"
                     [rootPath]="rootPath"
                     (currentPathChanged)="pathChange($event)"
                     (currentChildPathChanged)="pathChange($event)"
-                    (rightClickNodeChanged)="pathRightClick($event)"
-                    (contextmenu)="onContextMenu($event , 'tree')"
           ></app-path>
         </div>
         <div class="resizer gutter gutter-horizontal hidden md:block" (mousedown)="ResizeWindow($event)">
@@ -41,12 +38,10 @@
         </div>
         <div #folderContent
              class="col-10 p-2 file-container resizable"
-             [ngClass]="{'list-view': isListView, 'grid-view': !isListView}"
-             (contextmenu)="onContextMenu($event , 'emptyArea')">
+             [ngClass]="{'list-view': isListView, 'grid-view': !isListView}">
           <div id="files-container" class="h-100 mx-0 row" (click)="onFolderContentClick($event)">
             <div class="border fileItem"
                  *ngFor="let currentFolder of folders"
-                 (contextmenu)="onFolderContextMenu($event, currentFolder)"
                  [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  (dblclick)="onFolderDblClick(currentFolder)"
                  (click)="onFolderClick($event , currentFolder)">
@@ -60,7 +55,6 @@
             <div class="border fileItem"
                  *ngFor="let currentFile of blobs let i = index"
                  [ngClass]=" isFileInSelectedFiles(currentFile.file) ?  'active':  'inactive' "
-                 (contextmenu)="onFileContextMenu($event, currentFile.file)"
                  (click)="onFileClick($event , currentFile.file)">
               <img *ngIf="currentFile.file.FileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
@@ -135,8 +129,8 @@
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
               <span style="max-width: 100%;">
-                        <p class="file-name truncate">{{ currentFile.file.FileName }}</p>
-                    </span>
+                  <p class="file-name truncate">{{ currentFile.file.FileName }}</p>
+              </span>
               <div class="file-size">{{ currentFile.file.FileSize }}</div>
             </div>
           </div>
