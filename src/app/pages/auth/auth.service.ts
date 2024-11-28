@@ -61,7 +61,15 @@ export class AuthService {
       this.API_URL + 'refreshToken',
       { refreshToken: this.getRefreshToken() },
       { headers }
-    );
+    )
+      .pipe(
+        map((res) =>
+        {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('refreshToken', res.refreshToken);          
+          return res;
+        })
+      );
   }
 
   getAuthToken(): string {
