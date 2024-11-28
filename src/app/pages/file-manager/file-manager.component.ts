@@ -1,542 +1,339 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { FileManagerService } from 'src/app/services/file-manager.service';
-import { file, fileBlob, folder } from '../../interface/files';
-import { FileService } from "../../services/file.service";
-import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
-import { FilePath } from './components/path/file-path';
-import { ShareModalComponent } from "./components/share-modal/share-modal.component";
 import { DialogService } from './dialog-service';
+import { MatDialog } from '@angular/material/dialog';
+import { FilePath } from './components/path/file-path';
+import { File, FileBlob, Folder } from '../../interface/files';
+import { FileManagerService } from 'src/app/services/file-manager.service';
+import { ShareModalComponent } from './components/share-modal/share-modal.component';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
 
 @Component({
   selector: 'vex-file-manager',
   templateUrl: './file-manager.component.html',
   styleUrl: './file-manager.component.scss'
 })
-export class FileManagerComponent implements OnInit, AfterViewInit
-{
-  setSharedFile(status: boolean)
-  {
-    this.showShareFiles = status;
-  }
-  rootPath: FilePath = new FilePath();
-  currentPath: FilePath = new FilePath();
-  folders: folder[] = [];
-  files: file[] = [];
-  selectedFiles: file[] = [];
-  selectedFolders: folder[] = [];
-  previousPathes: FilePath[] = [];
-  searchKeyWord: undefined;
-  isListView: boolean = false;
-  pathFolderContextMenu!: FilePath;
-  actionName: string = "";
-  fromPathContext!: string | undefined;
-  fromContext: boolean = false;
-  canPaste: boolean = false;
+export class FileManagerComponent implements OnInit, AfterViewInit {
+  lastDownX = 0;
+  clickCount = 0;
+  clickTimer: any;
+  isResizing = false;
+  originalWidth1 = 0;
+  originalWidth2 = 0;
+  files: File[] = [];
   fromPath: string = '';
+  blobs: FileBlob[] = [];
+  folders: Folder[] = [];
+  actionName: string = '';
+  searchKeyWord: undefined;
+  canPaste: boolean = false;
+  fromFile: boolean = false;
+  selectedFiles: File[] = [];
+  isListView: boolean = false;
+  fromFolder: boolean = false;
+  fromContext: boolean = false;
+  ShowFileMenu: boolean = false;
+  ShowTreeMenu: boolean = false;
+  selectedFolders: Folder[] = [];
+  showEmptyArea: boolean = false;
+  previousPaths: FilePath[] = [];
   currentPathItems: string[] = [];
   showShareFiles: boolean = false;
-  
+  backButtonEnable: boolean = true;
+  fromcontext: boolean | undefined;
+  pathFolderContextMenu!: FilePath;
+  rootPath: FilePath = new FilePath();
+  fromPathContext!: string | undefined;
+  currentPath: FilePath = new FilePath();
+
+
+  @ViewChild('resizableDiv1', { static: false }) resizableDiv1!: ElementRef;
+  @ViewChild('resizableDiv2', { static: false }) resizableDiv2!: ElementRef;
+  @ViewChild(FileContextMenuComponent) contextMenu!: FileContextMenuComponent;
+  @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
+  @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
+
   constructor(private service: FileManagerService,
-    private fileService: FileService,
-    private dialog: MatDialog,
-    private dialogService: DialogService,
-    private spinner: NgxSpinnerService)
-  {
+              private dialog: MatDialog,
+              private dialogService: DialogService,
+              private spinner: NgxSpinnerService) {
   }
 
-  ngOnInit(): void
-  {
-    this.getPath();
+  async ngOnInit(): Promise<void> {
+    await this.getPath();
   }
 
-
-  ngAfterViewInit(): void
-  {
+  ngAfterViewInit(): void {
     const offsetX = this.resizableDiv1.nativeElement.style.width.clientX - this.lastDownX;
-
-    this.resizableDiv1.nativeElement.style.width = ` ${ this.originalWidth1 + offsetX }px`;
+    this.resizableDiv1.nativeElement.style.width = ` ${this.originalWidth1 + offsetX}px`;
     this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 2 + 'px';
   }
 
-  openShareModal(): void
-  {
-    var virtualPath: any;
-    if (this.selectedFiles.length == 0 && this.selectedFolders.length == 0) return;
-    if (this.selectedFiles.length > 0)
-       virtualPath = this.selectedFiles.splice(0, 1)[0];
-    else if (this.selectedFolders.length > 0)
-      virtualPath = this.selectedFolders.splice(0, 1)[0];
-
-    console.log(virtualPath);
-    this.dialog.open(ShareModalComponent, { width: '500px', data: virtualPath });
+  setSharedFile(status: boolean) {
+    this.showShareFiles = status;
   }
 
-  isLoading = false;
-
-  async getPath()
-  {
-    // this.spinner.show();
-    const command = 'getFolderContent';
-    this.selectedFiles = [];
-    await this.service.CallAPI(command, '').subscribe(
-      response =>
-      {
-        // this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 10 + 'px';
-        this.rootPath.title = response.CurrentPath;
-        this.rootPath.fullTitle = response.CurrentPath;
-        this.folders = response.Folders;
-        this.rootPath.childs = [];
-        for (let i = 0; i < this.folders.length; i++)
-          this.rootPath.childs.push(
-
-            {
-              title: this.folders[i].FolderName,
-              fullTitle: this.folders[i].VirtualPath,
-              parent: this.folders[i].VirtualPath.split("\\")[0] + "\\",
-              childs: []
-            });
-        this.files = response.Files;
-        this.currentPath = this.rootPath;
-        this.previews();
-        this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-        this.currentPathItems = this.currentPathItems.filter(item => !!item);
-      },
-      error =>
-      {
-        console.error('API error:', error);
-      },
-      () =>
-      {
-
-        this.spinner.hide();
-      }
-    );
+  get upButtonEnable(): boolean {
+    return this.currentPath.parent == undefined || this.currentPath.parent == '';
   }
 
-  getPaths(path: FilePath)
-  {
-    const command = 'getFolderContent';
-    this.rootPath.childs.forEach(element =>
-    {
-      if (path.parent != undefined)
-        if (!path.parent.startsWith(element.fullTitle))
+  async getPath() {
+    try {
+      this.selectedFiles = [];
+      const response = await firstValueFrom(
+        this.service.CallAPI('getFolderContent', '')
+      );
+      await this.bindingData(response);
+    } catch (error) {
+      console.error('API error:', error);
+    } finally {
+      await this.spinner.hide();
+    }
+  }
+
+  async bindingData(response: any) {
+    this.rootPath.title = response.CurrentPath;
+    this.rootPath.fullTitle = response.CurrentPath;
+    this.folders = response.Folders;
+    this.files = response.Files;
+    this.rootPath.childs = [];
+    for (const folder of this.folders) {
+      this.rootPath.childs.push({
+        title: folder.FolderName,
+        fullTitle: folder.VirtualPath,
+        parent: folder.VirtualPath.split('\\')[0] + '\\',
+        fileId: folder.FileId,
+        childs: []
+      });
+    }
+    await this.previews();
+    this.currentPath = this.rootPath;
+    this.currentPathItems = this.currentPath.parent ?
+      this.currentPath.parent.split('\\').filter(item => !!item) : [];
+  }
+
+  async getPaths(path: FilePath) {
+    try {
+      this.rootPath.childs.forEach(element => {
+        if (path.parent && !path.parent.startsWith(element.fullTitle))
           element.childs = [];
-    });
-    this.folders = [];
-    this.files = [];
-    this.spinner.show();
-    this.service.CallAPI(command, path.fullTitle).subscribe(
-      response =>
-      {
-        this.folders = response.Folders ?? [];
-        this.files = response.Files ?? [];
-        this.previews();
+      });
 
-        var parentTitle: string = "";
-        this.currentPath.childs = [];
-        this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-        this.currentPathItems = this.currentPathItems.filter(item => !!item);
-        for (let i = 0; i < this.folders.length; i++)
-        {
-          parentTitle = "";
-          var parents = this.folders[i].VirtualPath.split("\\");
-          parents.splice(-1);
-          parents.forEach(element =>
-          {
-            if (parentTitle.trim().length > 0)
-              parentTitle += "\\";
-            parentTitle += element;
-          });
+      this.files = [];
+      this.folders = [];
+      await this.spinner.show();
 
-          this.currentPath.childs.push(
-            {
-              title: this.folders[i].FolderName,
-              fullTitle: this.folders[i].VirtualPath,
-              parent: parentTitle,
-              childs: []
-            });
-        }
-      },
-      error =>
-      {
-        console.error('API error:', error);
-      },
-      () =>
-      {
-        this.spinner.hide();
+      const response = await firstValueFrom(
+        this.service.CallAPI('getFolderContent', path.fullTitle)
+      );
+
+      this.files = response.Files || [];
+      this.folders = response.Folders || [];
+
+      await this.previews();
+
+      this.currentPath.childs = [];
+      this.currentPathItems = this.currentPath.parent ?
+        this.currentPath.parent.split('\\').filter(item => !!item) : [];
+
+      let parentTitle: string = '';
+      for (const folder of this.folders) {
+        parentTitle = '';
+        let parents = folder.VirtualPath.split('\\');
+        parents.splice(-1);
+        parents.forEach(element => {
+          if (parentTitle.trim().length > 0)
+            parentTitle += '\\';
+          parentTitle += element;
+        });
+
+        this.currentPath.childs.push({
+          title: folder.FolderName,
+          fullTitle: folder.VirtualPath,
+          parent: parentTitle,
+          fileId: folder.FileId,
+          childs: []
+        });
       }
-    );
-
+    } catch (error) {
+      console.error('API error:', error);
+    } finally {
+      await this.spinner.hide();
+    }
   }
 
-
-  getPathContent(i: number)
-  {
-    // currentPath.title
-    console.log('i', i);
-    console.log('his.currentPathItems ', this.currentPathItems);
-    // this.currentPath.title = this.currentPathItems[i];
-    // this.currentPathItems = this.removeFromCurrentPath(i);
-    this.currentPath.fullTitle.split("\\");
-    if (i == 0)
-      this.getPath();
-    var fullPath = this.currentPath.fullTitle.split("\\").splice(0, i + 1).join("\\").toString();
-    console.log('fullPath', fullPath);
-    this.rootPath.childs.find(x => x.fullTitle == fullPath);
-    var navigate = this.rootPath.childs.find(x => x.fullTitle == fullPath);
-    if (navigate != undefined)
-      this.getPaths(navigate);
-
+  async previews() {
+    this.blobs = [];
+    for (const file of this.files) {
+      if (file.FileName.endsWith('.png')) {
+        try {
+          const response = await firstValueFrom<Blob>(
+            this.service.preview('filePreview', file.VirtualPath)
+          );
+          const fileURL = URL.createObjectURL(response);
+          this.blobs.push({ file: file, content: fileURL });
+        } catch (error) {
+          console.error('File download error:', error);
+        }
+      } else {
+        this.blobs.push({ file: file, content: '' });
+      }
+    }
   }
 
-
-  removeFromCurrentPath(index: number): string[]
-  {
-    return index > -1 ? this.currentPathItems.slice(0, index) : [];
-  }
-
-
-  pathChange(path: FilePath)
-  {
-    this.previousPathes.push(this.currentPath);
+  async pathChange(path: FilePath) {
+    this.previousPaths.push(this.currentPath);
     this.currentPath = path;
-    this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-    this.currentPathItems = this.currentPathItems.filter(item => !!item);
-    this.getPaths(path);
+    this.currentPathItems = this.currentPath.parent ?
+      this.currentPath.parent.split('\\').filter(item => !!item) : [];
+    await this.getPaths(path);
     this.backButtonEnable = false;
   }
 
+  openShareModal(): void {
+    let virtualPath: any;
+    if (this.selectedFiles.length > 0)
+      virtualPath = this.selectedFiles.splice(0, 1)[0];
+    else if (this.selectedFolders.length > 0)
+      virtualPath = this.selectedFolders.splice(0, 1)[0];
+    else
+      return;
+    this.dialog.open(ShareModalComponent, { width: '500px', data: virtualPath });
+  }
 
-  pathRighClick([event, path]: [MouseEvent, FilePath])
-  {
+  async getPathContent(i: number) {
+    if (i == 0) await this.getPath();
+
+    let fullPath = this.currentPath.fullTitle
+      .split('\\')
+      .splice(0, i + 1)
+      .join('\\')
+      .toString();
+
+    let navigate = this.rootPath.childs.find(x => x.fullTitle == fullPath);
+    if (navigate) await this.getPaths(navigate);
+  }
+
+  pathRightClick([event, path]: [MouseEvent, FilePath]) {
     this.pathFolderContextMenu = path;
     this.fromcontext = true;
     this.onContextMenu(event, 'tree');
   }
 
-  loadShareFiles()
-  {
-    this.showShareFiles = true;
-    this.spinner.show();
-    this.service.getSharedFiles().subscribe(response =>
-    {
-      this.files = response.Files,
-        this.folders = response.Folders,
-        this.previews();
-    },
-      error =>
-      {
-        console.error('API error:', error);
-      },
-      () =>
-      {
-
-        this.spinner.hide();
-      });
+  /**********************-Toolbar Event-************************/
+  async backButtonClicked() {
+    this.currentPath = this.previousPaths.splice(this.previousPaths.length - 1, 1)[0];
+    this.currentPathItems = this.currentPath.parent ?
+      this.currentPath.parent.split('\\').filter(item => !!item) : [];
+    await this.getPaths(this.currentPath);
+    this.backButtonEnable = !!this.previousPaths.length;
   }
 
-  backButtonClicked()
-  {
-    var path = this.previousPathes.splice(this.previousPathes.length - 1, 1)[0];
-    this.currentPath = path;
-    this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-    this.currentPathItems = this.currentPathItems.filter(item => !!item);
-    this.getPaths(this.currentPath);
-    this.backButtonEnable = this.previousPathes.length == 0;
-  }
-
-  upButtonClicked()
-  {
-    if (this.currentPath.parent != undefined)
-    {
-      this.previousPathes.push(this.currentPath);
-      this.currentPath = this.previousPathes.find(x => x.fullTitle == this.currentPath.parent) ?? new FilePath();
-      this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-      this.currentPathItems = this.currentPathItems.filter(item => !!item);
-      if (this.currentPath.fullTitle == '' || this.currentPath.fullTitle == undefined)
-        this.getPath();
-      else
-        this.getPaths(this.currentPath);
+  async upButtonClicked() {
+    if (this.currentPath.parent) {
+      this.previousPaths.push(this.currentPath);
+      this.currentPath = this.previousPaths.find(x => x.fullTitle == this.currentPath.parent) || new FilePath();
+      this.currentPathItems = this.currentPath.parent ?
+        this.currentPath.parent.split('\\').filter(item => !!item) : [];
+      if (!this.currentPath.fullTitle) {
+        await this.getPath();
+      } else {
+        await this.getPaths(this.currentPath);
+      }
     }
   }
 
-
-  copyButtonClicked()
-  {
+  copyButtonClicked() {
     this.canPaste = true;
-    this.actionName = "copy";
+    this.actionName = 'copy';
     this.fromPath = this.currentPath.fullTitle;
-    if (this.ShowTreeMenu == true)
+    if (this.ShowTreeMenu)
       this.copyFromContextButtonClicked();
   }
 
-
-  copyFromContextButtonClicked()
-  {
-    if (this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) != undefined)
-    {
-      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new folder());
-      this.fromPathContext = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title)?.VirtualPath;
+  copyFromContextButtonClicked() {
+    const folder = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title);
+    if (folder) {
+      this.selectedFolders.push(folder);
+      this.fromPathContext = folder.VirtualPath;
     }
   }
 
-
-  cutButtonClicked()
-  {
+  cutButtonClicked() {
     this.canPaste = true;
-    this.actionName = "cut";
+    this.actionName = 'cut';
     this.fromPath = this.currentPath.fullTitle;
-    if (this.ShowTreeMenu == true)
+    if (this.ShowTreeMenu)
       this.cutFromContextButtonClicked();
   }
 
-  cutFromContextButtonClicked()
-  {
-    if (this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) != undefined)
-    {
-      this.selectedFolders.push(this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title) || new folder());
-      this.fromPathContext = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title)?.VirtualPath;
+  cutFromContextButtonClicked() {
+    const folder = this.folders.find(x => x.FolderName == this.pathFolderContextMenu.title);
+    if (folder) {
+      this.selectedFolders.push(folder);
+      this.fromPathContext = folder.VirtualPath;
     }
   }
 
-  async pasteButtonClicked()
-  {
+  async pasteButtonClicked() {
     await this.paste();
     this.canPaste = false;
-    this.getPaths(this.currentPath);
+    await this.getPaths(this.currentPath);
   }
 
-  async renameButtonClicked()
-  {
-    await this.rename();
-    this.getPaths(this.currentPath);
-  }
+  async paste() {
+    const exists = this.files
+      .map(x => x.FileName)
+      .some(item => this.selectedFiles
+        .map(i => i.FileName)
+        .includes(item)
+      );
 
-  async deleteButtonClicked()
-  {
-    await this.delete();
-  }
-
-  
-  async RecycleBin() {
-    // this.spinner.show();
-    const command = 'RecycleBin';
-    this.selectedFiles = [];
-    await this.service.CallAPI(command, '').subscribe(
-      response => {
-        // this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 10 + 'px';
-        this.rootPath.title = response.CurrentPath;
-        this.rootPath.fullTitle = response.CurrentPath;
-        this.folders = response.Folders;
-        this.rootPath.childs = [];
-        for (let i = 0; i < this.folders.length; i++)
-          this.rootPath.childs.push(
-
-            {
-              title: this.folders[i].FolderName,
-              fullTitle: this.folders[i].VirtualPath,
-              parent: this.folders[i].VirtualPath.split("\\")[0] + "\\",
-              childs: []
-            });
-        this.files = response.Files;
-        this.currentPath = this.rootPath;
-        this.previews();
-        this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split("\\") : [];
-        this.currentPathItems = this.currentPathItems.filter(item => !!item);
-      },
-      error => {
-        console.error('API error:', error);
-      },
-      () => {
-
-        this.spinner.hide();
-      }
-    );
-  }
-
-
-  async paste()
-  {
-    const exists = this.files.map(x => x.FileName).some(item => this.selectedFiles.map(i => i.FileName).includes(item));
-    if (exists)
-    {
-      const confirmed = await this.dialogService.openConfirmationDialog("برخی از موارد از قبل وجود دارند، آیا مایل به بازنویسی هستید؟");
+    if (exists) {
+      const confirmed = await this.dialogService.openConfirmationDialog('برخی از موارد از قبل وجود دارند، آیا مایل به بازنویسی هستید؟');
       if (!confirmed) return;
     }
-    var Items: string[] = [];
-    this.selectedFiles.forEach(selectedFile =>
-    {
-      Items.push(this.fromPath + "\\" + selectedFile.FileName);
+
+    let Items: string[] = [];
+    this.selectedFiles.forEach(selectedFile => {
+      Items.push(this.fromPath + '\\' + selectedFile.FileName);
     });
-    this.selectedFolders.forEach(selectedFile =>
-    {
-      Items.push(this.fromPath + "\\" + selectedFile.FolderName);
+    this.selectedFolders.forEach(selectedFile => {
+      Items.push(this.fromPath + '\\' + selectedFile.FolderName);
     });
     const data = {
-      "Path": this.currentPath.fullTitle + "\\",
-      "Items": Items
+      'Path': this.currentPath.fullTitle + '\\',
+      'Items': Items
     };
-    this.callApiWithResponse(this.actionName, JSON.stringify(data));
+    await this.callApiWithResponse(this.actionName, JSON.stringify(data));
   }
 
-
-  fromcontext: boolean | undefined;
-
-  async addNewFolderButtonClicked()
-  {
-    var folderName: any;
-    var path = this.fromcontext ? this.pathFolderContextMenu.fullTitle : this.currentPath.fullTitle;
-    folderName = "NewFolder";
-    folderName = await this.dialogService.openRenameDialog(folderName);
-    if (folderName != undefined)
-    {
-      const data = {
-        Path: path,
-        FolderName: folderName
-      };
-      const jsonData = JSON.stringify(data);
-      this.callApi("CreateNewFolder", jsonData);
-    }
+  async renameButtonClicked() {
+    await this.rename();
+    await this.getPaths(this.currentPath);
   }
 
-
-  async addNewFileButtonClicked()
-  {
-    var fileName: any;
-    fileName = "NewFile.txt";
-    fileName = await this.dialogService.openRenameDialog(fileName);
-    if (fileName != undefined)
-    {
-      const data = {
-        Path: this.currentPath.fullTitle,
-        FileName: fileName
-      };
-      const jsonData = JSON.stringify(data);
-      this.callApiWithResponse("CreateNewFile", jsonData);
-    }
-  }
-
-
-  viewButtonClicked()
-  {
-    this.download();
-  }
-
-  downloadButtonClicked()
-  {
-    this.download();
-  }
-
-  async zipdButtonClicked()
-  {
-    var Items: string[] = [];
-
-    var newName: any;
-    if (this.selectedFiles.length == 0 && this.selectedFolders.length == 0) return;
-    if (this.selectedFiles.length > 0)
+  async rename() {
+    let newName: any;
+    if (this.selectedFiles.length > 0) {
       newName = this.selectedFiles[0].FileName;
-    else if (this.selectedFolders.length > 0)
+    } else if (this.selectedFolders.length > 0) {
       newName = this.selectedFolders[0].FolderName;
-    var selectedCount = this.selectedFiles.length + this.selectedFolders.length;
-    if (selectedCount > 1)
-      newName = await this.dialogService.openRenameDialog(newName);
-    if (selectedCount == 1 || newName != undefined)
-    {
-      this.selectedFolders.forEach(selectedFile =>
-      {
-        Items.push(this.currentPath.title + "\\" + selectedFile.FolderName);
-      });
-      this.selectedFiles.forEach(selectedFile =>
-      {
-        Items.push(this.currentPath.title + "\\" + selectedFile.FileName);
-      });
-      const data = {
-        Path: this.currentPath.title,
-        Items: Items,
-        FileName: newName
-      };
-      const jsonData = JSON.stringify(data);
-      this.callApiWithResponse("zip", jsonData);
+    } else {
+      return;
     }
-  }
-
-  async unZipdButtonClicked()
-  {
-    var Items: string[] = [];
-    this.selectedFolders.forEach(selectedFile =>
-    {
-      Items.push(this.currentPath.title + "\\" + selectedFile.FolderName);
-    });
-    this.selectedFiles.forEach(selectedFile =>
-    {
-      Items.push(this.currentPath.title + "\\" + selectedFile.FileName);
-    });
-    const data = {
-      Path: this.currentPath.title,
-      Items: Items
-    };
-    const jsonData = JSON.stringify(data);
-    this.callApiWithResponse("unzip", jsonData);
-  }
-
-  SwitchView()
-  {
-    this.isListView = !this.isListView;
-  }
-
-  async search()
-  {
-    const data = {
-      Path: this.currentPath.title,
-      Query: this.searchKeyWord,
-    };
-    const jsonData = JSON.stringify(data);
-    this.callApiWithResponse("search", jsonData);
-  }
-
-
-  reload()
-  {
-    this.pathChange(this.currentPath);
-  }
-
-  async upload()
-  {
-    var files: File[] = [];
-    var path = this.currentPath.fullTitle;
-    if (this.fromcontext == true)
-      path = this.pathFolderContextMenu.fullTitle;
-    else if (this.fromFolder == true)
-      path = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0].VirtualPath;
-    files = await this.dialogService.openUploadDialog(path);
-    this.getPaths(this.currentPath);
-  }
-
-
-  async rename()
-  {
-    var newName: any;
-    if (this.selectedFiles.length == 0 && this.selectedFolders.length == 0) return;
-    if (this.selectedFiles.length > 0)
-      newName = this.selectedFiles[0].FileName;
-    else if (this.selectedFolders.length > 0)
-      newName = this.selectedFolders[0].FolderName;
 
     newName = await this.dialogService.openRenameDialog(newName);
-    if (newName != undefined)
-    {
-      var Items: string[] = [];
-      var ListId: string[] = [];
-      this.selectedFiles.forEach(selectedFile =>
-      {
-        Items.push(this.currentPath.title + "\\" + selectedFile.FileName);
+    if (newName) {
+      let Items: string[] = [];
+      let ListId: string[] = [];
+      this.selectedFiles.forEach(selectedFile => {
+        Items.push(this.currentPath.title + '\\' + selectedFile.FileName);
         ListId.push(selectedFile.FileId);
       });
-      this.selectedFolders.forEach(selectedFile =>
-      {
-        Items.push(this.currentPath.title + "\\" + selectedFile.FolderName);
+      this.selectedFolders.forEach(selectedFile => {
+        Items.push(this.currentPath.title + '\\' + selectedFile.FolderName);
         ListId.push(selectedFile.FileId);
       });
       const data = {
@@ -546,31 +343,35 @@ export class FileManagerComponent implements OnInit, AfterViewInit
         ListId: ListId
       };
       const jsonData = JSON.stringify(data);
-      this.callApiWithResponse("rename", jsonData);
+      await this.callApiWithResponse('rename', jsonData);
       this.selectedFiles = [];
       this.selectedFolders = [];
     }
-
   }
-  
 
-  async RecycleFromRecycleBin() {
+  async deleteButtonClicked() {
+    await this.delete();
+  }
 
-    const confirmed = await this.dialogService.openConfirmationDialog("آیا از بازگردانی آیتم های انتخابی اطمینان دارید؟");
+  async delete() {
+    const confirmed = await this.dialogService.openConfirmationDialog('آیا از حذف آیتم های انتخابی اطمینان دارید؟');
+
     if (confirmed) {
+      let Items: string[] = [];
+      let ListId: string[] = [];
 
-      var Items: string[] = [];
-      var ListId: string[] = [];
-      if (this.fromcontext == true) {
+      if (this.fromcontext) {
         Items.push(this.pathFolderContextMenu.fullTitle);
       }
-      for (let i = 0; i < this.selectedFolders.length; i++) {
-        Items.push(this.selectedFolders[i].VirtualPath);
-        ListId.push(this.selectedFolders[i].FileId);
+
+      for (const folder of this.selectedFolders) {
+        Items.push(folder.VirtualPath);
+        ListId.push(folder.FileId);
       }
-      for (let i = 0; i < this.selectedFiles.length; i++) {
-        Items.push(this.currentPath.fullTitle + "\\" + this.selectedFiles[i].FileName);
-        ListId.push(this.selectedFiles[i].FileId);
+
+      for (const file of this.selectedFiles) {
+        Items.push(this.currentPath.fullTitle + '\\' + file.FileName);
+        ListId.push(file.FileId);
       }
 
       const data = {
@@ -579,261 +380,234 @@ export class FileManagerComponent implements OnInit, AfterViewInit
         ListId: ListId
       };
 
-      if (this.fromcontext == true || this.selectedFolders.length > 0) {
-
-        await this.callApi("RecycleFromRecycleBin", JSON.stringify(data));
-        this.getPaths(this.currentPath);
-      } else
-
-        this.callApiWithResponse("RecycleFromRecycleBin", JSON.stringify(data));
+      if (this.fromcontext || this.selectedFolders.length > 0) {
+        await this.callApi('delete', JSON.stringify(data));
+      } else {
+        await this.callApiWithResponse('delete', JSON.stringify(data));
+      }
     }
   }
 
+  async addNewFolderButtonClicked() {
+    let folderName: any;
+    let path = this.fromcontext ? this.pathFolderContextMenu.fullTitle : this.currentPath.fullTitle;
+    folderName = 'NewFolder';
+    folderName = await this.dialogService.openRenameDialog(folderName);
+    if (folderName) {
+      const data = {
+        Path: path,
+        FolderName: folderName
+      };
+      const jsonData = JSON.stringify(data);
+      await this.callApi('CreateNewFolder', jsonData);
+    }
+  }
 
-
-  async delete()
-  {
-
-    const confirmed = await this.dialogService.openConfirmationDialog("آیا از حذف آیتم های انتخابی اطمینان دارید؟");
-    if (confirmed)
-    {
-
-      var Items: string[] = [];
-      var ListId: string[] = [];
-      if (this.fromcontext == true)
-      {
-        Items.push(this.pathFolderContextMenu.fullTitle);
-      }
-      for (let i = 0; i < this.selectedFolders.length; i++)
-      {
-        Items.push(this.selectedFolders[i].VirtualPath);
-        ListId.push(this.selectedFolders[i].FileId);
-      }
-      for (let i = 0; i < this.selectedFiles.length; i++)
-      {
-        Items.push(this.currentPath.fullTitle + "\\" + this.selectedFiles[i].FileName);
-        ListId.push(this.selectedFiles[i].FileId);
-      }
-
+  async addNewFileButtonClicked() {
+    let fileName: any;
+    fileName = 'NewFile.txt';
+    fileName = await this.dialogService.openRenameDialog(fileName);
+    if (fileName) {
       const data = {
         Path: this.currentPath.fullTitle,
-        Items: Items,
-        ListId: ListId
+        FileName: fileName
       };
-
-      if (this.fromcontext == true || this.selectedFolders.length > 0)
-      {
-
-        await this.callApi("delete", JSON.stringify(data));
-        this.getPaths(this.currentPath);
-      } else
-
-        this.callApiWithResponse("delete", JSON.stringify(data));
+      await this.callApiWithResponse('CreateNewFile', JSON.stringify(data));
     }
   }
 
+  async downloadButtonClicked() {
+    await this.download();
+  }
 
-  async download()
-  {
-    if (this.showShareFiles)
-    {
-      this.selectedFiles.forEach(selectedFile =>
-      {
-        console.log('selectedFIle', selectedFile);
-        this.service.downloadShareFiles(selectedFile.FileId, selectedFile.VirtualPath
-        ).subscribe((response: Blob) =>
-        {
-          console.log(response);
+  async download() {
+    if (this.showShareFiles) {
+      for (const file of this.selectedFiles) {
+        try {
+          const response = await firstValueFrom<Blob>(
+            this.service.downloadShareFiles(file.FileId, file.VirtualPath)
+          );
           const a = document.createElement('a');
           const objectUrl = URL.createObjectURL(response);
           a.href = objectUrl;
-          a.download = selectedFile.FileName;
+          a.download = file.FileName;
           a.click();
           URL.revokeObjectURL(objectUrl);
-        }, error =>
-        {
+        } catch (error) {
           console.error('File download error:', error);
-        });
-      });
-    } else
-    {
-      this.selectedFiles.forEach(selectedFile =>
-      {
-        this.service.downloadFileAsync("download",
-          (this.currentPath.fullTitle + "\\" + selectedFile.FileName)
-        ).subscribe((response: Blob) =>
-        {
+        }
+      }
+    } else {
+      for (const file of this.selectedFiles) {
+        try {
+          const response = await firstValueFrom<Blob>(
+            this.service.downloadFileAsync('download',
+              this.currentPath.fullTitle + '\\' + file.FileName)
+          );
           const a = document.createElement('a');
           const objectUrl = URL.createObjectURL(response);
           a.href = objectUrl;
-          a.download = selectedFile.FileName;
+          a.download = file.FileName;
           a.click();
           URL.revokeObjectURL(objectUrl);
-        }, error =>
-        {
+        } catch (error) {
           console.error('File download error:', error);
-        });
-      });
+        }
+      }
+    }
+  }
+
+  async zipButtonClicked() {
+    let newName: any;
+    if (this.selectedFiles.length > 0) {
+      newName = this.selectedFiles[0].FileName;
+    } else if (this.selectedFolders.length > 0) {
+      newName = this.selectedFolders[0].FolderName;
+    } else {
+      return;
     }
 
+    let Items: string[] = [];
+    let selectedCount = this.selectedFiles.length + this.selectedFolders.length;
+    if (selectedCount > 1) {
+      newName = await this.dialogService.openRenameDialog(newName);
+    }
+    if (selectedCount == 1 || newName) {
+      this.selectedFolders.forEach(selectedFile => {
+        Items.push(this.currentPath.title + '\\' + selectedFile.FolderName);
+      });
 
+      this.selectedFiles.forEach(selectedFile => {
+        Items.push(this.currentPath.title + '\\' + selectedFile.FileName);
+      });
+
+      const data = {
+        Path: this.currentPath.title,
+        Items: Items,
+        FileName: newName
+      };
+      await this.callApiWithResponse('zip', JSON.stringify(data));
+    }
   }
 
-
-  blobs: fileBlob[] = [];
-
-  async previews()
-  {
-    this.blobs = [];
-    this.files.forEach(file =>
-    {
-      if (file.FileName.endsWith(".png"))
-      {
-        this.service.preview("filePreview",
-          (file.VirtualPath)
-        ).subscribe((response: Blob) =>
-        {
-          const fileURL = URL.createObjectURL(response);
-          this.blobs.push({ file: file, content: fileURL });
-        }, error =>
-        {
-          console.error('File download error:', error);
-        });
-      } else
-      {
-        this.blobs.push({ file: file, content: '' });
-
-      }
+  async unzipButtonClicked() {
+    let Items: string[] = [];
+    this.selectedFolders.forEach(selectedFile => {
+      Items.push(this.currentPath.title + '\\' + selectedFile.FolderName);
     });
-  }
 
-  async preview()
-  {
-    this.blobs = [];
-    this.files.forEach(file =>
-    {
-      if (file.FileName.endsWith(".png"))
-      {
-        this.service.preview("filePreview",
-          (file.VirtualPath)
-        ).subscribe((response: Blob) =>
-        {
-          const fileURL = URL.createObjectURL(response);
-          this.blobs.push({ file: file, content: fileURL });
-        }, error =>
-        {
-          console.error('File download error:', error);
-        });
-      } else
-      {
-        this.blobs.push({ file: file, content: '' });
-
-      }
+    this.selectedFiles.forEach(selectedFile => {
+      Items.push(this.currentPath.title + '\\' + selectedFile.FileName);
     });
+
+    const data = {
+      Path: this.currentPath.title,
+      Items: Items
+    };
+    await this.callApiWithResponse('unzip', JSON.stringify(data));
   }
 
-  callApi(command: string, parameters: string)
-  {
-    this.spinner.show();
-    this.service.CallAPI(command, parameters).subscribe(
-      response =>
-      {
-        this.getPaths(this.currentPath);
-      },
-      error =>
-      {
-        console.error('API error:', error);
-      },
-      () =>
-      {
-        this.spinner.hide();
-      }
-    );
+  SwitchView() {
+    this.isListView = !this.isListView;
   }
 
-  callApiWithResponse(command: string, parameters: string)
-  {
-    this.spinner.show();
-    this.service.CallAPI(command, parameters).subscribe(
-      response =>
-      {
-        this.folders = response.Folders ?? [];
-        this.files = response.Files ?? [];
-        this.previews();
-      },
-      error =>
-      {
-        console.error('API error:', error);
-      },
-    ).add(() =>
-    {
-      this.spinner.hide();
-    });
+  async search() {
+    const data = {
+      Path: this.currentPath.title,
+      Query: this.searchKeyWord
+    };
+    await this.callApiWithResponse('search', JSON.stringify(data));
   }
 
-  selectedFileChanged(event: any, currentFile: file)
-  {
+  /**********************-Context Event-************************/
+  async reload() {
+    await this.pathChange(this.currentPath);
+  }
+
+  async upload() {
+    let path = this.currentPath.fullTitle;
+    if (this.fromcontext) {
+      path = this.pathFolderContextMenu.fullTitle;
+    } else if (this.fromFolder) {
+      path = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0].VirtualPath;
+    }
+
+    await this.dialogService.openUploadDialog(path);
+    await this.getPaths(this.currentPath);
+  }
+
+  onContextMenu(event: MouseEvent, from: string) {
+    event.preventDefault();
+
+    if (this.fromFile) {
+      this.fromFile = false;
+      return;
+    }
+
+    this.contextMenu.show(event, from);
+    this.ShowFileMenu = from == 'file';
+    this.ShowTreeMenu = from == 'tree';
+    this.showEmptyArea = from == 'emptyArea';
+
+    this.selectedFiles = [];
+    this.selectedFolders = [];
+  }
+
+  onFileContextMenu(event: MouseEvent, currentFile: any) {
+    event.preventDefault();
+    this.fromFile = true;
+    this.fromFolder = false;
+    this.selectedFileChanged(undefined, currentFile);
+    this.contextMenu.show(event, 'file');
+  }
+
+  onFolderContextMenu(event: MouseEvent, currentFile: any) {
+    event.preventDefault();
+    this.fromFolder = true;
+    this.fromFile = true;
+    this.selectedFolderChanged(undefined, currentFile);
+    this.contextMenu.show(event, 'file');
+  }
+
+  /**********************-Selected Event-************************/
+  selectedFolderChanged(event: any, currentFile: Folder) {
     this.fromContext = false;
-    if (event != undefined && event.ctrlKey)
+    if (event && event.ctrlKey) {
+      this.selectedFolders.push(currentFile);
+    } else {
+      this.selectedFolders = [];
+      this.selectedFiles = [];
+      this.selectedFolders.push(currentFile);
+    }
+  }
+
+  selectedFileChanged(event: any, currentFile: File) {
+    this.fromContext = false;
+    if (event && event.ctrlKey) {
       this.selectedFiles.push(currentFile);
-    else
-    {
+    } else {
       this.selectedFiles = [];
       this.selectedFolders = [];
       this.selectedFiles.push(currentFile);
     }
   }
 
-  isFileInSelectedFiles(currentFile: file): boolean
-  {
+  isFolderInSelectedFiles(file: Folder): boolean {
+    return this.selectedFolders.includes(file);
+  }
+
+  isFileInSelectedFiles(currentFile: File): boolean {
     return this.selectedFiles.includes(currentFile);
   }
 
-  clickTimer: any;
-
-  clickCount = 0;
-  onFileClick(event: MouseEvent, file: file)
-  {
-    this.clickCount++;
-    setTimeout(() =>
-    {
-      if (this.clickCount === 1)
-      {
-        if (this.clickTimer)
-        {
-          this.fromContext = false;
-          clearTimeout(this.clickTimer);
-          this.clickTimer = null;
-        } else
-        {
-          this.clickTimer = setTimeout(() =>
-          {
-            this.selectedFileChanged(event, file);
-            this.clickTimer = null;
-            this.clickTimer = null;
-          }, 250);
-        }
-      } else if (this.clickCount === 2)
-      {
-        console.log('double click');
-      }
-      this.clickCount = 0;
-    }, 250);
-  }
-
-
-  onFolderClick(event: MouseEvent, file: folder)
-  {
-    if (this.clickTimer)
-    {
+  async onFolderClick(event: MouseEvent, file: Folder) {
+    if (this.clickTimer) {
       this.fromContext = false;
       clearTimeout(this.clickTimer);
       this.clickTimer = null;
-      this.doubleClick(file);
-    } else
-    {
-      this.clickTimer = setTimeout(() =>
-      {
+      await this.doubleClick(file);
+    } else {
+      this.clickTimer = setTimeout(() => {
         this.selectedFolderChanged(event, file);
         this.clickTimer = null;
         this.clickTimer = null;
@@ -841,35 +615,70 @@ export class FileManagerComponent implements OnInit, AfterViewInit
     }
   }
 
-  selectedFolderChanged(event: any, currentFile: folder)
-  {
-    this.fromContext = false;
-    if (event != undefined && event.ctrlKey)
-      this.selectedFolders.push(currentFile);
-    else
-    {
-      this.selectedFolders = [];
-      this.selectedFiles = [];
-      this.selectedFolders.push(currentFile);
+  async doubleClick(folder: Folder) {
+    const folderSelected = this.currentPath.childs.find(x => x.title == folder.FolderName);
+    if (folderSelected) await this.pathChange(folderSelected);
+  }
+
+  onFileClick(event: MouseEvent, file: File) {
+    this.clickCount++;
+    setTimeout(() => {
+      if (this.clickCount === 1) {
+        if (this.clickTimer) {
+          this.fromContext = false;
+          clearTimeout(this.clickTimer);
+          this.clickTimer = null;
+        } else {
+          this.clickTimer = setTimeout(() => {
+            this.selectedFileChanged(event, file);
+            this.clickTimer = null;
+            this.clickTimer = null;
+          }, 250);
+        }
+      } else if (this.clickCount === 2) {
+        console.log('double click');
+      }
+      this.clickCount = 0;
+    }, 250);
+  }
+
+  onDivClick(event: any) {
+    if (this.fileMenu) this.fileMenu.hide();
+
+    if (event && event.ctrlKey) return;
+
+    this.selectedFiles = [];
+    this.selectedFolders = [];
+  }
+
+  async callApi(command: string, parameters: string) {
+    try {
+      await this.spinner.show();
+      await firstValueFrom(this.service.CallAPI(command, parameters));
+      await this.getPaths(this.currentPath);
+    } catch (error) {
+      console.error('API error:', error);
+    } finally {
+      await this.spinner.hide();
     }
   }
 
-  isFolderInSelectedFiles(file: folder): boolean
-  {
-    return this.selectedFolders.includes(file);
+  async callApiWithResponse(command: string, parameters: string) {
+    try {
+      await this.spinner.show();
+      const response = await firstValueFrom(this.service.CallAPI(command, parameters));
+      this.folders = response.Folders || [];
+      this.files = response.Files || [];
+      await this.previews();
+    } catch (error) {
+      console.error('API error:', error);
+    } finally {
+      await this.spinner.hide();
+    }
   }
 
-  @ViewChild('resizableDiv1', { static: false }) resizableDiv1!: ElementRef;
-  @ViewChild('resizableDiv2', { static: false }) resizableDiv2!: ElementRef;
-  @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
-
-  isResizing = false;
-  lastDownX = 0;
-  originalWidth1 = 0;
-  originalWidth2 = 0;
-
-  onMouseDown(event: MouseEvent, direction: 'left' | 'right')
-  {
+  /**********************-Resize Event-************************/
+  onMouseDown(event: MouseEvent, _direction: 'left' | 'right') {
     this.isResizing = true;
     this.lastDownX = event.clientX;
     this.originalWidth1 = this.resizableDiv1.nativeElement.offsetWidth;
@@ -879,102 +688,22 @@ export class FileManagerComponent implements OnInit, AfterViewInit
   }
 
   @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent)
-  {
+  onMouseMove(event: MouseEvent) {
     if (!this.isResizing) return;
 
     const offsetX = event.clientX - this.lastDownX;
 
-    this.resizableDiv1.nativeElement.style.width = ` ${ this.originalWidth1 + offsetX }px`;
+    this.resizableDiv1.nativeElement.style.width = ` ${this.originalWidth1 + offsetX}px`;
     this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 10 + 'px';
   }
 
   @HostListener('document:mouseup')
-  onMouseUp()
-  {
+  onMouseUp() {
     this.isResizing = false;
   }
 
   @HostListener('window:resize', ['$event'])
-  windowsResize()
-  {
+  windowsResize() {
     this.resizableDiv2.nativeElement.style.width = this.resizableContainer.nativeElement.offsetWidth - this.resizableDiv1.nativeElement.offsetWidth - 10 + 'px';
-  }
-
-  @ViewChild(FileContextMenuComponent) contextMenu!: FileContextMenuComponent;
-
-  onContextMenu(event: MouseEvent, from: string)
-  {
-    if (event != undefined)
-      event.preventDefault();
-
-    if (this.fromFile)
-    {
-      this.fromFile = false;
-      return;
-    }
-    this.contextMenu.show(event, from);
-    this.ShowFileMenu = from == "file";
-    this.ShowTreeMenu = from == "tree";
-    this.showEmptyArea = from == "emptyArea";
-
-    this.selectedFiles = [];
-    this.selectedFolders = [];
-  }
-
-  ShowFileMenu: boolean = false;
-  ShowTreeMenu: boolean = false;
-  showEmptyArea: boolean = false;
-  fromFile: boolean = false;
-  fromFolder: boolean = false;
-
-  onFileContextMenu(event: MouseEvent, currentFile: any)
-  {
-    event.preventDefault();
-    this.fromFile = true;
-    this.fromFolder = false;
-    this.selectedFileChanged(undefined, currentFile);
-    this.contextMenu.show(event, "file");
-  }
-
-  onFolderContextMenu(event: MouseEvent, currentFile: any)
-  {
-    event.preventDefault();
-    this.fromFolder = true;
-    this.fromFile = true;
-    this.selectedFolderChanged(undefined, currentFile);
-    this.contextMenu.show(event, "file");
-  }
-
-  backButtonEnable: boolean = true;
-
-  get upButtonEnable(): boolean
-  {
-    return this.currentPath.parent == undefined || this.currentPath.parent == '';
-  }
-
-  @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
-
-  onDivClick(event: any)
-  {
-    if (this.fileMenu != undefined)
-      this.fileMenu.hide();
-    if (event != undefined && event.ctrlKey)
-      return;
-    this.selectedFiles = [];
-    this.selectedFolders = [];
-  }
-
-
-  doubleClick(file: folder)
-  {
-    if (this.currentPath.childs.find(x => x.title == file.FolderName) != undefined)
-      this.pathChange(this.currentPath.childs.find(x => x.title == file.FolderName) ?? this.currentPath);
-    
-  }
-
-  getContainerWidth(): number | undefined
-  {
-    return document.getElementById("files-container")?.offsetWidth;
   }
 }

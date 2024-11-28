@@ -5,6 +5,8 @@ import { FileManagerComponent } from './pages/file-manager/file-manager.componen
 import { OTPComponent } from './pages/OTPs/otp/otp.component';
 import { VerifyOtpComponentComponent } from './pages/OTPs/verify-otp-component/verify-otp-component.component';
 import { SharedItemsComponent } from './pages/shared-items/shared-items.component';
+import { SharedWithUserComponent } from './pages/shared-with-user/shared-with-user.component';
+import { TrashComponent } from './pages/trash/trash.component';
 
 export const appRoutes: VexRoutes = [
   {
@@ -69,10 +71,9 @@ export const appRoutes: VexRoutes = [
       },
 
       { path: 'verify-otp', component: VerifyOtpComponentComponent },
-      {
-        path: 'fileManagement/showShareFiles',
-        component: FileManagerComponent
-      },
+      { path: 'fileManagement/showShareFiles', component: FileManagerComponent },
+      { path: 'shared-with-me', component: SharedWithUserComponent },
+      { path: 'trash', component: TrashComponent },
       { path: 'shared-items', component: SharedItemsComponent }
       //{ path: '**', component: PageNotFoundComponent },
     ]

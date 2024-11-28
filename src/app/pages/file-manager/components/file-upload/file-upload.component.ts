@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { firstValueFrom } from 'rxjs'; // Import for converting observable to promise
 import { FileManagerService } from 'src/app/services/file-manager.service';
+import { log } from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
 
 @Component({
   selector: 'app-file-upload',
@@ -40,21 +41,11 @@ export class FileUploadComponent {
     public dialogRef: MatDialogRef<FileUploadComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: FileManagerService
-  ) {}
+  ) {
+  }
 
   close(): void {
     this.dialogRef.close(false);
-  }
-
-  async upload(): Promise<void> {
-    // Call uploadFileInChunks for each file in sequence using for...of loop with await
-    for (let i = 0; i < this.files.length; i++) {
-      this.uploadProgress[i] = 0; // Initialize upload progress for each file
-      await this.uploadFileInChunks(this.files[i], i);
-    }
-
-    // Close the dialog after all files are uploaded
-    this.dialogRef.close(this.files);
   }
 
   onDragOver(event: DragEvent): void {
@@ -64,7 +55,7 @@ export class FileUploadComponent {
     dropzone.classList.add('dragover');
   }
 
-  onDrop(event: DragEvent): void {
+  async onDrop(event: DragEvent): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
     const dropzone = event.currentTarget as HTMLElement;
@@ -78,21 +69,32 @@ export class FileUploadComponent {
       }
 
       // Start uploading files after drop
-      this.upload();
+      await this.upload();
     }
   }
 
-  onFileSelected(event: Event): void {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      for (let i = 0; i < input.files.length; i++) {
-        this.files.push(input.files[i]);
-        this.uploadProgress.push(0); // Initialize upload progress for each file
-      }
+    if (!input.files || !input.files.length) return;
 
-      // Start uploading files after selection
-      this.upload();
+    for (const file of Array.from(input.files)) {
+      this.files.push(file);
+      this.uploadProgress.push(0); // Initialize upload progress for each file
     }
+
+    // Start uploading files after drop
+    await this.upload();
+  }
+
+  async upload(): Promise<void> {
+    // Call uploadFileInChunks for each file in sequence using for...of loop with await
+    for (let i = 0; i < this.files.length; i++) {
+      this.uploadProgress[i] = 0; // Initialize upload progress for each file
+      await this.uploadFileInChunks(this.files[i], i);
+    }
+
+    // Close the dialog after all files are uploaded
+    this.dialogRef.close(this.files);
   }
 
   // Upload the entire file in chunks synchronously
@@ -118,21 +120,17 @@ export class FileUploadComponent {
     const chunkFile = new File([chunk], file.name, { type: file.type });
 
     try {
-      try {
-        const state = this.dialogRef.getState();
-        if (
-          state === MatDialogState.CLOSED ||
-          state === MatDialogState.CLOSING
-        ) {
-          return;
-        }
-        // Use firstValueFrom to convert observable to promise and wait for it to complete
-        await firstValueFrom(
-          this.service.uploadFile('upload', this.data.currentPath, chunkFile)
-        );
-      } catch (error) {
+      const state = this.dialogRef.getState();
+      if (
+        state === MatDialogState.CLOSED ||
+        state === MatDialogState.CLOSING
+      ) {
         return;
       }
+      // Use firstValueFrom to convert observable to promise and wait for it to complete
+      await firstValueFrom(
+        this.service.uploadFile('upload', this.data.currentPath, chunkFile)
+      );
 
       // Update the progress after successful upload of each chunk
       if (index < lastIndex) {
