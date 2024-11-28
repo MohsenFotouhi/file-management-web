@@ -92,76 +92,76 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
       this.rootPath.fullTitle = response.CurrentPath;
       this.folders = response.Folders || [];
       this.files = response.Files || [];
-    this.rootPath.childs = [];
-    for (const folder of this.folders) {
-      this.rootPath.childs.push(
-        {
-          title: folder.FolderName,
-          fullTitle: folder.VirtualPath,
-          parent: folder.VirtualPath.split('\\')[0] + '\\',
-          fileId: folder.FileId,
-          childs: []
-        });
-    }
-    await this.previews();
-    this.currentPath = this.rootPath;
-    this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split('\\') : [];
-    this.currentPathItems = this.currentPathItems.filter(item => !!item);
+      this.rootPath.childs = [];
+      for (const folder of this.folders) {
+        this.rootPath.childs.push(
+          {
+            title: folder.FolderName,
+            fullTitle: folder.VirtualPath,
+            parent: folder.VirtualPath.split('\\')[0] + '\\',
+            fileId: folder.FileId,
+            childs: []
+          });
+      }
+      await this.previews();
+      this.currentPath = this.rootPath;
+      this.currentPathItems = this.currentPath.parent != undefined ? this.currentPath.parent.split('\\') : [];
+      this.currentPathItems = this.currentPathItems.filter(item => !!item);
     } catch (error) {
       console.error('API error:', error);
     } finally {
       await this.spinner.hide();
-  }
+    }
   }
 
   async getPaths(path: FilePath) {
     if (path.parent) {
-    const command = 'GetContentById';
-    this.rootPath.childs.forEach(element => {
-      if (path.parent && !path.parent.startsWith(element.fullTitle))
-        element.childs = [];
-    });
+      const command = 'GetContentById';
+      this.rootPath.childs.forEach(element => {
+        if (path.parent && !path.parent.startsWith(element.fullTitle))
+          element.childs = [];
+      });
 
-    this.files = [];
-    this.folders = [];
-    await this.spinner.show();
-    try {
-      const response = await firstValueFrom(
+      this.files = [];
+      this.folders = [];
+      await this.spinner.show();
+      try {
+        const response = await firstValueFrom(
           this.service.CallAPI(command, path.fileId)
-      );
+        );
 
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
-      await this.previews();
+        this.folders = response.Folders || [];
+        this.files = response.Files || [];
+        await this.previews();
 
-      let parentTitle: string = '';
-      this.currentPath.childs = [];
-      this.currentPathItems = this.currentPath.parent ?
-        this.currentPath.parent.split('\\').filter(item => !!item) : [];
+        let parentTitle: string = '';
+        this.currentPath.childs = [];
+        this.currentPathItems = this.currentPath.parent ?
+          this.currentPath.parent.split('\\').filter(item => !!item) : [];
 
-      for (const folder of this.folders) {
-        parentTitle = '';
+        for (const folder of this.folders) {
+          parentTitle = '';
           let parents = folder.VirtualPath.split('\\');
           parents.splice(-1);
-        parents.forEach(element => {
-          if (parentTitle.trim().length > 0)
-            parentTitle += '\\';
-          parentTitle += element;
-        });
+          parents.forEach(element => {
+            if (parentTitle.trim().length > 0)
+              parentTitle += '\\';
+            parentTitle += element;
+          });
 
-        this.currentPath.childs.push({
-          title: folder.FolderName,
-          fullTitle: folder.VirtualPath,
-          parent: parentTitle,
-          fileId: folder.FileId,
-          childs: []
-        });
+          this.currentPath.childs.push({
+            title: folder.FolderName,
+            fullTitle: folder.VirtualPath,
+            parent: parentTitle,
+            fileId: folder.FileId,
+            childs: []
+          });
+        }
+      } catch (error) {
+        console.error('API error:', error);
+      } finally {
+        await this.spinner.hide();
       }
-    } catch (error) {
-      console.error('API error:', error);
-    } finally {
-      await this.spinner.hide();
-    }
     } else {
       await this.getPath();
     }
@@ -408,7 +408,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     this.treeSidebarSection.nativeElement.style.width = ` ${this.originalWidthTreeSidebar + offsetX}px`;
     this.folderContent.nativeElement.style.width = this.mainContainer.nativeElement.offsetWidth - this.treeSidebarSection.nativeElement.offsetWidth - 10 + 'px';
   }
-  
+
   @HostListener('document:mouseup')
   onMouseUp() {
     this.isResizing = false;
