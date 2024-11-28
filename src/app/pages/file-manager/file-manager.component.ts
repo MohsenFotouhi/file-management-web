@@ -440,9 +440,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     } else {
       for (const file of this.selectedFiles) {
         try {
+         
           const response = await firstValueFrom<Blob>(
             this.service.downloadFileAsync('download',
-              this.currentPath.fullTitle + '\\' + file.FileName)
+              file.FileId)
           );
           const a = document.createElement('a');
           const objectUrl = URL.createObjectURL(response);

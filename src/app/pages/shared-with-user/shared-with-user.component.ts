@@ -310,7 +310,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     try {
       for (const file of this.selectedFiles) {
         const response = await firstValueFrom(
-          this.service.downloadShareFiles(file.DownloadId, file.VirtualPath)
+          this.service.downloadShareFiles(file.FileId, file.VirtualPath)
         );
         const a = document.createElement('a');
         const objectUrl = URL.createObjectURL(response);
