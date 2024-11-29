@@ -2,24 +2,25 @@
   <div @fadeInUp class="card overflow-hidden w-full max-w-md">
     <div class="p-6 pb-0 flex flex-col items-center justify-center">
       <div class="fill-current text-center">
-        <img class="w-16" src="assets/img/logo/logo.svg"/>
+        <img class="w-16" src="assets/img/logo/logo.svg" />
       </div>
     </div>
 
     <div class="text-center mt-4">
       <h2 class="title m-0">خوش آمدید</h2>
-      <h4 class="body-2 text-secondary m-0">
-        با مشخصات خود وارد شوید.
-      </h4>
+      <h4 class="body-2 text-secondary m-0">با مشخصات خود وارد شوید.</h4>
     </div>
 
-    <div [formGroup]="form" class="p-6 flex flex-col gap-4">
+    <form
+      [formGroup]="form"
+      class="p-6 flex flex-col gap-4"
+      (ngSubmit)="send()">
       <div class="flex flex-col">
         <mat-form-field class="flex-1">
           <mat-label>نام کاربری</mat-label>
-          <input formControlName="username" matInput required/>
+          <input formControlName="username" matInput required />
           <mat-error *ngIf="form.get('username')?.invalid"
-          >لطفا نام کاربری را وارد کنید
+            >لطفا نام کاربری را وارد کنید
           </mat-error>
         </mat-form-field>
 
@@ -29,7 +30,7 @@
             [type]="inputType"
             formControlName="password"
             matInput
-            required/>
+            required />
           <button
             (click)="toggleVisibility()"
             mat-icon-button
@@ -46,18 +47,20 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <mat-checkbox class="caption" color="primary">مرا بخاطر بسپار</mat-checkbox>
-        <a [routerLink]="['/forgot-password']" class="caption">فراموشی رمزعبور</a>
+        <mat-checkbox class="caption" color="primary"
+          >مرا بخاطر بسپار</mat-checkbox
+        >
+        <a [routerLink]="['/forgot-password']" class="caption"
+          >فراموشی رمزعبور</a
+        >
       </div>
 
-      <button (click)="send()" color="primary" mat-raised-button type="button">
-        ورود
-      </button>
+      <button color="primary" mat-raised-button type="submit">ورود</button>
 
-<!--      <p class="text-secondary text-center">-->
-<!--        حساب کاربری ندارید؟<br/>-->
-<!--        <a [routerLink]="['/register']">ثبت نام</a>-->
-<!--      </p>-->
-    </div>
+      <!--      <p class="text-secondary text-center">-->
+      <!--        حساب کاربری ندارید؟<br/>-->
+      <!--        <a [routerLink]="['/register']">ثبت نام</a>-->
+      <!--      </p>-->
+    </form>
   </div>
 </div>

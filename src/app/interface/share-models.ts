@@ -4,7 +4,8 @@ export interface CreateDownloadLinkCommand {
     isPublic: boolean;
     shareWithUsers: User[];
     shareWithEmails: string[]
-    virtualPath: string;
+  virtualPath: string;
+  FileID: string;
 }
 
 export interface User {

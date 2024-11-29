@@ -37,6 +37,20 @@ export class NavigationLoaderService
           },
           {
             type: 'link',
+            label: 'همرسانی شده',
+            route: '/shared-with-me',
+            icon: 'mat:group',
+            routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
+            label: 'حذف شده ها',
+            route: '/trash',
+            icon: 'mat:delete',
+            routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
             label: 'پروفایل',
             route: '/dashboard',
             icon: 'mat:dashboard',
@@ -47,6 +61,13 @@ export class NavigationLoaderService
             label: ' اشتراک گذاشته شده ها ',
             route: '/shared-items',
             icon: 'mat:share',
+            routerLinkActiveOptions: { exact: true }
+          },
+          {
+            type: 'link',
+            label: 'تنظیمات',
+            route: '/settings',
+            icon: 'mat:settings',
             routerLinkActiveOptions: { exact: true }
           },
         ]

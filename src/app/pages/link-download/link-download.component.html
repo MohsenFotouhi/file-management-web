@@ -1,34 +1,136 @@
-<div class="row mx-0 row-cols-1 row-cols-md-2" >
+<!-- <div class="row mx-0 row-cols-1 row-cols-md-2">
   <div class="col mt-2" *ngIf="!hasError">
     <h2 class="title flex-auto">شناسه یک بار رمز را وارد کنید</h2>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" *ngIf="token.length && !step3">
-    <mat-form-field appearance="outline">
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      *ngIf="token.length && !step3">
+      <mat-form-field appearance="outline">
         <mat-label>شناسه کاربری یا ایمیل </mat-label>
-        <input matInput placeholder="Enter your username" formControlName="username">
-        <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-        این فیلد الزامی است
+        <input
+          matInput
+          placeholder="Enter your username"
+          formControlName="username" />
+        <mat-error
+          *ngIf="
+            loginForm.get('username')?.invalid &&
+            loginForm.get('username')?.touched
+          ">
+          این فیلد الزامی است
         </mat-error>
-    </mat-form-field>
+      </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" class="mr-2" [disabled]="loginForm.invalid">
-           1 دانلود فایل
-    </button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="mr-2"
+        [disabled]="loginForm.invalid">
+        1 دانلود فایل
+      </button>
     </form>
 
     <div *ngIf="step3">
-        <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline">
         <mat-label>شناسه او تی پی </mat-label>
         <input [(ngModel)]="otp" matInput placeholder="شناسه او تی پی" />
-        </mat-form-field>
-        {{otp}}
-        <button mat-raised-button color="primary" type="button" class="mr-2" [disabled]="!otp.length" (click)="getDownloadLink(otp)">
+      </mat-form-field>
+      {{ otp }}
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="mr-2"
+        [disabled]="!otp.length"
+        (click)="getDownloadLink(otp)">
         2 دانلود فایل
-        </button>
+      </button>
     </div>
-    
   </div>
-   <div class="col mt-2" *ngIf="hasError">
-      <h2  class="title text-red-600">لینک دانلود صحیح نمیباشد مجددا تلاش کنید</h2>
-   </div>
+  <div class="col mt-2" *ngIf="hasError">
+    <h2 class="title text-red-600">لینک دانلود صحیح نمیباشد مجددا تلاش کنید</h2>
+  </div>
+</div> -->
+<div class="w-full h-full bg-pattern flex flex-col items-center justify-center">
+  <div @fadeInUp class="card overflow-hidden w-full max-w-md min-h-[210px]">
+    <div class="p-6 pb-0 flex flex-col items-center justify-center">
+      <div class="fill-current text-center flex flex-col items-center">
+        <img *ngIf="!fileName" class="w-16" src="assets/img/logo/logo.svg" />
+        <img *ngIf="fileName" class="w-16" [src]="imgSrc" />
+        <h4 *ngIf="fileName" class="mt-1">{{ fileName }}</h4>
+      </div>
+    </div>
+
+    <div *ngIf="currentStep === steps.EMAIL">
+      <div class="text-center mt-4">
+        <!-- <h2 class="title m-0">خوش آمدید</h2> -->
+        <h4 class="body-2 text-secondary m-0">
+          شناسه کاربری یا ایمیل را وارد کنید
+        </h4>
+      </div>
+      <form
+        [formGroup]="loginForm"
+        class="p-6 flex flex-col"
+        (ngSubmit)="onSubmit()"
+        *ngIf="token.length">
+        <mat-form-field appearance="outline">
+          <mat-label>شناسه کاربری یا ایمیل </mat-label>
+          <input
+            matInput
+            placeholder="Enter your username"
+            formControlName="username" />
+          <mat-error
+            *ngIf="
+              loginForm.get('username')?.invalid &&
+              loginForm.get('username')?.touched
+            ">
+            این فیلد الزامی است
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="loginForm.invalid">
+          مرحله بعد
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="currentStep === steps.OTP" class="flex flex-col p-4">
+      <p class="text-center">یکبار رمز به ایمیل شما ارسال شد</p>
+      <mat-form-field appearance="outline">
+        <!-- <mat-label>شناسه او تی پی </mat-label> -->
+        <input
+          [(ngModel)]="otp"
+          matInput
+          type="password"
+          placeholder="یکبار رمز را وارد کنید" />
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class=""
+        [disabled]="!otp.length"
+        (click)="getDownloadLink(otp)">
+        دانلود فایل
+      </button>
+    </div>
+
+    <div
+      *ngIf="currentStep === steps.READY_TO_DOWNLOAD"
+      class="flex justify-center p-4">
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        class="w-full"
+        (click)="downloadFile()">
+        دانلود فایل
+      </button>
+    </div>
+  </div>
 </div>

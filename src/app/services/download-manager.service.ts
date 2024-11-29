@@ -28,6 +28,17 @@ export class DownloadManagerService
   downloadFromLinkWith2FA(dto: { twoFAcode: string, tokenId: string; }): Observable<any>
   {
     const url = this.API_URL + '/api/DownloadManager/DownloadFromLinkWith2FA';
-    return this.http.get<any>(url, { params: dto });
+    return this.http.get(url, { params: dto, responseType: 'blob' });
+  }
+
+
+  downloadFileAsync(command: string, parameters: string): Observable<any> {
+
+    const formData: FormData = new FormData();
+    formData.append('fileID', parameters);
+
+    const url = `${this.API_URL}/api/DownloadFile/DownloadFilebyIdAsync`;
+    console.log(url);
+    return this.http.post(url, formData, { responseType: 'blob' });
   }
 }

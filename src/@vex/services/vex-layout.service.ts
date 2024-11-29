@@ -79,7 +79,7 @@ export class VexLayoutService {
   }
 
   collapseSidenav() {
-    this._sidenavCollapsedSubject.next(true);
+    this._sidenavCollapsedSubject.next(false);
   }
 
   expandSidenav() {

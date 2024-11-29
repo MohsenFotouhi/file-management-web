@@ -3,19 +3,23 @@ import {
   ChangeDetectorRef,
   Component
 } from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {fadeInUp400ms} from '@vex/animations/fade-in-up.animation';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatButtonModule} from '@angular/material/button';
-import {NgIf} from '@angular/common';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {AuthService} from '../auth.service';
-import {LoginModel} from 'src/app/interface/auth-interface';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AuthService } from '../auth.service';
+import { LoginModel } from 'src/app/interface/auth-interface';
+import { error } from 'console';
+import { ToastService } from 'src/app/services/toast.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'vex-login',
@@ -38,7 +42,6 @@ import {LoginModel} from 'src/app/interface/auth-interface';
   ]
 })
 export class LoginComponent {
-
   form = this.fb.group<any>({
     username: ['', Validators.required],
     password: ['', Validators.required]
@@ -51,41 +54,40 @@ export class LoginComponent {
     private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private snackbar: MatSnackBar,
-    private authService: AuthService
-  ) {
-  }
+    private authService: AuthService,
+    private toastService: ToastService,
+    private spinner: NgxSpinnerService
+  ) {}
 
   send() {
     if (this.form.valid) {
-      const obj: any = {username: this.form.value['username'], password: this.form.value['password']}
-      this.authService.login(obj).subscribe(res => {
-        if (res) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('userInfo', JSON.stringify(res.userInfo));
-          localStorage.setItem('username', res.userInfo.username);
-          localStorage.setItem('userGUID', res.userInfo.userGUID);
-          this.authService.setUser();
-          this.router.navigate(['/']);
-          this.snackbar.open(
-            "ورود با موفقیت انجام شد",
-            '',
-            {duration: 1000, verticalPosition: 'top', direction: 'rtl'}
-          );
-        } else {
-          this.snackbar.open(
-            "متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.",
-            '',
-            {duration: 1000, verticalPosition: 'top', direction: 'rtl'}
-          );
-        }
-      }, () => {
-        this.snackbar.open(
-          "متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.",
-          '',
-          {duration: 1000, verticalPosition: 'top', direction: 'rtl'}
-        );
-      })
+      const obj: any = {
+        username: this.form.value['username'],
+        password: this.form.value['password']
+      };
+      this.spinner.show();
+
+      this.authService
+        .login(obj)
+        .pipe(finalize(() => this.spinner.hide()))
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.authService.setUser();
+              this.router.navigate(['/']);
+              this.toastService.open('ورود با موفقیت انجام شد');
+            } else {
+              this.toastService.open(
+                'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
+              );
+            }
+          },
+          error: (error) => {
+            this.toastService.open(
+              'متاسفیم! ورود انجام نشد لطفا مجددا تلاش کنید.'
+            );
+          }
+        });
     }
   }
 

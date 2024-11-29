@@ -10,9 +10,9 @@
         [src]="imageUrl$ | async"
         alt="Logo"
         class="w-6 select-none flex-none" />
-<!--      <h2 class="vex-sidenav-toolbar__headline flex-auto">-->
-<!--        {{ title$ | async }}-->
-<!--      </h2>-->
+      <!--      <h2 class="vex-sidenav-toolbar__headline flex-auto">-->
+      <!--        {{ title$ | async }}-->
+      <!--      </h2>-->
     </div>
 
     <div *ngIf="searchVisible$ | async" class="vex-sidenav-search__container">
@@ -48,6 +48,13 @@
     </div>
   </vex-scrollbar>
 
+  <div
+    class="vux-sidebar-storage__container flex-none">
+    <div class="vex-sidenav-user flex items-center">
+      <vex-sidenav-storage [storageUsage]="storageUsage" class="ml-3"></vex-sidenav-storage>
+      <div class="vex-sidenav-user__content flex-auto">{{storageUsage}}% فضای استفاده شده</div>
+    </div>
+  </div>
   <div
     *ngIf="userVisible$ | async"
     class="vex-sidenav-user__container flex-none">

@@ -9,159 +9,153 @@
         <button class="btn-toolbar" title="up" [disabled]="upButtonEnable" (click)="upButtonClicked()">
           <i class="fa-solid fa-turn-up"></i>
         </button>
-        <button class="btn-toolbar" title="copy" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+        <button class="btn-toolbar" title="copy"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="copyButtonClicked()">
           <i class="fa-solid fa-copy"></i>
         </button>
-        <button class="btn-toolbar" title="Cut" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+        <button class="btn-toolbar" title="Cut"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="cutButtonClicked()">
           <i class="fa-solid fa-scissors"></i>
         </button>
-        <button class="btn-toolbar" title="paste" [disabled]="canPaste == false || showShareFiles"
+        <button class="btn-toolbar" title="paste" [disabled]="!canPaste || showShareFiles"
                 (click)="pasteButtonClicked()">
           <i class="fa-solid fa-paste"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title=">تغییر نام" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+        <button class="btn-toolbar" title=">تغییر نام"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="renameButtonClicked()">
           <i class="fa-solid fa-i-cursor"></i>
         </button>
-        <button class="btn-toolbar" title="edit" disabled="true" >
+        <button class="btn-toolbar" title="edit" disabled>
           <i class="fa-solid fa-file-pen"></i>
         </button>
-        <button class="btn-toolbar" title="حذف" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+        <button class="btn-toolbar" title="حذف"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
                 (click)="deleteButtonClicked()">
           <i class="fa-solid fa-trash"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()" [disabled]="showShareFiles">
+        <button class="btn-toolbar" title="ایجاد فایل جدید" (click)="addNewFolderButtonClicked()"
+                [disabled]="showShareFiles">
           <i class="fa-solid fa-folder-plus"></i>
         </button>
-        <button class="btn-toolbar" title="ایجاد پوشه جدید" (click)="addNewFileButtonClicked()" [disabled]="showShareFiles">
+        <button class="btn-toolbar" title="ایجاد پوشه جدید" (click)="addNewFileButtonClicked()"
+                [disabled]="showShareFiles">
           <i class="fa-solid fa-file-circle-plus"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="نمایش" disabled=true>
+        <button class="btn-toolbar" title="نمایش" disabled>
           <i class="fa-solid fa-eye"></i>
         </button>
-        <button class="btn-toolbar" title="دانلود" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0" (click)="downloadButtonClicked()">
+        <button class="btn-toolbar" title="دانلود" [disabled]="selectedFiles.length == 0 && selectedFolders.length == 0"
+                (click)="downloadButtonClicked()">
           <i class="fa-solid fa-cloud-arrow-down"></i>
         </button>
         <button class="btn-toolbar" title="بارگذاری" [disabled]="showShareFiles" (click)="upload()">
           <i class="fa-solid fa-cloud-arrow-up"></i>
         </button>
         <div class="horizontalLine">|</div>
-        <button class="btn-toolbar" title="آرشیو" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
-                (click)="zipdButtonClicked()">
+        <button class="btn-toolbar" title="آرشیو"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+                (click)="zipButtonClicked()">
           <i class="fa-solid fa-file-zipper"></i>
         </button>
-        <button class="btn-toolbar" title="استخراج" [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
-                (click)="unZipdButtonClicked()">
+        <button class="btn-toolbar" title="استخراج"
+                [disabled]="(selectedFiles.length == 0 && selectedFolders.length == 0) || showShareFiles"
+                (click)="unzipButtonClicked()">
           <i class="fa-solid fa-square-arrow-up-right"></i>
         </button>
         <button class="btn-toolbar" title="تغیر حالت نمایش" (click)="SwitchView()">
           <i class="fa-solid fa-list-ul"></i>
         </button>
         <input class="form-control form-control-sm search-input" placeholder="جستجو ..." matInput
-               [(ngModel)]="searchKeyWord" (keyup.enter)="search()"/>
+               [(ngModel)]="searchKeyWord" (keyup.enter)="search()" />
       </div>
 
       <div class=" file-holder resizable-container" #resizableContainer>
 
-        <div class="border-end resizable tree-holder" style="overflow-x: auto; min-width: 187px;" #resizableDiv1
-            (contextmenu)="onContextMenu($event , 'emptyArea')" >
-        <mat-tab-group animationDuration="0ms" mat-stretch-tabs="true" mat-align-tabs="start">
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon class="example-tab-icon">folder_open</mat-icon>
-            </ng-template> 
-              <div class="" (click)="setSharedFile(false)">
-                <app-path class="app-path" [rootPath]="rootPath"
-                (currentPathChanged)="pathChange($event)"
-                (currentChildPathChanged)="pathChange($event)"
-                (rightClickNodeChanged)="pathRighClick($event)"
-                (contextmenu)="onContextMenu($event , 'tree')"
-                (fileShareStatus)="setSharedFile($event)"
-                ></app-path>
-            </div>
-          </mat-tab>
-
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <mat-icon class="example-tab-icon">share</mat-icon>
-            </ng-template> 
-                <app-shared-files style="width: 100px; height: 100px;" (click)="loadShareFiles()"></app-shared-files>
-          </mat-tab>
-        </mat-tab-group>
+        <div class="border-end resizable tree-holder hidden md:block" style="overflow-x: auto; min-width: 187px;"
+             #resizableDiv1
+             (contextmenu)="onContextMenu($event , 'emptyArea')">
+          <app-path class="app-path" [rootPath]="rootPath"
+                    (currentPathChanged)="pathChange($event)"
+                    (currentChildPathChanged)="pathChange($event)"
+                    (rightClickNodeChanged)="pathRightClick($event)"
+                    (contextmenu)="onContextMenu($event , 'tree')"
+                    (fileShareStatus)="setSharedFile($event)"
+          ></app-path>
         </div>
 
-        
-        <div class="resizer gutter gutter-horizontal" (mousedown)="onMouseDown($event, 'left')">
+        <div class="resizer gutter gutter-horizontal hidden md:block" (mousedown)="onMouseDown($event, 'left')">
           <div class="resizer-icon"></div>
         </div>
 
-        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}" class="col-10 p-2 file-container  resizable"
+        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}"
+             class="col-10 p-2 file-container  resizable"
              #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
           <div id="files-container" class="mx-0 row" (click)="onDivClick($event)">
-            <div class="border fileItem" id="myDiv"
+            <div class="border fileItem"
                  [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  *ngFor="let currentFolder of folders"
                  (contextmenu)="onFolderContextMenu($event, currentFolder)"
                  (click)="onFolderClick($event , currentFolder)">
               <img src="assets/img/filesIcons/folder.png" alt="img/folder.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
-              <p class="file-name">{{ currentFolder.FolderName }}</p>
+                   class="file-image" />
+              <p class="file-name truncate">{{ currentFolder.FarsiName || currentFolder.FolderName }}</p>
               <div class="file-size"></div>
             </div>
 
-            <div class="border fileItem" id="myDiv"
-            *ngFor="let currentFile of blobs let i = index"
-            [ngClass]=" isFileInSelectedFiles(currentFile.file) ?  'active':  'inactive' "
+            <div class="border fileItem"
+                 *ngFor="let currentFile of blobs let i = index"
+                 [ngClass]=" isFileInSelectedFiles(currentFile.file) ?  'active':  'inactive' "
                  (contextmenu)="onFileContextMenu($event, currentFile.file)"
                  (click)="onFileClick($event , currentFile.file)">
               <img *ngIf="currentFile.file.FileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('dll')" src="assets/img/filesIcons/dll.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.exe') " src="assets/img/filesIcons/exe.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.file')" src="assets/img/filesIcons/file.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf=" currentFile.file.FileName.endsWith('.folder')" src="assets/img/filesIcons/folder.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf=" currentFile.file.FileName.endsWith('.html')" src="assets/img/filesIcons/html.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf=" currentFile.file.FileName.endsWith('.js')" src="assets/img/filesIcons/js.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf=" currentFile.file.FileName.endsWith('.json')" src="assets/img/filesIcons/json.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.MP3')" src="assets/img/filesIcons/MP3.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
-              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/MP4.png" alt=""
+                   class="file-image" />
+              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/mp4.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.php')" src="assets/img/filesIcons/php.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.txt')" src="assets/img/filesIcons/txt.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.zip')" src="assets/img/filesIcons/zip.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <img *ngIf="currentFile.file.FileName.endsWith('.pdf')" src="assets/img/filesIcons/pdf.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
 
               <img *ngIf="
                          currentFile.file.FileName.endsWith('.img') ||
@@ -169,7 +163,7 @@
                          currentFile.file.FileName.endsWith('.jpeg') "
                    [src]="currentFile.content" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
 
               <img *ngIf="
                     ! currentFile.file.FileName.endsWith('.css') &&
@@ -191,35 +185,36 @@
                     ! currentFile.file.FileName.endsWith('.jpeg')
                     " src="assets/img/filesIcons/file.png" alt="file.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
-                   class="file-image"/>
+                   class="file-image" />
               <span style="max-width: 100%;">
-                        <p class="file-name">{{  currentFile.file.FileName }}</p>
+                <p class="file-name truncate">{{ currentFile.file.FarsiName }}</p>
                     </span>
-              <div class="file-size">{{  currentFile.file.FileSize }}</div>
+              <div class="file-size">{{ currentFile.file.FileSize }}</div>
             </div>
           </div>
         </div>
       </div>
-       <file-context-menu
-       (uploadlick) = upload()
-       (downloadClick) = download()
-       (shareClick) = openShareModal()
-       (createFolderClick) = addNewFolderButtonClicked()
-       (deleteClick) = delete()
-       (renameClick) = rename()
-       (cutClick) = cutButtonClicked()
-       (copyClick) = copyButtonClicked()
-       (reloadClick) = reload()
-       (pasteClick) = paste()
-       [activeActionButtons] ='selectedFiles.length != 0 && selectedFolders.length != 0'
-       [isSharedFile]="showShareFiles"
-       ></file-context-menu>
+      <file-context-menu
+        (uploadlick)=upload()
+        (downloadClick)=download()
+        (shareClick)=openShareModal()
+        (createFolderClick)=addNewFolderButtonClicked()
+        (deleteClick)=delete()
+        (renameClick)=rename()
+        (cutClick)=cutButtonClicked()
+        (copyClick)=copyButtonClicked()
+        (reloadClick)=reload()
+        (pasteClick)=paste()
+        [activeActionButtons]='selectedFiles.length != 0 && selectedFolders.length != 0'
+        [isSharedFile]="showShareFiles"
+      ></file-context-menu>
 
       <div class="border p-2">
-        <a class="first-link" *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i)"> 
-          <span>{{path }}</span>
-          > </a>
-        <a class="second-link"> {{currentPath.title }}</a>
+        <a class="first-link" *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i)">
+          <span>{{ path }}</span>
+          >
+        </a>
+        <a class="second-link"> {{ currentPath.title }}</a>
       </div>
     </div>
   </div>
