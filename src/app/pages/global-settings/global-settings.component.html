@@ -4,39 +4,63 @@
   <vex-page-layout-content class="container">
     <div class="card">
       <mat-tab-group>
-        <mat-tab [label]="tabs.GeneralGlobalSetting">
+        <mat-tab label="ذخیره سازی">
           <div class="p-6">
-            <global-settings-storage></global-settings-storage>
+            <global-settings-storage
+              [data]="settingsData[tabs.GeneralGlobalSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.GeneralGlobalSetting)
+              "></global-settings-storage>
           </div>
         </mat-tab>
 
-        <mat-tab [label]="tabs.RecycleBinGlobalSetting">
+        <mat-tab label="سطل زباله">
           <div class="p-6">
-            <settings-recycle-bin></settings-recycle-bin>
+            <settings-recycle-bin
+              [data]="settingsData[tabs.RecycleBinGlobalSetting]"
+              (formSubmit)="
+                handleSubmit($event, tabs.RecycleBinGlobalSetting)
+              "></settings-recycle-bin>
           </div>
         </mat-tab>
 
-        <mat-tab [label]="tabs.EmailGlobalSetting">
+        <mat-tab label="ایمیل">
           <div class="p-6">
-            <global-settings-email></global-settings-email>
+            <global-settings-email
+              [data]="settingsData[tabs.EmailGlobalSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.EmailGlobalSetting)
+              "></global-settings-email>
           </div>
         </mat-tab>
 
-        <mat-tab [label]="tabs.LDAPSetting">
+        <mat-tab label="تنظیمات LDAP">
           <div class="p-6">
-            <global-settings-ldap></global-settings-ldap>
+            <global-settings-ldap
+              [data]="settingsData[tabs.LDAPSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.LDAPSetting)
+              "></global-settings-ldap>
           </div>
         </mat-tab>
 
-        <mat-tab [label]="tabs.DownloadGlobalSetting">
+        <mat-tab label="دانلود">
           <div class="p-6">
-            <global-settings-download></global-settings-download>
+            <global-settings-download
+              [data]="settingsData[tabs.DownloadGlobalSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.DownloadGlobalSetting)
+              "></global-settings-download>
           </div>
         </mat-tab>
 
-        <mat-tab [label]="tabs.UploadGlobalSetting">
+        <mat-tab label="آپلود">
           <div class="p-6">
-            <global-settings-upload></global-settings-upload>
+            <global-settings-upload
+              [data]="settingsData[tabs.UploadGlobalSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.UploadGlobalSetting)
+              "></global-settings-upload>
           </div>
         </mat-tab>
       </mat-tab-group>

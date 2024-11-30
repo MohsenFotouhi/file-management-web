@@ -7,7 +7,7 @@
         <mat-tab label="ذخیره سازی">
           <div class="p-6">
             <settings-storage
-              [data]="settingsData"
+              [data]="settingsData.storageSetting"
               (submitForm)="onStorageSubmit($event)"></settings-storage>
           </div>
         </mat-tab>
@@ -15,7 +15,7 @@
         <mat-tab label="سطل زباله">
           <div class="p-6">
             <settings-recycle-bin
-              [data]="settingsData"
+              [data]="settingsData.recycleBinSetting"
               (formSubmit)="onRecycleBinSubmit($event)"></settings-recycle-bin>
           </div>
         </mat-tab>
