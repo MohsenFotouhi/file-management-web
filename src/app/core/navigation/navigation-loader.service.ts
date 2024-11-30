@@ -70,6 +70,13 @@ export class NavigationLoaderService
             icon: 'mat:settings',
             routerLinkActiveOptions: { exact: true }
           },
+          {
+            type: 'link',
+            label: 'تنظیمات عمومی',
+            route: '/global-settings',
+            icon: 'mat:settings',
+            routerLinkActiveOptions: { exact: true }
+          },
         ]
       },
     ]);

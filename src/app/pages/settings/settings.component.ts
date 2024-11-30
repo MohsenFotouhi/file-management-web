@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/vex-page-layout-content.directive';
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
@@ -25,7 +24,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
   standalone: true,
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
-  animations: [fadeInUp400ms],
   imports: [
     VexPageLayoutComponent,
     VexPageLayoutHeaderDirective,

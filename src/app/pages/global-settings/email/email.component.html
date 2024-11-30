@@ -1,0 +1,64 @@
+<div @fadeInUp class="card flex-auto">
+  <form
+    [formGroup]="form"
+    class="px-6 py-4 flex flex-col"
+    (ngSubmit)="onSubmit()">
+    <div class="flex flex-col sm:grid sm:grid-cols-2 sm:gap-4">
+      <mat-form-field class="flex-auto">
+        <mat-label>آدرس سرور SMTP</mat-label>
+        <input
+          matInput
+          formControlName="SMTPServer"
+          type="text"
+          placeholder="آدرس سرور SMTP &hellip;"
+          required />
+        <mat-error *ngIf="form.get('SMTPServer')?.invalid"
+          >این فیلد اجباری است
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>پورت</mat-label>
+        <input
+          matInput
+          formControlName="Port"
+          type="number"
+          placeholder="پورت&hellip;"
+          required />
+        <mat-error *ngIf="form.get('Port')?.invalid"
+          >این فیلد اجباری است
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>نام کاربری</mat-label>
+        <input
+          matInput
+          formControlName="Username"
+          type="text"
+          placeholder="نام کاربری&hellip;"
+          required />
+        <mat-error *ngIf="form.get('Username')?.invalid"
+          >این فیلد اجباری است
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>رمز عبور</mat-label>
+        <input
+          matInput
+          formControlName="Password"
+          type="password"
+          placeholder="رمز عبور&hellip;"
+          required />
+        <mat-error *ngIf="form.get('Password')?.invalid"
+          >این فیلد اجباری است
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+      <button color="primary" mat-flat-button type="submit">ذخیره</button>
+    </div>
+  </form>
+</div>

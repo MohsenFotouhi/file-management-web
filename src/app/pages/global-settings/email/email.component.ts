@@ -1,16 +1,21 @@
+import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { CreateUserSetting } from 'src/app/interface/auth-interface';
 
 @Component({
-  selector: 'settings-recycle-bin',
-  templateUrl: './recycle-bin.component.html',
-  styleUrl: './recycle-bin.component.scss',
+  selector: 'global-settings-email',
+  templateUrl: './email.component.html',
+  styleUrl: './email.component.scss',
   standalone: true,
   animations: [fadeInUp400ms],
   imports: [
@@ -18,27 +23,31 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatSlideToggleModule
+    NgIf
   ]
 })
-export class SettingsRecycleBinComponent implements OnInit {
+export class GlobalSettingsEmailComponent implements OnInit {
   @Input() data: CreateUserSetting;
-  @Output() formSubmit = new EventEmitter();
+  @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    userCanPhysicalDelete: [false],
-    userCanRestore: [false],
-    adminAllowDelete: [false]
+    SMTPServer : ['', Validators.required],
+    Port: [null, Validators.required],
+    Username: ['', Validators.required],
+    Password: ['', Validators.required]
   });
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.recycleBinSetting));
+      this.form.patchValue(JSON.parse(this.data.storageSetting));
     }
   }
 
   onSubmit() {
-    this.formSubmit.emit(this.form.value);
+    if (this.form.invalid) {
+      return;
+    }
+    this.submitForm.emit(this.form.value);
   }
 }
