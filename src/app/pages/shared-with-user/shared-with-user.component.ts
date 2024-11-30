@@ -39,20 +39,14 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   folders: Folder[] = [];
   blobs: FileBlob[] = [];
   searchKeyWord: undefined;
-  fromFile: boolean = false;
   selectedFiles: File[] = [];
-  fromFolder: boolean = false;
   isListView: boolean = false;
   originalWidthTreeSidebar = 0;
-  ShowFileMenu: boolean = false;
-  ShowTreeMenu: boolean = false;
   originalWidthFolderContent = 0;
-  showEmptyArea: boolean = false;
   selectedFolders: Folder[] = [];
   previousPaths: FilePath[] = [];
   currentPathItems: string[] = [];
   showShareFiles: boolean = false;
-  pathFolderContextMenu!: FilePath;
   backButtonDisable: boolean = true;
   rootPath: FilePath = new FilePath();
   currentPath: FilePath = new FilePath();
@@ -310,7 +304,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     try {
       for (const file of this.selectedFiles) {
         const response = await firstValueFrom(
-          this.service.downloadShareFiles(file.DownloadId, file.VirtualPath)
+          this.service.downloadShareFiles(file.FileId, file.VirtualPath)
         );
         const a = document.createElement('a');
         const objectUrl = URL.createObjectURL(response);
@@ -348,45 +342,6 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     } finally {
       await this.spinner.hide();
     }
-  }
-
-  /****************-Context Event-******************/
-  pathRightClick([event, path]: [MouseEvent, FilePath]) {
-    this.pathFolderContextMenu = path;
-    this.onContextMenu(event, 'tree');
-  }
-
-  onContextMenu(event: MouseEvent, from: string) {
-    if (event != undefined)
-      event.preventDefault();
-
-    if (this.fromFile) {
-      this.fromFile = false;
-      return;
-    }
-    this.contextMenu.show(event, from);
-    this.ShowFileMenu = from == 'file';
-    this.ShowTreeMenu = from == 'tree';
-    this.showEmptyArea = from == 'emptyArea';
-
-    this.selectedFiles = [];
-    this.selectedFolders = [];
-  }
-
-  onFolderContextMenu(event: MouseEvent, _currentFile: any) {
-    event.preventDefault();
-    this.fromFolder = true;
-    this.fromFile = true;
-    // this.selectedFolderChanged(undefined, currentFile);
-    this.contextMenu.show(event, 'file');
-  }
-
-  onFileContextMenu(event: MouseEvent, currentFile: any) {
-    event.preventDefault();
-    this.fromFile = true;
-    this.fromFolder = false;
-    this.selectedFileChanged(undefined, currentFile);
-    this.contextMenu.show(event, 'file');
   }
 
   /**********************-Resize Event-************************/
