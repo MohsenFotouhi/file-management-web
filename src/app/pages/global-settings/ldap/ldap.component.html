@@ -12,9 +12,9 @@
           type="text"
           placeholder="آدرس سرور&hellip;"
           required />
-        <mat-error *ngIf="form.get('Server')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("Server")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
@@ -25,9 +25,9 @@
           type="number"
           placeholder="پورت&hellip;"
           required />
-        <mat-error *ngIf="form.get('Port')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("Port")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
@@ -38,9 +38,9 @@
           type="text"
           placeholder="اسم دامنه&hellip;"
           required />
-        <mat-error *ngIf="form.get('DomainName')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("DomainName")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
@@ -51,9 +51,9 @@
           type="text"
           placeholder="DC&hellip;"
           required />
-        <mat-error *ngIf="form.get('DC')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("DC")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
@@ -64,9 +64,10 @@
           type="text"
           placeholder="نام کاربری&hellip;"
           required />
-        <mat-error *ngIf="form.get('Username')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+
+        @if (form.get("Username")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
@@ -77,9 +78,9 @@
           type="password"
           placeholder="رمز عبور&hellip;"
           required />
-        <mat-error *ngIf="form.get('Password')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("Password")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
     </div>
 

@@ -12,9 +12,9 @@
           type="number"
           placeholder="حداکثر فضای ذخیره کاربر(مگابایت)&hellip;"
           required />
-        <mat-error *ngIf="form.get('UserMaxStorage')?.invalid"
-          >این فیلد اجباری است
-        </mat-error>
+        @if (form.get("UserMaxStorage")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
       </mat-form-field>
     </div>
 

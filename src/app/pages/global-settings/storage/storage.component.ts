@@ -1,5 +1,10 @@
-import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,7 +15,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
-import { CreateUserSetting } from 'src/app/interface/auth-interface';
 
 @Component({
   selector: 'global-settings-storage',
@@ -23,11 +27,10 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    NgIf
   ]
 })
-export class GlobalSettingsStorageComponent implements OnInit {
-  @Input() data: CreateUserSetting;
+export class GlobalSettingsStorageComponent implements OnChanges {
+  @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
     UserMaxStorage: [null, Validators.required]
@@ -35,9 +38,9 @@ export class GlobalSettingsStorageComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.storageSetting));
+      this.form.patchValue(JSON.parse(this.data));
     }
   }
 

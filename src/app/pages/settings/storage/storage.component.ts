@@ -27,7 +27,7 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
   ]
 })
 export class SettingsStorageComponent implements OnInit {
-  @Input() data: CreateUserSetting;
+  @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
     maxUserStorage: [null, Validators.required],
@@ -39,7 +39,7 @@ export class SettingsStorageComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.storageSetting));
+      this.form.patchValue(JSON.parse(this.data));
     }
   }
 

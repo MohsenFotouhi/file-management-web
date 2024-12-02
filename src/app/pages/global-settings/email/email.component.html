@@ -31,6 +31,23 @@
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
+        <mat-label>ایمیل ادمین</mat-label>
+        <input
+          matInput
+          formControlName="AdminNotifyEmail"
+          placeholder="ایمیل&hellip;"
+          required />
+        <mat-error *ngIf="form.get('AdminNotifyEmail')?.invalid">
+          @if (form.get("AdminNotifyEmail")?.errors?.["required"]) {
+            این فیلد اجباری است
+          }
+          @if (form.get("AdminNotifyEmail")?.errors?.["email"]) {
+            ایمیل نامعتبر است
+          }
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
         <mat-label>نام کاربری</mat-label>
         <input
           matInput

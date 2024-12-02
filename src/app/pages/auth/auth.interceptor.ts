@@ -1,15 +1,37 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from '@angular/common/http';
 import { inject, Injectable, Injector } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, catchError, filter, finalize, Observable, switchMap, take, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  finalize,
+  Observable,
+  switchMap,
+  take,
+  tap,
+  throwError
+} from 'rxjs';
 import { AuthService } from './auth.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   isRefreshingToken: boolean = false;
-  tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null);
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private toast: ToastService
+  ) {}
 
   addToken(req: HttpRequest<any>, token: string): HttpRequest<any> {
     return req.clone({
@@ -19,7 +41,10 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     const snackBar = inject(MatSnackBar);
     const token = this.authService.getAuthToken();
 
@@ -33,18 +58,20 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(
-      tap(event => {
+      tap((event) => {
         // console.log(event);
       }),
       catchError((error: HttpErrorResponse) => {
         if ([401].includes(error.status)) {
-          return this.handle401Error(req, next).pipe(catchError(err => {
-            // Optionally handle error from handle401Error  
-            return throwError(() => err); // Propagate the error  
-          }));
+          return this.handle401Error(req, next).pipe(
+            catchError((err) => {
+              // Optionally handle error from handle401Error
+              return throwError(() => err); // Propagate the error
+            })
+          );
         } else {
           this.handle400Error(snackBar, error);
-          return throwError(() => error); // Return the original error  
+          return throwError(() => error); // Return the original error
         }
       })
     );
@@ -53,7 +80,7 @@ export class AuthInterceptor implements HttpInterceptor {
   handle401Error(req: HttpRequest<any>, next: HttpHandler) {
     if (!this.isRefreshingToken) {
       this.isRefreshingToken = true;
-      this.tokenSubject.next(null); // Notify subscribers to wait for the token  
+      this.tokenSubject.next(null); // Notify subscribers to wait for the token
 
       return this.authService.refreshToken().pipe(
         switchMap((newToken) => {
@@ -63,37 +90,35 @@ export class AuthInterceptor implements HttpInterceptor {
           }
 
           this.authService.logout();
-          return throwError(() => new HttpErrorResponse({ status: 401 })); // Propagated error  
+          return throwError(() => new HttpErrorResponse({ status: 401 })); // Propagated error
         }),
-        catchError(error => {
+        catchError((error) => {
           this.authService.logout();
-          return throwError(() => error); // Propagate refresh token error  
+          return throwError(() => error); // Propagate refresh token error
         }),
-        finalize(() => this.isRefreshingToken = false)
+        finalize(() => (this.isRefreshingToken = false))
       );
     } else {
-      // Wait for other requests to complete the token refresh  
+      // Wait for other requests to complete the token refresh
       return this.tokenSubject.pipe(
-        filter(token => token != null), // Wait until the token is set  
+        filter((token) => token != null), // Wait until the token is set
         take(1),
-        switchMap(token => next.handle(this.addToken(req, token!)))
+        switchMap((token) => next.handle(this.addToken(req, token!)))
       );
     }
   }
 
-
-  private handle400Error(snackBar: MatSnackBar, error: HttpErrorResponse)
-  {
-    if (error.error === 'Invalid token')
-    {
+  private handle400Error(snackBar: MatSnackBar, error: HttpErrorResponse) {
+    if (error.error === 'Invalid token') {
       this.authService.logout();
       return;
     }
 
-    snackBar.open(error.error, 'Close', {
-      duration: 3000, // Duration in milliseconds
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-    });
+    // snackBar.open(error.error, 'Close', {
+    //   duration: 3000, // Duration in milliseconds
+    //   horizontalPosition: 'right',
+    //   verticalPosition: 'top',
+    // });
+    this.toast.open(error.error);
   }
 }

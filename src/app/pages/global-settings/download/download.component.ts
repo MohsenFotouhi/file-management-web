@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -31,8 +37,8 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     ChipSelectComponent
   ]
 })
-export class GlobalSettingsDownloadComponenet {
-  @Input() data: CreateUserSetting;
+export class GlobalSettingsDownloadComponenet implements OnChanges {
+  @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   options = ['Option1', 'Option2', 'Option3', 'Option4', 'Option5'];
   form: FormGroup = this.fb.group({
@@ -50,9 +56,9 @@ export class GlobalSettingsDownloadComponenet {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.storageSetting));
+      this.form.patchValue(JSON.parse(this.data));
     }
   }
 

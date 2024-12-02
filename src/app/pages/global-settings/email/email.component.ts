@@ -1,5 +1,11 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -26,21 +32,22 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     NgIf
   ]
 })
-export class GlobalSettingsEmailComponent implements OnInit {
-  @Input() data: CreateUserSetting;
+export class GlobalSettingsEmailComponent implements OnChanges {
+  @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    SMTPServer : ['', Validators.required],
+    SMTPServer: ['', Validators.required],
     Port: [null, Validators.required],
+    AdminNotifyEmail: ['', [Validators.required, Validators.email]],
     Username: ['', Validators.required],
     Password: ['', Validators.required]
   });
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.storageSetting));
+      this.form.patchValue(JSON.parse(this.data));
     }
   }
 

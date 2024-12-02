@@ -56,8 +56,8 @@ export class SettingsComponent implements OnInit {
     this.spinner.show();
     this.settingsData$ = this.authService.getAllUserSetting().pipe(
       map((res) => {
-        this.settingsModel = res[0];
-        return res[0];
+        this.settingsModel = res[0] || {};
+        return this.settingsModel;
       }),
       finalize(() => {
         this.spinner.hide();

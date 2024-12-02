@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,20 +21,20 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     MatSlideToggleModule
   ]
 })
-export class SettingsRecycleBinComponent implements OnInit {
-  @Input() data: CreateUserSetting;
+export class SettingsRecycleBinComponent implements OnChanges {
+  @Input() data: string;
   @Output() formSubmit = new EventEmitter();
   form: FormGroup = this.fb.group({
-    userCanPhysicalDelete: [false],
-    userCanRestore: [false],
-    adminAllowDelete: [false]
+    UserCanPhysicalDelete: [false],
+    UserCanRestore: [false],
+    AdminAllowDelete: [false]
   });
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.data) {
-      this.form.patchValue(JSON.parse(this.data.recycleBinSetting));
+      this.form.patchValue(JSON.parse(this.data));
     }
   }
 
