@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+import { ChipSelectComponent } from 'src/app/components/chip-select/chip-select.component';
 
 import { TimepickerComponent } from 'src/app/components/timepicker/timepicker.component';
 import { CreateUserSetting } from 'src/app/interface/auth-interface';
@@ -26,7 +27,8 @@ import { CreateUserSetting } from 'src/app/interface/auth-interface';
     MatButtonModule,
     ReactiveFormsModule,
     TimepickerComponent,
-    MatSelectModule
+    MatSelectModule,
+    ChipSelectComponent
   ]
 })
 export class GlobalSettingsDownloadComponenet {

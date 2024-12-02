@@ -68,7 +68,7 @@
         controlName="EndTimeDownLoad"
         [form]="form"></app-timepicker>
 
-      <mat-form-field class="flex-auto">
+      <!-- <mat-form-field class="flex-auto">
         <mat-label>افزونه های قابل دانلود </mat-label>
         <mat-select formControlName="AllowExtentionDownLoad" multiple>
           <mat-select-trigger>
@@ -93,7 +93,8 @@
         @if (form.get("AllowExtentionDownLoad")?.invalid) {
           <mat-error>این فیلد اجباری است </mat-error>
         }
-      </mat-form-field>
+      </mat-form-field> -->
+      <vex-chip-select></vex-chip-select>
 
       <mat-form-field class="flex-auto">
         <mat-label>افزونه های غیر قابل دانلود</mat-label>
