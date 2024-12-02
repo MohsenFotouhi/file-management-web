@@ -78,7 +78,6 @@ export class GlobalSettingsComponent implements OnInit {
             this.settingsData[item.Key] = item.Value;
           });
         }),
-        tap(() => console.log(this.settingsData)),
         finalize(() => this.spinner.hide())
       )
       .subscribe();

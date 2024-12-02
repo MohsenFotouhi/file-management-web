@@ -1,5 +1,11 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -30,8 +36,9 @@ export class GlobalSettingsEmailComponent implements OnChanges {
   @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    SMTPServer : ['', Validators.required],
+    SMTPServer: ['', Validators.required],
     Port: [null, Validators.required],
+    AdminNotifyEmail: ['', [Validators.required, Validators.email]],
     Username: ['', Validators.required],
     Password: ['', Validators.required]
   });

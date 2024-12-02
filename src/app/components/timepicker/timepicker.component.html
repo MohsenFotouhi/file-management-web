@@ -6,8 +6,11 @@
       aria-label="12hr format"
       [ngxTimepicker]="default"
       [formControlName]="controlName"
+      [format]="24"
       matInput
       readonly />
-    <ngx-material-timepicker #default></ngx-material-timepicker>
+    <ngx-material-timepicker
+      #default
+      ></ngx-material-timepicker>
   </mat-form-field>
 </div>
