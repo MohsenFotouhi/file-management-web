@@ -7,7 +7,6 @@ import { DownloadManagerService } from './download-manager.service';
   providedIn: 'root'
 })
 export class FileDownloadService {
-  private chunkSize = 256 * 1024; // 1MB
   private maxConcurrency = 4;
   public progress$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
