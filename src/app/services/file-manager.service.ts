@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from "../../environments/environment";
 import { FileSystemCommand } from '../interface/file-system-command';
+import { FileDownloadService } from './file-download.service';
 
 
 @Injectable({
@@ -11,10 +12,16 @@ import { FileSystemCommand } from '../interface/file-system-command';
 export class FileManagerService
 {
 
-  constructor(private http: HttpClient) { }
+  progress = 0;
+
+  constructor(private http: HttpClient, private fileDownloadService: FileDownloadService) {
+    this.fileDownloadService.progress$.subscribe((value) => {
+      this.progress = value;
+    });
+}
 
   private apiUrl = environment.api + '/';
-  id: string = 'HgoApi1';
+  id: string = 'RayanFileManagerApi1';
 
 
   CallAPI(command: string, parameters: string): Observable<any>
@@ -24,14 +31,14 @@ export class FileManagerService
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 
 
   uploadFileChunk(formData: FormData): Observable<any>
   {
-    return this.http.post<any>(`${ this.apiUrl }HgoApi1`, formData, {
+    return this.http.post<any>(`${ this.apiUrl }RayanFileManagerApi1`, formData, {
       headers: new HttpHeaders({ 'enctype': 'multipart/form-data' })
     });
   }
@@ -49,7 +56,7 @@ export class FileManagerService
     formData = formData.set('command', command);
     formData = formData.set('parameters', parameters);
 
-    const url = `${ this.apiUrl }HgoApi2`;
+    const url = `${ this.apiUrl }RayanFileManagerApi2`;
     return this.http.get(url, { params: formData, responseType: 'blob' });
   }
 
@@ -62,7 +69,7 @@ export class FileManagerService
     formData.append('parameters', parameters);
     formData.append('file', file, file.name);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 
@@ -88,7 +95,7 @@ export class FileManagerService
     formData.append('arguments', argumentsData);
     formData.append('command', 'UploadChunk');
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     // const url = `http://localhost:13153/api/file-manager-file-system-images`;
     return this.http.post<any>(url, formData);
   }
@@ -118,7 +125,7 @@ export class FileManagerService
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
   downloadFileAsync(command: string, parameters: string): Observable<any>
@@ -131,6 +138,12 @@ export class FileManagerService
 
     const url = `${ this.apiUrl }api/DownloadFile/DownloadFileAsync`;
     return this.http.post(url, formData, { responseType: 'blob' });
+  }
+
+  async downloadFileWithRange(fileId: string,totalSize:number) {
+    const url = `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
+
+    await this.fileDownloadService.downloadFile(url, totalSize);
   }
 
   downloadShareFiles(downloadId: string, VirtualPath: string): Observable<any>
@@ -152,7 +165,7 @@ export class FileManagerService
     formData.append('command', actionName);
     formData.append('parameters', data);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
 
   }
@@ -176,7 +189,7 @@ export class FileManagerService
     formData.append('command', "getSharedFiles");
     formData.append('parameters', '');
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${ this.apiUrl }RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 

@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 })
 export class FileService {
   API_URL = environment.api;
-  id: string = 'HgoApi1';
+  id: string = 'RayanFileManagerApi1';
 
   constructor(private http: HttpClient) {
   }
@@ -18,7 +18,7 @@ export class FileService {
     formData.append('id', this.id);
     formData.append('command', 'getFolderContent');
     formData.append('parameters', parameters);
-    const url = this.API_URL + '/HgoApi1';
+    const url = this.API_URL + '/RayanFileManagerApi1';
     return this.http.post<any>(url, formData);
   }
 
