@@ -3,6 +3,8 @@ export class File {
   FileName!: string;
   FarsiName!: string;
   FileSize!: string;
+  FileSizeInDisk!: string;
+  RealFileSize!: number;
   ModifiedDate!: string;
   VirtualPath!: string;
   DownloadId!: string;
