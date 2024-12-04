@@ -1,17 +1,33 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+  inject
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {
   MatAutocompleteSelectedEvent,
   MatAutocompleteModule
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'vex-chip-select',
@@ -22,67 +38,84 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
     MatChipsModule,
     MatIconModule,
     MatAutocompleteModule,
-    ReactiveFormsModule,
-    AsyncPipe
+    ReactiveFormsModule
   ],
   templateUrl: './chip-select.component.html',
   styleUrl: './chip-select.component.scss'
 })
 export class ChipSelectComponent {
-  separatorKeysCodes: number[] = [ENTER, COMMA];
-  fruitCtrl = new FormControl('');
-  filteredFruits: Observable<string[]>;
-  fruits: string[] = ['Lemon'];
-  allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  @Input() options: string[];
+  @Input() label: string = 'Select one option';
+  @Input() placeholder: string = 'Options...';
+  @Input() controlName: string;
+  @Input() formGroup: FormGroup;
+  @Input() selectedOptions: string[] = [];
+  @Output() selectedChange = new EventEmitter<string[]>();
+  @Output() optionsChange = new EventEmitter();
 
-  @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  optionCtrl = new FormControl('', Validators.pattern(/^\.[a-zA-Z0-9]+$/));
+  filteredOptions: Observable<string[]>;
+  isInvalid = false;
+
+  @ViewChild('optionInput') optionInput: ElementRef<HTMLInputElement>;
 
   announcer = inject(LiveAnnouncer);
 
-  constructor() {
-    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+  constructor(private toast: ToastService) {
+    this.filteredOptions = this.optionCtrl.valueChanges.pipe(
       startWith(null),
-      map((fruit: string | null) =>
-        fruit ? this._filter(fruit) : this.allFruits.slice()
-      )
+      map((option: string | null) => {
+        this.isInvalid = this.formGroup.controls[this.controlName].invalid;
+        return option ? this._filter(option) : this.options.slice();
+      }),
     );
   }
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
+    // Add our Option
+    if (this.optionCtrl.invalid) {
+      this.toast.open('فرمت وارد شده صحیح نمیباشد(باید به فرمت *. باشد)');
+    }
 
-    // Add our fruit
-    if (value) {
-      this.fruits.push(value);
+    if (value && this.optionCtrl.valid) {
+      this.selectedOptions.push(value);
     }
 
     // Clear the input value
     event.chipInput!.clear();
 
-    this.fruitCtrl.setValue(null);
+    this.optionCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.fruits.indexOf(fruit);
+  remove(option: string): void {
+    const index = this.selectedOptions.indexOf(option);
 
     if (index >= 0) {
-      this.fruits.splice(index, 1);
-
-      this.announcer.announce(`Removed ${fruit}`);
+      this.selectedOptions.splice(index, 1);
+      this.announcer.announce(`Removed ${option}`);
+      this.emitChange();
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.fruits.push(event.option.viewValue);
-    this.fruitInput.nativeElement.value = '';
-    this.fruitCtrl.setValue(null);
+    const value = event.option.viewValue;
+    this.selectedOptions.push(value);
+    this.optionInput.nativeElement.value = '';
+    this.optionCtrl.setValue(null);
+    this.emitChange();
+    // this._filter(value);
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+  emitChange() {
+    this.formGroup.controls[this.controlName].setValue(this.selectedOptions);
+    this.selectedChange.emit();
+  }
 
-    return this.allFruits.filter((fruit) =>
-      fruit.toLowerCase().includes(filterValue)
-    );
+  private _filter(value: string) {
+    const filteredOptions = this.options.filter((option) => option !== value);
+    this.optionsChange.emit(filteredOptions);
+    return filteredOptions;
   }
 }

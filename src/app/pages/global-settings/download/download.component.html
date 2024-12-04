@@ -68,66 +68,32 @@
         controlName="EndTimeDownLoad"
         [form]="form"></app-timepicker>
 
-      <!-- <mat-form-field class="flex-auto">
-        <mat-label>افزونه های قابل دانلود </mat-label>
-        <mat-select formControlName="AllowExtentionDownLoad" multiple>
-          <mat-select-trigger>
-            {{ form.get("AllowExtentionDownLoad")?.value[0] || "" }}
-            @if ((form.get("AllowExtentionDownLoad")?.value?.length || 0) > 1) {
-              <span class="example-additional-selection">
-                (+{{
-                  (form.get("AllowExtentionDownLoad")?.value?.length || 0) - 1
-                }}
-                {{
-                  form.get("AllowExtentionDownLoad")?.value?.length === 2
-                    ? "other"
-                    : "others"
-                }})
-              </span>
-            }
-          </mat-select-trigger>
-          @for (option of options; track option) {
-            <mat-option [value]="option">{{ option }}</mat-option>
-          }
-        </mat-select>
-        @if (form.get("AllowExtentionDownLoad")?.invalid) {
-          <mat-error>این فیلد اجباری است </mat-error>
-        }
-      </mat-form-field> -->
-      <vex-chip-select></vex-chip-select>
+      <vex-chip-select
+        [options]="filteredDownloadExtentions"
+        [formGroup]="form"
+        [selectedOptions]="form.get('AllowExtentionDownLoad')?.value || []"
+        controlName="AllowExtentionDownLoad"
+        label="افزونه های قابل دانلود"
+        placeholder="افزونه های قابل دانلود..."
+        (selectedChange)="handleExtentionsChange()"></vex-chip-select>
 
-      <mat-form-field class="flex-auto">
-        <mat-label>افزونه های غیر قابل دانلود</mat-label>
-        <mat-select formControlName="DenyExtentionDownLoad" multiple>
-          <mat-select-trigger>
-            {{ form.get("DenyExtentionDownLoad")?.value[0] || "" }}
-            @if ((form.get("DenyExtentionDownLoad")?.value?.length || 0) > 1) {
-              <span class="example-additional-selection">
-                (+{{
-                  (form.get("DenyExtentionDownLoad")?.value?.length || 0) - 1
-                }}
-                {{
-                  form.get("DenyExtentionDownLoad")?.value?.length === 2
-                    ? "other"
-                    : "others"
-                }})
-              </span>
-            }
-          </mat-select-trigger>
-          @for (option of options; track option) {
-            <mat-option [value]="option">{{ option }}</mat-option>
-          }
-        </mat-select>
-        @if (form.get("DenyExtentionDownLoad")?.invalid) {
-          <mat-error>این فیلد اجباری است </mat-error>
-        }
-      </mat-form-field>
+      <vex-chip-select
+        [options]="filteredDownloadExtentions"
+        [formGroup]="form"
+        [selectedOptions]="form.get('DenyExtentionDownLoad')?.value || []"
+        controlName="DenyExtentionDownLoad"
+        label="افزونه های غیر قابل دانلود"
+        placeholder="افزونه های غیر قابل دانلود..."
+        (selectedChange)="handleExtentionsChange()"></vex-chip-select>
 
       <mat-form-field class="flex-auto">
         <mat-label>روز های مجاز برای دانلود</mat-label>
-        <mat-select formControlName="AllowDayDownLoad" multiple>
+        <mat-select
+          formControlName="AllowDayDownLoad"
+          multiple
+          (selectionChange)="handleDaysSelectChange()">
           <mat-select-trigger>
-            {{ form.get("AllowDayDownLoad")?.value[0] || "" }}
+            {{ allowDownloadSummaryText || "" }}
             @if ((form.get("AllowDayDownLoad")?.value?.length || 0) > 1) {
               <span class="example-additional-selection">
                 (+{{ (form.get("AllowDayDownLoad")?.value?.length || 0) - 1 }}
@@ -139,8 +105,12 @@
               </span>
             }
           </mat-select-trigger>
-          @for (option of options; track option) {
-            <mat-option [value]="option">{{ option }}</mat-option>
+          @for (day of weekDays; track day.value; let idx = $index) {
+            <mat-option
+              [value]="day.value"
+              [disabled]="disabledAllowDays[idx]"
+              >{{ day.name }}</mat-option
+            >
           }
         </mat-select>
         @if (form.get("AllowDayDownLoad")?.invalid) {
@@ -150,9 +120,12 @@
 
       <mat-form-field class="flex-auto">
         <mat-label>روز های غیر مجاز برای دانلود</mat-label>
-        <mat-select formControlName="DenyDayDownLoad" multiple>
+        <mat-select
+          formControlName="DenyDayDownLoad"
+          multiple
+          (selectionChange)="handleDaysSelectChange()">
           <mat-select-trigger>
-            {{ form.get("DenyDayDownLoad")?.value[0] || "" }}
+            {{ denyDownloadSummaryText || "" }}
             @if ((form.get("DenyDayDownLoad")?.value?.length || 0) > 1) {
               <span class="example-additional-selection">
                 (+{{ (form.get("DenyDayDownLoad")?.value?.length || 0) - 1 }}
@@ -164,8 +137,12 @@
               </span>
             }
           </mat-select-trigger>
-          @for (option of options; track option) {
-            <mat-option [value]="option">{{ option }}</mat-option>
+          @for (day of weekDays; track day.value; let idx = $index) {
+            <mat-option
+              [disabled]="disabledDenyDays[idx]"
+              [value]="day.value"
+              >{{ day.name }}</mat-option
+            >
           }
         </mat-select>
         @if (form.get("DenyDayDownLoad")?.invalid) {
