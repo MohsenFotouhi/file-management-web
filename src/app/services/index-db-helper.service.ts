@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class IndexDBHelperService {
 
-  constructor() { }
+  constructor() {
+  }
 
   dbName = 'DownloadDB';
   storeName = 'fileChunks';
@@ -57,5 +58,13 @@ export class IndexDBHelperService {
       request.onsuccess = () => resolve(request.result as string[]);
       request.onerror = (event: any) => reject(event.target.error);
     });
+  }
+
+  async cleanupIndexedDB(db: IDBDatabase) {
+    const transaction = db.transaction(this.storeName, 'readwrite');
+    const store = transaction.objectStore(this.storeName);
+
+    const request = store.clear();
+    request.onsuccess = () => console.log('IndexedDB cleaned up.');
   }
 }

@@ -8,10 +8,14 @@ import { FileDownloadService } from '../../services/file-download.service';
 })
 export class DashboardComponent implements OnInit {
   progress = 0;
+  isDownloadWithIDM = true;
 
   constructor(private fileDownloadService: FileDownloadService) {
     this.fileDownloadService.progress$.subscribe((value) => {
       this.progress = value;
+    });
+    this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
+      this.isDownloadWithIDM = value;
     });
   }
 
