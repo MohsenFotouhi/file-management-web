@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, lastValueFrom, mergeMap } from 'rxjs';
 import { IndexDBHelperService } from './index-db-helper.service';
 import { DownloadManagerService } from './download-manager.service';
+import { BehaviorSubject, from, lastValueFrom, mergeMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileDownloadService {
   private maxConcurrency = 4;
+  private chunkSize = 1024 * 1024; // 1MB
   public progress$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public isDownloadWithIDM$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(private dbHelper: IndexDBHelperService,
               private downloadManagerService: DownloadManagerService) {
@@ -36,7 +38,20 @@ export class FileDownloadService {
       )
       .subscribe({
         next: (chunkIndex) => console.log(`Chunk ${chunkIndex + 1} downloaded.`),
-        error: (err) => console.error('Error downloading chunk:', err),
+        error: (err) => {
+          if (navigator.onLine) {
+            if (err.status === 0) {
+              this.isDownloadWithIDM$.next(true);
+              console.error('block with IDM: ', err);
+            } else {
+              this.isDownloadWithIDM$.next(false);
+              console.error('Error downloading chunk:', err);
+            }
+          } else {
+            this.isDownloadWithIDM$.next(false);
+            console.error('network error: ', err);
+          }
+        },
         complete: async () => {
           console.log('All chunks downloaded.');
           await this.combineChunks(db, totalChunks);
@@ -75,7 +90,7 @@ export class FileDownloadService {
       if (chunk) chunks.push(chunk);
     }
 
-    await this.cleanupIndexedDB(db);
+    await this.dbHelper.cleanupIndexedDB(db);
 
     const fileBlob = new Blob(chunks);
     const url = URL.createObjectURL(fileBlob);
@@ -85,14 +100,6 @@ export class FileDownloadService {
     a.download = 'downloaded-file';
     a.click();
     URL.revokeObjectURL(url);
-  }
-
-  private async cleanupIndexedDB(db: IDBDatabase) {
-    const transaction = db.transaction(this.dbHelper.storeName, 'readwrite');
-    const store = transaction.objectStore(this.dbHelper.storeName);
-
-    const request = store.clear();
-    request.onsuccess = () => console.log('IndexedDB cleaned up.');
   }
 
   async getFileSize(fileUrl: string): Promise<number> {
