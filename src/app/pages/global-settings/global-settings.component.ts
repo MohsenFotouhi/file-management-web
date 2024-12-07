@@ -19,6 +19,7 @@ import { GlobalSettingsLDAPComponent } from './ldap/ldap.component';
 import { GlobalSettingsEmailComponent } from './email/email.component';
 import { Setting } from 'src/app/interface/setting-model';
 import { SettingService } from 'src/app/services/setting.service';
+import { GlobalSettingsOtpComponent } from './otp/otp.component';
 
 enum GlobalSettingsTabs {
   GeneralGlobalSetting = 'GeneralGlobalSetting',
@@ -26,7 +27,8 @@ enum GlobalSettingsTabs {
   EmailGlobalSetting = 'EmailGlobalSetting',
   LDAPSetting = 'LDAPSetting',
   DownloadGlobalSetting = 'DownloadGlobalSetting',
-  UploadGlobalSetting = 'UploadGlobalSetting'
+  UploadGlobalSetting = 'UploadGlobalSetting',
+  OtpGlobalSetting = 'OtpGlobalSetting'
 }
 
 @Component({
@@ -49,7 +51,8 @@ enum GlobalSettingsTabs {
     GlobalSettingsDownloadComponenet,
     GlobalSettingsUploadComponenet,
     GlobalSettingsLDAPComponent,
-    GlobalSettingsEmailComponent
+    GlobalSettingsEmailComponent,
+    GlobalSettingsOtpComponent
     // AsyncPipe,
     // NgIf
   ]
