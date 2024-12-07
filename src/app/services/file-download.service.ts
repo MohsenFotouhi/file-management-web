@@ -10,7 +10,6 @@ export class FileDownloadService {
   private maxConcurrency = 4;
   private chunkSize = 1024 * 1024; // 1MB
   public progress$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  public isDownloadWithIDM$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private dbHelper: IndexDBHelperService,
               private downloadManagerService: DownloadManagerService) {
