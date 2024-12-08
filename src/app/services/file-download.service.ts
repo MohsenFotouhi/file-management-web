@@ -27,7 +27,7 @@ export class FileDownloadService {
       .pipe(
         mergeMap(
           (chunkIndex) =>
-            this.downloadAndSaveChunk(db, fileUrl, chunkIndex).then(() => {
+            this.downloadAndSaveChunk(db, fileUrl, chunkIndex, totalSize).then(() => {
               completedChunks++;
               const progress = (completedChunks / totalChunks) * 100;
               this.progress$.next(progress);
@@ -60,9 +60,9 @@ export class FileDownloadService {
       });
   }
 
-  private async downloadAndSaveChunk(db: IDBDatabase, fileUrl: string, chunkIndex: number): Promise<number> {
+  private async downloadAndSaveChunk(db: IDBDatabase, fileUrl: string, chunkIndex: number,totalSize:number): Promise<number> {
     const start = chunkIndex * this.chunkSize;
-    const end = Math.min(start + this.chunkSize - 1, await this.getFileSize(fileUrl));
+    const end = Math.min(start + this.chunkSize - 1, totalSize );
 
     const chunk = await lastValueFrom(
       this.downloadManagerService.downloadChunk(fileUrl, start, end)
@@ -102,9 +102,9 @@ export class FileDownloadService {
     URL.revokeObjectURL(url);
   }
 
-  async getFileSize(fileUrl: string): Promise<number> {
-    // const response = await fetch(fileUrl, { method: 'HEAD' });
-    // return parseInt(response.headers.get('content-length') || '0', 10);
-    return 2102720520 - 1;
-  }
+  //async getFileSize(fileUrl: string): Promise<number> {
+  //  // const response = await fetch(fileUrl, { method: 'HEAD' });
+  //  // return parseInt(response.headers.get('content-length') || '0', 10);
+  //  return 2102720520 - 1;
+  //}
 }
