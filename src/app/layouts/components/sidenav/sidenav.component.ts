@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { VexChartComponent } from '@vex/components/vex-chart/vex-chart.component';
 import { SidenavStorageComponent } from './sidenav-storage/sidenav-storage.component';
 import { FileManagerService } from '../../../services/file-manager.service';
+import { UserStorageUse } from 'src/app/interface/share-models';
 
 @Component({
   selector: 'vex-sidenav',
@@ -63,6 +64,7 @@ export class SidenavComponent implements OnInit {
   userMenuOpen$: Observable<boolean> = of(false);
 
   items$: Observable<NavigationItem[]> = this.navigationService.items$;
+  userStorage$: Observable<UserStorageUse>;
 
   constructor(
     private navigationService: NavigationService,
@@ -71,8 +73,7 @@ export class SidenavComponent implements OnInit {
     private readonly popoverService: VexPopoverService,
     private readonly dialog: MatDialog,
     private service: FileManagerService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     // this.service.CallAPI("", "").pipe(
@@ -80,7 +81,8 @@ export class SidenavComponent implements OnInit {
     //     this.storageUsage = data;
     //   }),
     // ).subscribe()
-    this.storageUsage = 60;
+    // this.storageUsage = 60;
+    this.userStorage$ = this.getUserStorage();
   }
 
   collapseOpenSidenav() {
@@ -133,5 +135,15 @@ export class SidenavComponent implements OnInit {
       width: '100%',
       maxWidth: '600px'
     });
+  }
+
+  getUserStorage() {
+    return this.service.getUserStorageUse().pipe(
+      map((res) => {
+        res.MaxUserStorage = Math.trunc(res.MaxUserStorage / 1000000);
+        res.UserStorageUse = Math.trunc(res.UserStorageUse / 1000000);
+        return res;
+      })
+    );
   }
 }
