@@ -63,6 +63,16 @@
               "></global-settings-upload>
           </div>
         </mat-tab>
+
+        <mat-tab label="OTP">
+          <div class="p-6">
+            <global-settings-otp
+              [data]="settingsData[tabs.OtpGlobalSetting]"
+              (submitForm)="
+                handleSubmit($event, tabs.OtpGlobalSetting)
+              "></global-settings-otp>
+          </div>
+        </mat-tab>
       </mat-tab-group>
     </div>
   </vex-page-layout-content>

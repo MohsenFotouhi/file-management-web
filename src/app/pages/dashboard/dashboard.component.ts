@@ -1,27 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../../services/dashboard.service';
+import { FileDownloadService } from '../../services/file-download.service';
 
 @Component({
   selector: 'vex-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit
-{
+export class DashboardComponent implements OnInit {
+  progress = 0;
+  isDownloadWithIDM = true;
 
-
-  tableData: any[] = [];
-
-  constructor(private service: DashboardService)
-  {
-
+  constructor(private fileDownloadService: FileDownloadService) {
+    this.fileDownloadService.progress$.subscribe((value) => {
+      this.progress = value;
+    });
+    this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
+      this.isDownloadWithIDM = value;
+    });
   }
 
+  ngOnInit(): void {
+  }
 
-  ngOnInit(): void
-  {
+  downloadedFileSize = 0;
+  totalSize = 2102720520;
 
+  getProgressValue(): number {
+    return Math.ceil((this.downloadedFileSize / this.totalSize) * 100);
+  }
 
+  async downloadFile() {
+    const fileUrl = 'http://rfms.roka-co.com:443/api/file/download-with-range';
+    const totalSize = await this.fileDownloadService.getFileSize(fileUrl);
+    await this.fileDownloadService.downloadFile(fileUrl, totalSize);
   }
 
 }

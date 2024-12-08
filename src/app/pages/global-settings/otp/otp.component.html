@@ -1,0 +1,98 @@
+<div @fadeInUp class="card flex-auto">
+  <form
+    [formGroup]="form"
+    class="px-6 py-4 flex flex-col"
+    (ngSubmit)="onSubmit()">
+    <div class="flex flex-col sm:grid sm:grid-cols-2 sm:gap-4">
+      <mat-form-field class="flex-auto">
+        <mat-label>روش ارسال</mat-label>
+        <mat-select formControlName="SendType">
+          <mat-select-trigger>
+            {{ sendTypesEnum[form.value["SendType"]] || "" }}
+          </mat-select-trigger>
+          @for (type of sendTypes; track type.value; let idx = $index) {
+            <mat-option [value]="type.value">{{ type.key }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>روش تایید دانلود</mat-label>
+        <mat-select formControlName="DownloadVerificationMethod">
+          <mat-select-trigger>
+            {{ sendTypesEnum[form.value["DownloadVerificationMethod"]] || "" }}
+          </mat-select-trigger>
+          @for (type of sendTypes; track type.value; let idx = $index) {
+            <mat-option [value]="type.value">{{ type.key }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن ایمیل</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          formControlName="TextEmail"
+          placeholder="متن ایمیل&hellip;"
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
+        @if (form.get("TextEmail")?.invalid) {
+          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن پیامک</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          formControlName="TextSms"
+          placeholder="متن پیامک&hellip;"
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
+        @if (form.get("TextSms")?.invalid) {
+          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن توکن</mat-label>
+        <input
+          matInput
+          formControlName="TextToken"
+          placeholder="متن توکن&hellip;" />
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>آدرس لینک</mat-label>
+        <input
+          matInput
+          formControlName="LinkUrl"
+          placeholder="آدرس لینک&hellip;" />
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>Secret key</mat-label>
+        <input
+          matInput
+          formControlName="SecretKey"
+          placeholder="Secret key&hellip;" />
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>Timeout</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="TimeOut"
+          placeholder="Timeout&hellip;" />
+      </mat-form-field>
+
+    </div>
+
+    <div class="flex items-center justify-end gap-2">
+      <button color="primary" mat-flat-button type="submit">ذخیره</button>
+    </div>
+  </form>
+</div>

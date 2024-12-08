@@ -17,3 +17,8 @@ export interface PublicModel {
   id: string;
   name: string;
 }
+
+export interface UserStorageUse {
+  UserStorageUse: number;
+  MaxUserStorage: number;
+}
