@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit {
 
   async downloadFile() {
     const fileUrl = 'http://rfms.roka-co.com:443/api/file/download-with-range';
-    const totalSize = await this.fileDownloadService.getFileSize(fileUrl);
+    const totalSize = 2102720520 - 1;
     await this.fileDownloadService.downloadFile(fileUrl, totalSize);
   }
 
