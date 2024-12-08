@@ -13,9 +13,9 @@ import { ShareModalComponent } from './components/share-modal/share-modal.compon
 export class DialogService {
   constructor(private dialog: MatDialog) { }
 
-  openRenameDialog(files: File[]): Promise<string | undefined> {
+  openRenameDialog(name: string): Promise<string | undefined> {
     const dialogRef = this.dialog.open(RenameDialogComponent, {
-      data: { newName: files },
+      data: { newName: name },
       width: '500px'
     });
 

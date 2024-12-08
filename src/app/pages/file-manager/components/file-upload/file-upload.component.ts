@@ -1,31 +1,30 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
 import { Component, Inject } from '@angular/core';
+import { MatInputModule } from '@angular/material/input';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { FileManagerService } from 'src/app/services/file-manager.service';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
   MatDialogState
 } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { firstValueFrom } from 'rxjs'; // Import for converting observable to promise
-import { FileManagerService } from 'src/app/services/file-manager.service';
-import { log } from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
   imports: [
+    NgIf,
+    NgFor,
+    FormsModule,
     CommonModule,
+    MatInputModule,
     MatDialogModule,
     MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
     ReactiveFormsModule,
-    NgFor,
-    NgIf,
     MatProgressBarModule
   ],
   templateUrl: './file-upload.component.html',
