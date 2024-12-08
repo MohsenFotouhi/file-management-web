@@ -1,16 +1,30 @@
-<div style="background-color: rgb(250, 250, 250); width: 500px;">
-  
-  <h1 mat-dialog-title>تغییر نام فایل</h1>
-  <div style="background-color: rgb(255, 252, 252); border: black; margin: 5px;">
-  <div mat-dialog-content >
-    <mat-form-field style="width: 100%; background-color: white;">
-      <label >نام جدید</label>
-      <input class="file-name"  matInput [(ngModel)]="data.newName" >
-    </mat-form-field>
+<form
+  [formGroup]="renameForm"
+  class="bg-slate-50 w-full"
+  (ngSubmit)="onConfirm()">
+  <h1 mat-dialog-title>تغییر نام</h1>
+  <div class="bg-white border-black m-1">
+    <div mat-dialog-content>
+      <mat-form-field class="w-100 bg-white">
+        <mat-label>نام جدید</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="name"
+        />
+        <mat-hint>حداکثر 200 کاراکتر باشد.</mat-hint>
+        @if (name?.invalid) {
+          @if (name?.hasError('required')) {
+            <mat-error class="text-xs">نام اجباری است.</mat-error>
+          } @else if (name?.hasError('maxlength')) {
+            <mat-error class="text-xs">طول نام حداکثر 200 کاراکتر می باشد.</mat-error>
+          }
+        }
+      </mat-form-field>
+    </div>
   </div>
-</div>
   <div mat-dialog-actions>
-    <button class="dialog-button" mat-button (click)="onCancel()">انصراف</button>
-    <button class="dialog-button" mat-button (click)="onConfirm()">تایید</button>
+    <button mat-button class="dialog-button text-white" type="button" (click)="onCancel()">انصراف</button>
+    <button mat-button class="dialog-button text-white" type="submit">تایید</button>
   </div>
-</div>
+</form>
