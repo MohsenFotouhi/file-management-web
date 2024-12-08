@@ -338,6 +338,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       });
       const data = {
         Path: this.currentPath.title,
+        ParentDirectoryID: this.currentPath.fileId,
         Items: Items,
         NewName: newName,
         ListId: ListId
@@ -376,6 +377,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
       const data = {
         Path: this.currentPath.fullTitle,
+        ParentDirectoryID: this.currentPath.fileId,
         Items: Items,
         ListId: ListId
       };
@@ -396,6 +398,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     if (folderName) {
       const data = {
         Path: path,
+        ParentDirectoryID: this.currentPath.fileId,
         FolderName: folderName
       };
       const jsonData = JSON.stringify(data);
@@ -410,6 +413,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     if (fileName) {
       const data = {
         Path: this.currentPath.fullTitle,
+        ParentDirectoryID: this.currentPath.fileId,
         FileName: fileName
       };
       await this.callApiWithResponse('CreateNewFile', JSON.stringify(data));
@@ -440,7 +444,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     } else {
       for (const file of this.selectedFiles) {
         try {
-         
+
          // const response = await firstValueFrom<Blob>(
           //  this.service.downloadFileAsync('download',
           //    file.FileId)
@@ -518,6 +522,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async search() {
     const data = {
       Path: this.currentPath.title,
+      ParentDirectoryID: this.currentPath.fileId,
       Query: this.searchKeyWord
     };
     await this.callApiWithResponse('search', JSON.stringify(data));

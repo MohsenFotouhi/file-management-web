@@ -93,13 +93,15 @@
           <div class="resizer-icon"></div>
         </div>
 
-        <div [ngClass]="{'list-view': isListView, 'grid-view': !isListView}"
-             class="col-10 p-2 file-container  resizable"
-             #resizableDiv2 (contextmenu)="onContextMenu($event , 'emptyArea')">
+        <div
+          #resizableDiv2
+          class="col-10 p-2 file-container resizable"
+          [ngClass]="{'list-view': isListView, 'grid-view': !isListView}"
+          (contextmenu)="onContextMenu($event , 'emptyArea')">
           <div id="files-container" class="mx-0 row" (click)="onDivClick($event)">
             <div class="border fileItem"
-                 [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  *ngFor="let currentFolder of folders"
+                 [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
                  (contextmenu)="onFolderContextMenu($event, currentFolder)"
                  (click)="onFolderClick($event , currentFolder)">
               <img src="assets/img/filesIcons/folder.png" alt="img/folder.png"

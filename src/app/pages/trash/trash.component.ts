@@ -210,13 +210,6 @@ export class TrashComponent implements OnInit, AfterViewInit {
     }, 300);
   }
 
-  async onFolderDblClick(folder: Folder) {
-    clearTimeout(this.clickTimeout);
-    this.clickTimeout = null;
-    const child = this.currentPath.childs.find(x => x.title == folder.FolderName);
-    if (child) await this.pathChange(child);
-  }
-
   isFolderInSelectedFiles(file: Folder): boolean {
     return this.selectedFolders.includes(file);
   }
@@ -360,6 +353,7 @@ export class TrashComponent implements OnInit, AfterViewInit {
 
       const data = {
         Path: this.currentPath.fullTitle,
+        ParentDirectoryID: this.currentPath.fileId,
         Items: Items,
         ListId: ListId
       };
