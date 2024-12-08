@@ -56,3 +56,11 @@ export enum WeekDays {
   Thursday = 'پنجشنبه',
   Friday = 'جمعه'
 }
+
+export enum OtpType {
+  Email = 1,
+  Sms = 2,
+  App = 3,
+  // Link = 4,
+  // None = 0
+}
