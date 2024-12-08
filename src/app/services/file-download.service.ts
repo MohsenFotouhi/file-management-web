@@ -8,8 +8,9 @@ import { BehaviorSubject, from, lastValueFrom, mergeMap } from 'rxjs';
 })
 export class FileDownloadService {
   private maxConcurrency = 4;
-  private chunkSize = 1024 * 1024; // 1MB
+  private chunkSize = 1024 * 256; // 256KB
   public progress$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  isDownloadWithIDM$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private dbHelper: IndexDBHelperService,
               private downloadManagerService: DownloadManagerService) {
