@@ -48,7 +48,6 @@
             <div class="border fileItem"
                  *ngFor="let currentFolder of folders"
                  [ngClass]=" isFolderInSelectedFiles(currentFolder) ?  'active':  'inactive' "
-                 (dblclick)="onFolderDblClick(currentFolder)"
                  (click)="onFolderClick($event , currentFolder)">
               <img src="assets/img/filesIcons/folder.png"
                    alt="img/folder.png"
