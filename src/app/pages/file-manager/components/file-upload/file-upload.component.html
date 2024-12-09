@@ -1,27 +1,31 @@
-
-<div style="background-color: rgb(250, 250, 250); min-width: 500px;" class="dropzone" (dragover)="onDragOver($event)"
-    (drop)="onDrop($event)">
-    <div mat-dialog-content class="chooser-container">
-        <input type="file" multiple (change)="onFileSelected($event)" hidden #fileInput>
-        <button class="dialog-button" (click)="fileInput.click()">انتخاب فایل</button>
-        <p class="file-chooser-p">فایل خود را به اینجا بکشید یا برای انتخاب کلیک کنید</p>
-    </div>
+<div class="bg-slate-50 w-full dropzone"
+     (dragover)="onDragOver($event)"
+     (drop)="onDrop($event)">
+  <div mat-dialog-content class="chooser-container">
+    <input type="file" multiple (change)="onFileSelected($event)" hidden #fileInput>
+    <button class="dialog-button" (click)="fileInput.click()">انتخاب فایل</button>
+    <p class="file-chooser-p">فایل خود را به اینجا بکشید یا برای انتخاب کلیک کنید</p>
+  </div>
 </div>
 
 <div dir="ltr">
-    <ul class="max-h-[67vh] overflow-y-auto overflow-x-hidden mx-2 px-0">
-        <li *ngFor="let file of files; let i = index">
-            <div class="font-mono">
-                <div class=""> 
-                    <div class="d-flex flex-row align-items-center">
-                      <p class="text-left mb-0 pr-2 text-field">{{ file.name}}  </p>  <mat-progress-bar [ngClass]="{'progress-completed': uploadProgress[i] === 100}" [dir]="'ltr'" mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar> 
-                    </div>
-                 </div>
-            </div>
-        </li>
-    </ul>
+  <ul class="max-h-[67vh] overflow-y-auto overflow-x-hidden mx-2 px-0">
+    <li *ngFor="let file of files; let i = index">
+      <div class="font-mono">
+        <div class="">
+          <div class="d-flex flex-row align-items-center">
+            <p class="text-left mb-0 pr-2 text-field">{{ file.name }} </p>
+            <mat-progress-bar
+              [dir]="'ltr'"
+              [ngClass]="{'progress-completed': uploadProgress[i] === 100}"
+              mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>
 
 <div mat-dialog-actions>
-    <button class="dialog-button" mat-button (click)="close()">بستن</button>
+  <button class="dialog-button" mat-button (click)="close()">بستن</button>
 </div>
