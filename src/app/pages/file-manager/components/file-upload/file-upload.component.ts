@@ -40,8 +40,7 @@ export class FileUploadComponent {
     public dialogRef: MatDialogRef<FileUploadComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: FileManagerService
-  ) {
-  }
+  ) {}
 
   close(): void {
     this.dialogRef.close(false);
@@ -120,15 +119,23 @@ export class FileUploadComponent {
 
     try {
       const state = this.dialogRef.getState();
-      if (
-        state === MatDialogState.CLOSED ||
-        state === MatDialogState.CLOSING
-      ) {
+      if (state === MatDialogState.CLOSED || state === MatDialogState.CLOSING) {
         return;
       }
+      const temp = {
+        FilePath: this.data.currentPath.fullTitle,
+        FileName: file.name,
+        FileSize: file.size
+      };
+      // Pre upload api call
+      const response = await firstValueFrom(
+        this.service.CallAPI('PreUpload', JSON.stringify(temp))
+      );
+      console.log(response);
+
       // Use firstValueFrom to convert observable to promise and wait for it to complete
       await firstValueFrom(
-        this.service.uploadFile('upload', this.data.currentPath, chunkFile)
+        this.service.uploadFile('upload', this.data, chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
@@ -144,5 +151,11 @@ export class FileUploadComponent {
     } catch (error) {
       console.error('Upload error:', error);
     }
+  }
+
+  async deleteUploadedFile() {
+    try {
+      await firstValueFrom(this.service.CallAPI('Delete', ''));
+    } catch (error) {}
   }
 }

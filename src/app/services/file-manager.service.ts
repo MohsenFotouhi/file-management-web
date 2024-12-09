@@ -29,7 +29,7 @@ export class FileManagerService {
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
-
+    
     const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
