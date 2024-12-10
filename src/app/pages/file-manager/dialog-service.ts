@@ -31,9 +31,9 @@ export class DialogService {
     return dialogRef.afterClosed().toPromise();
   }
 
-  openUploadDialog(currentPath : any): Promise<File[]> {
+  openUploadDialog(file: any, currentPath : string): Promise<File[]> {
     const dialogRef = this.dialog.open(FileUploadComponent, {
-      data: { currentPath: currentPath },
+      data: { file, currentPath },
       width: '500px'
     });
 

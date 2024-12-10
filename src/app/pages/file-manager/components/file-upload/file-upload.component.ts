@@ -1,4 +1,4 @@
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, tap } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
@@ -35,12 +35,17 @@ export class FileUploadComponent {
   chunkSize = 262144; // 256KB chunk size for upload
   previews: string[] = [];
   uploadProgress: number[] = [];
+  fileId: string;
+  fileName: string;
+  isUploading = false;
 
   constructor(
     public dialogRef: MatDialogRef<FileUploadComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: FileManagerService
-  ) {}
+  ) {
+    dialogRef.disableClose = true;
+  }
 
   close(): void {
     this.dialogRef.close(false);
@@ -66,8 +71,10 @@ export class FileUploadComponent {
         this.uploadProgress.push(0); // Initialize upload progress for each file
       }
 
-      // Start uploading files after drop
-      await this.upload();
+      if (!this.isUploading) {
+        // Start uploading files after drop
+        await this.upload();
+      }
     }
   }
 
@@ -80,11 +87,14 @@ export class FileUploadComponent {
       this.uploadProgress.push(0); // Initialize upload progress for each file
     }
 
-    // Start uploading files after drop
-    await this.upload();
+    if (!this.isUploading) {
+      // Start uploading files after drop
+      await this.upload();
+    }
   }
 
   async upload(): Promise<void> {
+    this.isUploading = true;
     // Call uploadFileInChunks for each file in sequence using for...of loop with await
     for (let i = 0; i < this.files.length; i++) {
       this.uploadProgress[i] = 0; // Initialize upload progress for each file
@@ -100,6 +110,18 @@ export class FileUploadComponent {
     file: File,
     fileIndex: number
   ): Promise<void> {
+    this.fileName = file.name;
+    const temp = {
+      FilePath: this.data.currentPath,
+      FileName: file.name,
+      FileSize: file.size
+    };
+    // Pre upload api call
+    const response = await firstValueFrom(
+      this.service.CallAPI('PreUpload', JSON.stringify(temp))
+    );
+    this.fileId = response.fileID;
+
     await this.uploadChunks(0, file, fileIndex); // Start uploading the file from chunk 0
   }
 
@@ -120,22 +142,13 @@ export class FileUploadComponent {
     try {
       const state = this.dialogRef.getState();
       if (state === MatDialogState.CLOSED || state === MatDialogState.CLOSING) {
+        this.deleteUploadedFile();
         return;
       }
-      const temp = {
-        FilePath: this.data.currentPath.fullTitle,
-        FileName: file.name,
-        FileSize: file.size
-      };
-      // Pre upload api call
-      const response = await firstValueFrom(
-        this.service.CallAPI('PreUpload', JSON.stringify(temp))
-      );
-      console.log(response);
 
       // Use firstValueFrom to convert observable to promise and wait for it to complete
       await firstValueFrom(
-        this.service.uploadFile('upload', this.data, chunkFile)
+        this.service.uploadFile('upload', this.data.currentPath, chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
@@ -149,13 +162,23 @@ export class FileUploadComponent {
         console.log(`Upload complete for file: ${file.name}`);
       }
     } catch (error) {
+      this.deleteUploadedFile();
       console.error('Upload error:', error);
     }
   }
 
   async deleteUploadedFile() {
     try {
-      await firstValueFrom(this.service.CallAPI('Delete', ''));
+      const temp = (this.data.currentPath as string).endsWith('\\') ? '' : '\\'; //Add double slash if in doesnt have it
+      const data = {
+        Path: this.data.currentPath,
+        ParentDirectoryID: this.data.file?.fileId,
+        Items: [`${this.data.currentPath}${temp}${this.fileName}`],
+        ListId: [this.fileId]
+      };
+      await firstValueFrom(
+        this.service.CallAPI('Delete', JSON.stringify(data))
+      );
     } catch (error) {}
   }
 }
