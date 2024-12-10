@@ -425,42 +425,11 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   async download() {
-    if (this.showShareFiles) {
-      for (const file of this.selectedFiles) {
-        try {
-          const response = await firstValueFrom<Blob>(
-            this.service.downloadShareFiles(file.FileId, file.VirtualPath)
-          );
-          const a = document.createElement('a');
-          const objectUrl = URL.createObjectURL(response);
-          a.href = objectUrl;
-          a.download = file.FileName;
-          a.click();
-          URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-          console.error('File download error:', error);
-        }
-      }
-    } else {
-      for (const file of this.selectedFiles) {
-        try {
-
-         // const response = await firstValueFrom<Blob>(
-          //  this.service.downloadFileAsync('download',
-          //    file.FileId)
-          //);
-
-          await this.service.downloadFileWithRange(file.FileId, file.RealFileSize);
-
-          //const a = document.createElement('a');
-          //const objectUrl = URL.createObjectURL(response);
-          //a.href = objectUrl;
-          //a.download = file.FileName;
-          //a.click();
-          //URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-          console.error('File download error:', error);
-        }
+    for (const file of this.selectedFiles) {
+      try {
+        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize);
+      } catch (error) {
+        console.error('File download error:', error);
       }
     }
   }
