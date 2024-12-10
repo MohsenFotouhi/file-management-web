@@ -8,6 +8,7 @@ import { FileManagerService } from 'src/app/services/file-manager.service';
 import { ShareModalComponent } from './components/share-modal/share-modal.component';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
+import { FileDownloadService } from '../../services/file-download.service';
 
 @Component({
   selector: 'vex-file-manager',
@@ -15,6 +16,7 @@ import { FileContextMenuComponent } from './components/file-context-menu/file-co
   styleUrl: './file-manager.component.scss'
 })
 export class FileManagerComponent implements OnInit, AfterViewInit {
+  progress = 0;
   lastDownX = 0;
   clickCount = 0;
   clickTimer: any;
@@ -27,6 +29,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   folders: Folder[] = [];
   actionName: string = '';
   searchKeyWord: undefined;
+  isDownloadWithIDM = true;
   canPaste: boolean = false;
   fromFile: boolean = false;
   selectedFiles: File[] = [];
@@ -54,10 +57,17 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
   @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
 
-  constructor(private service: FileManagerService,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
+              private spinner: NgxSpinnerService,
+              private service: FileManagerService,
               private dialogService: DialogService,
-              private spinner: NgxSpinnerService) {
+              private fileDownloadService: FileDownloadService) {
+    // this.fileDownloadService.progress$.subscribe((value) => {
+    //   this.progress = value;
+    // });
+    this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
+      this.isDownloadWithIDM = value;
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -427,7 +437,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async download() {
     for (const file of this.selectedFiles) {
       try {
-        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize);
+        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize, file.FarsiName || file.FileName);
       } catch (error) {
         console.error('File download error:', error);
       }

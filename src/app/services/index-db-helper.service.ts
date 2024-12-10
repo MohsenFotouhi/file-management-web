@@ -8,11 +8,12 @@ export class IndexDBHelperService {
   constructor() {
   }
 
-  private readonly dbName = 'DownloadDB';
+  private readonly _dbName = 'RayanDb';
+  public static DOWNLOAD_STORE_NAME = 'DownloadFileChunk';
 
   async openDB(storeName: string): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
+      const request = indexedDB.open(this._dbName, 1);
 
       request.onupgradeneeded = (event: any) => {
         const db = event.target.result;
@@ -59,11 +60,24 @@ export class IndexDBHelperService {
     });
   }
 
-  async cleanupIndexedDB(db: IDBDatabase, storeName: string) {
-    db.deleteObjectStore(storeName)
-    // const transaction = db.transaction(storeName, 'readwrite');
-    // const store = transaction.objectStore(storeName);
-    // const request = store.clear();
-    // request.onsuccess = () => console.log('IndexedDB cleaned up.');
+  async deleteFileChunks(db: IDBDatabase, storeName: string, fileId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      const request = store.openCursor();
+
+      request.onsuccess = (event: any) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          if (cursor.key.startsWith(fileId)) {
+            cursor.delete();
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      request.onerror = (event: any) => reject(event.target.error);
+    });
   }
 }

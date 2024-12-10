@@ -11,9 +11,9 @@ export class DashboardComponent implements OnInit {
   isDownloadWithIDM = true;
 
   constructor(private fileDownloadService: FileDownloadService) {
-    this.fileDownloadService.progress$.subscribe((value) => {
-      this.progress = value;
-    });
+    // this.fileDownloadService.progress$.subscribe((value) => {
+    //   this.progress = value;
+    // });
     this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
       this.isDownloadWithIDM = value;
     });
@@ -32,7 +32,6 @@ export class DashboardComponent implements OnInit {
   async downloadFile() {
     const fileUrl = 'http://rfms.roka-co.com:443/api/file/download-with-range';
     const totalSize = 2102720520 - 1;
-    await this.fileDownloadService.downloadFile(fileUrl, totalSize, 'TestFile');
+    await this.fileDownloadService.downloadFile(fileUrl, totalSize, 'TestFile', 'Microsoft.Azure.DevOps.Server.2022.1.rar');
   }
-
 }

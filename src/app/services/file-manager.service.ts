@@ -18,11 +18,11 @@ export class FileManagerService {
               private fileDownloadService: FileDownloadService) {
   }
 
-  async downloadFileWithRange(fileId: string, totalSize: number) {
+  async downloadFileWithRange(fileId: string, totalSize: number, fileName: string) {
     const url =
       `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
 
-    await this.fileDownloadService.downloadFile(url, totalSize, fileId);
+    await this.fileDownloadService.downloadFile(url, totalSize, fileId, fileName);
   }
 
   CallAPI(command: string, parameters: string): Observable<any> {
