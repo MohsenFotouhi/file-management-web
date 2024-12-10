@@ -20,6 +20,7 @@ import { VexChartComponent } from '@vex/components/vex-chart/vex-chart.component
 import { SidenavStorageComponent } from './sidenav-storage/sidenav-storage.component';
 import { FileManagerService } from '../../../services/file-manager.service';
 import { UserStorageUse } from 'src/app/interface/share-models';
+import { StoragePipe } from 'src/app/pipes/storage.pipe';
 
 @Component({
   selector: 'vex-sidenav',
@@ -37,7 +38,8 @@ import { UserStorageUse } from 'src/app/interface/share-models';
     AsyncPipe,
     MatProgressSpinnerModule,
     VexChartComponent,
-    SidenavStorageComponent
+    SidenavStorageComponent,
+    StoragePipe
   ]
 })
 export class SidenavComponent implements OnInit {
@@ -82,7 +84,8 @@ export class SidenavComponent implements OnInit {
     //   }),
     // ).subscribe()
     // this.storageUsage = 60;
-    this.userStorage$ = this.getUserStorage();
+    this.userStorage$ = this.service.userStorageUse$;
+    this.getUserStorage()
   }
 
   collapseOpenSidenav() {
@@ -138,12 +141,6 @@ export class SidenavComponent implements OnInit {
   }
 
   getUserStorage() {
-    return this.service.getUserStorageUse().pipe(
-      map((res) => {
-        res.MaxUserStorage = Math.trunc(res.MaxUserStorage / 1000000);
-        res.UserStorageUse = Math.trunc(res.UserStorageUse / 1000000);
-        return res;
-      })
-    );
+    this.service.getUserStorageUse().subscribe();
   }
 }

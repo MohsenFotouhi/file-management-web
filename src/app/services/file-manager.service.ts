@@ -10,6 +10,12 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class FileManagerService {
+  progress = 0;
+  private userStorage = new BehaviorSubject<UserStorageUse>({
+    UserStorageUse: 0,
+    MaxUserStorage: 0
+  });
+  userStorageUse$ = this.userStorage.asObservable();
 
   private id = 'RayanFileManagerApi1';
   private apiUrl = environment.api + '/';
@@ -158,6 +164,17 @@ export class FileManagerService {
 
   getUserStorageUse() {
     const url = `${this.apiUrl}GetUserStorageUse`;
-    return this.http.get<UserStorageUse>(url);
+    return this.http.get<UserStorageUse>(url).pipe(
+      map((res) => {
+        res.MaxUserStorage = 54299584000;
+        res.UserStorageUse = 5429958400;
+        this.setUserStorage(res);
+        return res;
+      })
+    );
+  }
+
+  setUserStorage(value: UserStorageUse) {
+    this.userStorage.next(value);
   }
 }
