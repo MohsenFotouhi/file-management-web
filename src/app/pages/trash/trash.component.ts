@@ -165,7 +165,7 @@ export class TrashComponent implements OnInit, AfterViewInit {
   async previews() {
     this.blobs = [];
     for (const file of this.files) {
-      if (file.FileName.endsWith('.png')) {
+      if (file.FileName.endsWith('.png') && false) {
         try {
           const response = await firstValueFrom(
             this.service.preview('filePreview', (file.VirtualPath))
@@ -415,6 +415,7 @@ export class TrashComponent implements OnInit, AfterViewInit {
       await this.spinner.hide();
     }
   }
+
   /**********************-Resize Event-************************/
   ResizeWindow(event: MouseEvent) {
     this.isResizing = true;

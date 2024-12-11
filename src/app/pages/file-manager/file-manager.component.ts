@@ -3,7 +3,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { DialogService } from './dialog-service';
 import { MatDialog } from '@angular/material/dialog';
 import { FilePath } from './components/path/file-path';
+import { ToastService } from '../../services/toast.service';
 import { File, FileBlob, Folder } from '../../interface/files';
+import { FileDownloadService } from '../../services/file-download.service';
 import { FileManagerService } from 'src/app/services/file-manager.service';
 import { ShareModalComponent } from './components/share-modal/share-modal.component';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
@@ -15,6 +17,7 @@ import { FileContextMenuComponent } from './components/file-context-menu/file-co
   styleUrl: './file-manager.component.scss'
 })
 export class FileManagerComponent implements OnInit, AfterViewInit {
+  progress = 0;
   lastDownX = 0;
   clickCount = 0;
   clickTimer: any;
@@ -27,6 +30,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   folders: Folder[] = [];
   actionName: string = '';
   searchKeyWord: undefined;
+  isDownloadWithIDM = true;
   canPaste: boolean = false;
   fromFile: boolean = false;
   selectedFiles: File[] = [];
@@ -54,10 +58,18 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   @ViewChild('resizableContainer', { static: false }) resizableContainer!: ElementRef;
   @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
 
-  constructor(private service: FileManagerService,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
+              private toast: ToastService,
+              private spinner: NgxSpinnerService,
+              private service: FileManagerService,
               private dialogService: DialogService,
-              private spinner: NgxSpinnerService) {
+              private fileDownloadService: FileDownloadService) {
+    // this.fileDownloadService.progress$.subscribe((value) => {
+    //   this.progress = value;
+    // });
+    this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
+      this.isDownloadWithIDM = value;
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -166,7 +178,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async previews() {
     this.blobs = [];
     for (const file of this.files) {
-      if (file.FileName.endsWith('.png')) {
+      if (file.FileName.endsWith('.png') && false) {
         try {
           const response = await firstValueFrom<Blob>(
             this.service.preview('filePreview', file.VirtualPath)
@@ -425,42 +437,12 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   async download() {
-    if (this.showShareFiles) {
-      for (const file of this.selectedFiles) {
-        try {
-          const response = await firstValueFrom<Blob>(
-            this.service.downloadShareFiles(file.FileId, file.VirtualPath)
-          );
-          const a = document.createElement('a');
-          const objectUrl = URL.createObjectURL(response);
-          a.href = objectUrl;
-          a.download = file.FileName;
-          a.click();
-          URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-          console.error('File download error:', error);
-        }
-      }
-    } else {
-      for (const file of this.selectedFiles) {
-        try {
-
-         // const response = await firstValueFrom<Blob>(
-          //  this.service.downloadFileAsync('download',
-          //    file.FileId)
-          //);
-
-          await this.service.downloadFileWithRange(file.FileId, file.RealFileSize);
-
-          //const a = document.createElement('a');
-          //const objectUrl = URL.createObjectURL(response);
-          //a.href = objectUrl;
-          //a.download = file.FileName;
-          //a.click();
-          //URL.revokeObjectURL(objectUrl);
-        } catch (error) {
-          console.error('File download error:', error);
-        }
+    this.toast.open('فایل در حال دانلود است، لطفا شکیبا باشید.');
+    for (const file of this.selectedFiles) {
+      try {
+        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize, file.FarsiName || file.FileName);
+      } catch (error) {
+        console.error('File download error:', error);
       }
     }
   }

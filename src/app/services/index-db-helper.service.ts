@@ -8,17 +8,17 @@ export class IndexDBHelperService {
   constructor() {
   }
 
-  dbName = 'DownloadDB';
-  storeName = 'fileChunks';
+  private readonly _dbName = 'RayanDb';
+  public static DOWNLOAD_STORE_NAME = 'DownloadFileChunk';
 
-  async openDB(): Promise<IDBDatabase> {
+  async openDB(storeName: string): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
+      const request = indexedDB.open(this._dbName, 1);
 
       request.onupgradeneeded = (event: any) => {
         const db = event.target.result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName);
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName);
         }
       };
 
@@ -27,10 +27,10 @@ export class IndexDBHelperService {
     });
   }
 
-  async saveChunk(db: IDBDatabase, chunk: Blob, key: string): Promise<void> {
+  async saveChunk(db: IDBDatabase, storeName: string, chunk: Blob, key: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(this.storeName, 'readwrite');
-      const store = transaction.objectStore(this.storeName);
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
       const request = store.put(chunk, key);
 
       request.onsuccess = () => resolve();
@@ -38,10 +38,10 @@ export class IndexDBHelperService {
     });
   }
 
-  async getChunk(db: IDBDatabase, key: string): Promise<Blob | null> {
+  async getChunk(db: IDBDatabase, storeName: string, key: string): Promise<Blob | null> {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(this.storeName, 'readonly');
-      const store = transaction.objectStore(this.storeName);
+      const transaction = db.transaction(storeName, 'readonly');
+      const store = transaction.objectStore(storeName);
       const request = store.get(key);
 
       request.onsuccess = () => resolve(request.result || null);
@@ -49,10 +49,10 @@ export class IndexDBHelperService {
     });
   }
 
-  async getAllKeys(db: IDBDatabase): Promise<string[]> {
+  async getAllKeys(db: IDBDatabase, storeName: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(this.storeName, 'readonly');
-      const store = transaction.objectStore(this.storeName);
+      const transaction = db.transaction(storeName, 'readonly');
+      const store = transaction.objectStore(storeName);
       const request = store.getAllKeys();
 
       request.onsuccess = () => resolve(request.result as string[]);
@@ -60,11 +60,24 @@ export class IndexDBHelperService {
     });
   }
 
-  async cleanupIndexedDB(db: IDBDatabase) {
-    const transaction = db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
+  async deleteFileChunks(db: IDBDatabase, storeName: string, fileId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      const request = store.openCursor();
 
-    const request = store.clear();
-    request.onsuccess = () => console.log('IndexedDB cleaned up.');
+      request.onsuccess = (event: any) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          if (cursor.key.startsWith(fileId)) {
+            cursor.delete();
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      request.onerror = (event: any) => reject(event.target.error);
+    });
   }
 }

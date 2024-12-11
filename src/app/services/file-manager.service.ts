@@ -1,28 +1,29 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { FileSystemCommand } from '../interface/file-system-command';
-import { FileDownloadService } from './file-download.service';
+import { Injectable } from '@angular/core';
 import { UserStorageUse } from '../interface/share-models';
+import { environment } from '../../environments/environment';
+import { FileDownloadService } from './file-download.service';
+import { FileSystemCommand } from '../interface/file-system-command';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileManagerService {
-  progress = 0;
 
-  constructor(
-    private http: HttpClient,
-    private fileDownloadService: FileDownloadService
-  ) {
-    this.fileDownloadService.progress$.subscribe((value) => {
-      this.progress = value;
-    });
+  private id = 'RayanFileManagerApi1';
+  private apiUrl = environment.api + '/';
+
+  constructor(private http: HttpClient,
+              private fileDownloadService: FileDownloadService) {
   }
 
-  private apiUrl = environment.api + '/';
-  id: string = 'RayanFileManagerApi1';
+  async downloadFileWithRange(fileId: string, totalSize: number, fileName: string) {
+    const url =
+      `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
+
+    await this.fileDownloadService.downloadFile(url, totalSize, fileId, fileName);
+  }
 
   CallAPI(command: string, parameters: string): Observable<any> {
     const formData: FormData = new FormData();
@@ -41,13 +42,13 @@ export class FileManagerService {
   }
 
   preview(command: string, parameters: string): Observable<any> {
-    let formData = new HttpParams();
-    formData = formData.set('id', this.id);
-    formData = formData.set('command', command);
-    formData = formData.set('parameters', parameters);
+    let params = new HttpParams();
+    params = params.set('id', this.id);
+    params = params.set('command', command);
+    params = params.set('parameters', parameters);
 
     const url = `${this.apiUrl}RayanFileManagerApi2`;
-    return this.http.get(url, { params: formData, responseType: 'blob' });
+    return this.http.get(url, { params: params, responseType: 'blob' });
   }
 
   uploadFile(command: string, parameters: string, file: File): Observable<any> {
@@ -115,6 +116,7 @@ export class FileManagerService {
     const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
+
   downloadFileAsync(command: string, parameters: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
@@ -123,13 +125,6 @@ export class FileManagerService {
 
     const url = `${this.apiUrl}api/DownloadFile/DownloadFileAsync`;
     return this.http.post(url, formData, { responseType: 'blob' });
-  }
-
-  async downloadFileWithRange(fileId: string, totalSize: number) {
-    const url =
-      `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
-
-    await this.fileDownloadService.downloadFile(url, totalSize);
   }
 
   downloadShareFiles(downloadId: string, VirtualPath: string): Observable<any> {
@@ -150,18 +145,6 @@ export class FileManagerService {
     const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
-
-  // getSharedFiles(): Observable<any> {
-  //   var files = [
-  //     { CreateDate : '' , FileName: "text1.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text2.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text3.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text4.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text5.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''}
-  //   ];
-
-  //   return of(files);
-  // }
 
   getSharedFiles(): Observable<any> {
     const formData: FormData = new FormData();

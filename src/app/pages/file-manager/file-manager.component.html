@@ -163,7 +163,7 @@
                          currentFile.file.FileName.endsWith('.img') ||
                          currentFile.file.FileName.endsWith('.png') ||
                          currentFile.file.FileName.endsWith('.jpeg') "
-                   [src]="currentFile.content" alt=""
+                   src="assets/img/filesIcons/image.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
 
@@ -210,8 +210,10 @@
         (pasteClick)=paste()
         [activeActionButtons]='selectedFiles.length != 0 && selectedFolders.length != 0'
         [isSharedFile]="showShareFiles"
-      ></file-context-menu>
-
+      />
+      @if (false && progress && progress !== 100 && !isDownloadWithIDM) {
+        <mat-progress-bar class="text-start" mode="determinate" [value]="progress"></mat-progress-bar>
+      }
       <div class="border p-2">
         <a class="first-link" *ngFor="let path of currentPathItems index as i" (click)="getPathContent(i)">
           <span>{{ path }}</span>
