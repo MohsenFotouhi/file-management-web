@@ -2,7 +2,7 @@ import { firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MatInputModule } from '@angular/material/input';
-import { DialogService } from '../file-manager/dialog-service';
+import { ToastService } from '../../services/toast.service';
 import { File, FileBlob, Folder } from '../../interface/files';
 import { FilePath } from '../file-manager/components/path/file-path';
 import { FileManagerService } from '../../services/file-manager.service';
@@ -11,6 +11,8 @@ import { PathComponent } from '../file-manager/components/path/path.component';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { SharedFilesComponent } from '../file-manager/components/shared-files/shared-files.component';
 import { FileContextMenuComponent } from '../file-manager/components/file-context-menu/file-context-menu.component';
+import { FileDownloadService } from '../../services/file-download.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'vex-shared-with-user',
@@ -24,13 +26,15 @@ import { FileContextMenuComponent } from '../file-manager/components/file-contex
     NgOptimizedImage,
     NgIf,
     FileContextMenuComponent,
-    PathComponent
+    PathComponent,
+    MatProgressBarModule
   ],
   templateUrl: './shared-with-user.component.html',
   styleUrl: './shared-with-user.component.scss'
 })
 export class SharedWithUserComponent implements OnInit, AfterViewInit {
 
+  progress = 0;
   lastDownX = 0;
   clickCount = 0;
   clickTimeout: any;
@@ -39,6 +43,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   folders: Folder[] = [];
   blobs: FileBlob[] = [];
   searchKeyWord: undefined;
+  isDownloadWithIDM = true;
   selectedFiles: File[] = [];
   isListView: boolean = false;
   originalWidthTreeSidebar = 0;
@@ -55,9 +60,16 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
     return this.currentPath.parent == undefined || this.currentPath.parent == '';
   }
 
-  constructor(private service: FileManagerService,
-              private dialogService: DialogService,
-              private spinner: NgxSpinnerService) {
+  constructor(private toast: ToastService,
+              private spinner: NgxSpinnerService,
+              private service: FileManagerService,
+              private fileDownloadService: FileDownloadService) {
+    // this.fileDownloadService.progress$.subscribe((value) => {
+    //   this.progress = value;
+    // });
+    this.fileDownloadService.isDownloadWithIDM$.subscribe((value) => {
+      this.isDownloadWithIDM = value;
+    });
   }
 
   @ViewChild('mainContainer', { static: false }) mainContainer!: ElementRef;
@@ -301,22 +313,14 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   }
 
   async downloadClicked() {
-    try {
-      for (const file of this.selectedFiles) {
-        const response = await firstValueFrom(
-          this.service.downloadShareFiles(file.FileId, file.VirtualPath)
-        );
-        const a = document.createElement('a');
-        const objectUrl = URL.createObjectURL(response);
-        a.href = objectUrl;
-        a.download = file.FileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(objectUrl);
+    this.toast.open('فایل در حال دانلود است، لطفا شکیبا باشید.');
+
+    for (const file of this.selectedFiles) {
+      try {
+        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize, file.FarsiName || file.FileName);
+      } catch (error) {
+        console.error('File download error:', error);
       }
-    } catch (error) {
-      console.error('File download error:', error);
     }
   }
 

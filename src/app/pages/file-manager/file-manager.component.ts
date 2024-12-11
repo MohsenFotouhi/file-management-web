@@ -3,12 +3,13 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { DialogService } from './dialog-service';
 import { MatDialog } from '@angular/material/dialog';
 import { FilePath } from './components/path/file-path';
+import { ToastService } from '../../services/toast.service';
 import { File, FileBlob, Folder } from '../../interface/files';
+import { FileDownloadService } from '../../services/file-download.service';
 import { FileManagerService } from 'src/app/services/file-manager.service';
 import { ShareModalComponent } from './components/share-modal/share-modal.component';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FileContextMenuComponent } from './components/file-context-menu/file-context-menu.component';
-import { FileDownloadService } from '../../services/file-download.service';
 
 @Component({
   selector: 'vex-file-manager',
@@ -58,6 +59,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   @ViewChild(FileContextMenuComponent, { static: false }) fileMenu!: FileContextMenuComponent;
 
   constructor(private dialog: MatDialog,
+              private toast: ToastService,
               private spinner: NgxSpinnerService,
               private service: FileManagerService,
               private dialogService: DialogService,
@@ -435,6 +437,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   async download() {
+    this.toast.open('فایل در حال دانلود است، لطفا شکیبا باشید.');
     for (const file of this.selectedFiles) {
       try {
         await this.service.downloadFileWithRange(file.FileId, file.RealFileSize, file.FarsiName || file.FileName);
