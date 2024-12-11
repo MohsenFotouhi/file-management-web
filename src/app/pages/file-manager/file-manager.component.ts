@@ -166,7 +166,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async previews() {
     this.blobs = [];
     for (const file of this.files) {
-      if (file.FileName.endsWith('.png')) {
+      if (file.FileName.endsWith('.png') && false) {
         try {
           const response = await firstValueFrom<Blob>(
             this.service.preview('filePreview', file.VirtualPath)
