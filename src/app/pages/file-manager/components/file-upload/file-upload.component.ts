@@ -40,8 +40,7 @@ export class FileUploadComponent {
     public dialogRef: MatDialogRef<FileUploadComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: FileManagerService
-  ) {
-  }
+  ) {}
 
   close(): void {
     this.dialogRef.close(false);
@@ -92,6 +91,7 @@ export class FileUploadComponent {
       await this.uploadFileInChunks(this.files[i], i);
     }
 
+    this.service.getUserStorageUse().subscribe();
     // Close the dialog after all files are uploaded
     this.dialogRef.close(this.files);
   }
@@ -120,10 +120,7 @@ export class FileUploadComponent {
 
     try {
       const state = this.dialogRef.getState();
-      if (
-        state === MatDialogState.CLOSED ||
-        state === MatDialogState.CLOSING
-      ) {
+      if (state === MatDialogState.CLOSED || state === MatDialogState.CLOSING) {
         return;
       }
       // Use firstValueFrom to convert observable to promise and wait for it to complete
