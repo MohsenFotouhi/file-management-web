@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { UserStorageUse } from '../interface/share-models';
 import { environment } from '../../environments/environment';
 import { FileDownloadService } from './file-download.service';
