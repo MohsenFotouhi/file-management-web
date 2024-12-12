@@ -3,4 +3,15 @@
     <h2 class="title flex-auto">فضای ذخیره سازی</h2>
     <vex-user-storage style="margin-top: 1rem;"></vex-user-storage>
   </div>
+  <div class="col mt-2">
+    <div>
+      <input type="file" multiple (change)="onFileSelected($event)" />
+    </div>
+
+    <div *ngFor="let fileProgress of filesProgress">
+      <p>{{ fileProgress.fileName }}</p>
+      <mat-progress-bar mode="determinate" [value]="fileProgress.progress"></mat-progress-bar>
+      <p *ngIf="fileProgress.error">{{ fileProgress.error }}</p>
+    </div>
+  </div>
 </div>

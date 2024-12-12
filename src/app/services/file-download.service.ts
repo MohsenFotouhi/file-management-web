@@ -17,8 +17,8 @@ export class FileDownloadService {
   }
 
   async downloadFile(fileUrl: string, totalSize: number, fileId: string, fileName: string) {
-    const storeName = IndexDBHelperService.DOWNLOAD_STORE_NAME;
-    const db = await this.dbHelper.openDB(storeName);
+    const storeName = this.dbHelper.DOWNLOAD_STORE_NAME;
+    const db = await this.dbHelper.openDB();
     const totalChunks = Math.ceil(totalSize / this.chunkSize);
     const missingChunks = await this.getMissingChunks(db, storeName, totalChunks);
 

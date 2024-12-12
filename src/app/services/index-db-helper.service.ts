@@ -8,17 +8,21 @@ export class IndexDBHelperService {
   constructor() {
   }
 
-  private readonly _dbName = 'RayanDb';
-  public static DOWNLOAD_STORE_NAME = 'DownloadFileChunk';
+  public readonly DB_NAME = 'RayanDb';
+  public readonly DOWNLOAD_STORE_NAME = 'DownloadFileChunk';
+  public readonly UPLOAD_STORE_NAME = 'UploadFileChunk';
 
-  async openDB(storeName: string): Promise<IDBDatabase> {
+  async openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this._dbName, 1);
+      const request = indexedDB.open(this.DB_NAME, 1);
 
       request.onupgradeneeded = (event: any) => {
         const db = event.target.result;
-        if (!db.objectStoreNames.contains(storeName)) {
-          db.createObjectStore(storeName);
+        if (!db.objectStoreNames.contains(this.DOWNLOAD_STORE_NAME)) {
+          db.createObjectStore(this.DOWNLOAD_STORE_NAME);
+        }
+        if (!db.objectStoreNames.contains(this.UPLOAD_STORE_NAME)) {
+          db.createObjectStore(this.UPLOAD_STORE_NAME);
         }
       };
 
@@ -38,13 +42,13 @@ export class IndexDBHelperService {
     });
   }
 
-  async getChunk(db: IDBDatabase, storeName: string, key: string): Promise<Blob | null> {
+  async getChunk(db: IDBDatabase, storeName: string, key: string): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(storeName, 'readonly');
       const store = transaction.objectStore(storeName);
       const request = store.get(key);
 
-      request.onsuccess = () => resolve(request.result || null);
+      request.onsuccess = () => resolve(request.result);
       request.onerror = (event: any) => reject(event.target.error);
     });
   }

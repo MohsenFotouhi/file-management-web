@@ -7,11 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { FileManagerService } from 'src/app/services/file-manager.service';
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
   MatDialogRef,
-  MatDialogState
+  MatDialogState,
+  MatDialogModule,
+  MAT_DIALOG_DATA
 } from '@angular/material/dialog';
+import { IndexDBHelperService } from '../../../../services/index-db-helper.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -33,17 +34,15 @@ import {
 export class FileUploadComponent {
   files: File[] = [];
   chunkSize = 262144; // 256KB chunk size for upload
-  previews: string[] = [];
   uploadProgress: number[] = [];
-  fileId: string;
-  fileName: string;
-  isUploading = false;
 
   constructor(
-    public dialogRef: MatDialogRef<FileUploadComponent>,
+    private service: FileManagerService,
+    private dbHelper: IndexDBHelperService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private service: FileManagerService
-  ) {}
+    public dialogRef: MatDialogRef<FileUploadComponent>
+  ) {
+  }
 
   close(): void {
     this.dialogRef.close(false);
@@ -59,19 +58,18 @@ export class FileUploadComponent {
   async onDrop(event: DragEvent): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
+    const input = event.dataTransfer;
     const dropzone = event.currentTarget as HTMLElement;
     dropzone.classList.remove('dragover');
 
-    if (event.dataTransfer?.files) {
-      for (let i = 0; i < event.dataTransfer.files.length; i++) {
-        this.files.push(event.dataTransfer.files[i]);
-        this.previews.push(URL.createObjectURL(event.dataTransfer.files[i]));
-        this.uploadProgress.push(0); // Initialize upload progress for each file
-      }
+    if (!input || !input.files || !input.files.length) return;
 
-      // Start uploading files after drop
-      await this.upload();
+    for (const file of Array.from(input.files)) {
+      this.files.push(file);
+      this.uploadProgress.push(0); // Initialize upload progress for each file
     }
+    // Start uploading files after drop
+    await this.readyForUpload();
   }
 
   async onFileSelected(event: Event): Promise<void> {
@@ -84,14 +82,13 @@ export class FileUploadComponent {
     }
 
     // Start uploading files after drop
-    await this.upload();
+    await this.readyForUpload();
   }
 
-  async upload(): Promise<void> {
-    // Call uploadFileInChunks for each file in sequence using for...of loop with await
+  async readyForUpload(): Promise<void> {
     for (let i = 0; i < this.files.length; i++) {
       this.uploadProgress[i] = 0; // Initialize upload progress for each file
-      await this.uploadFileInChunks(this.files[i], i);
+      await this.preUploadFile(this.files[i], i);
     }
 
     this.service.getUserStorageUse().subscribe();
@@ -100,35 +97,29 @@ export class FileUploadComponent {
   }
 
   // Upload the entire file in chunks synchronously
-  private async uploadFileInChunks(
-    file: File,
-    fileIndex: number
-  ): Promise<void> {
-
-    this.fileName = file.name;
-    const temp = {
-      FilePath: this.data.currentPath,
-      FileName: file.name,
-      FileSize: file.size
-    };
+  private async preUploadFile(file: File, fileIndex: number): Promise<void> {
     // Pre upload api call
     const response = await firstValueFrom(
-      this.service.CallAPI('PreUpload', JSON.stringify(temp))
+      this.service.CallAPI('PreUpload', JSON.stringify({
+        FilePath: this.data.currentPath,
+        FileName: file.name,
+        FileSize: file.size
+      }))
     );
-    this.fileId = response.fileID;
-  
-    await this.uploadChunks(0, file, fileIndex); // Start uploading the file from chunk 0
+
+    const db = await this.dbHelper.openDB();
+    await this.uploadChunks(db, 0, file, fileIndex, response.fileID); // Start uploading the file from chunk 0
   }
 
   // Recursive function to upload each chunk one after another
   private async uploadChunks(
+    db: IDBDatabase,
     index: number,
     file: File,
-    fileIndex: number
+    fileIndex: number,
+    fileId: string
   ): Promise<void> {
     const totalChunks = Math.ceil(file.size / this.chunkSize);
-    const lastIndex = totalChunks - 1;
-
     const start = index * this.chunkSize;
     const end = Math.min(start + this.chunkSize, file.size);
     const chunk = file.slice(start, end);
@@ -136,26 +127,25 @@ export class FileUploadComponent {
 
     try {
       const state = this.dialogRef.getState();
-      if (state === MatDialogState.CLOSED || state === MatDialogState.CLOSING) {
-        return;
-      }
-      // Use firstValueFrom to convert observable to promise and wait for it to complete
-      const uploadtemp = {
-        FilePath: this.data.currentPath,
-        FileId: this.fileId,
-      };
+      if (state === MatDialogState.CLOSED || state === MatDialogState.CLOSING) return;
+
+      await this.dbHelper.saveChunk(db, this.dbHelper.UPLOAD_STORE_NAME, chunk, fileId);
 
       await firstValueFrom(
-        this.service.uploadFile('upload', JSON.stringify(uploadtemp), chunkFile)
+        this.service.uploadFile('upload', JSON.stringify({
+          FilePath: this.data.currentPath,
+          FileId: fileId
+        }), chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
-      if (index < lastIndex) {
+      if (index < totalChunks - 1) {
         this.uploadProgress[fileIndex] = Math.round(
           (100 * index) / totalChunks
         );
-        await this.uploadChunks(index + 1, file, fileIndex); // Recursively upload next chunk
+        await this.uploadChunks(db, index + 1, file, fileIndex, fileId); // Recursively upload next chunk
       } else {
+        await this.dbHelper.deleteFileChunks(db, this.dbHelper.UPLOAD_STORE_NAME, fileId);
         this.uploadProgress[fileIndex] = 100; // Upload complete
         console.log(`Upload complete for file: ${file.name}`);
       }
