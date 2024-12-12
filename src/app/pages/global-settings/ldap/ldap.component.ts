@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,19 +26,19 @@ import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ]
 })
 export class GlobalSettingsLDAPComponent implements OnChanges {
   @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    Server: ['', Validators.required],
-    Port: [null, Validators.required],
-    DomainName: ['', Validators.required],
-    DC: ['', Validators.required],
-    Username: ['', Validators.required],
-    Password: ['', Validators.required]
+    Server: '',
+    Port: null,
+    DomainName: '',
+    DC: '',
+    Username: '',
+    Password: ''
   });
 
   constructor(private fb: FormBuilder) {}

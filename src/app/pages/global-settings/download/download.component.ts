@@ -53,16 +53,16 @@ export class GlobalSettingsDownloadComponenet implements OnChanges, OnInit {
   disabledAllowDays: boolean[] = [];
   disabledDenyDays: boolean[] = [];
   form: FormGroup = this.fb.group({
-    MaxSumByteDownPerDay: [null, Validators.required],
-    MaxSumByteDownPerMonth: [null, Validators.required],
-    CountDownPerDay: [null, Validators.required],
-    CountDownPerMonth: [null, Validators.required],
-    StartTimeDownLoad: [null],
-    EndTimeDownLoad: [null],
-    AllowExtentionDownLoad: ['', [Validators.required]],
-    DenyExtentionDownLoad: ['', [Validators.required]],
-    AllowDayDownLoad: ['', Validators.required],
-    DenyDayDownLoad: ['', Validators.required]
+    MaxSumByteDownPerDay: null,
+    MaxSumByteDownPerMonth: null,
+    CountDownPerDay: null,
+    CountDownPerMonth: null,
+    StartTimeDownLoad: null,
+    EndTimeDownLoad: null,
+    AllowExtentionDownLoad: '',
+    DenyExtentionDownLoad: '',
+    AllowDayDownLoad: '',
+    DenyDayDownLoad: ''
   });
 
   constructor(private fb: FormBuilder) {}
@@ -75,8 +75,7 @@ export class GlobalSettingsDownloadComponenet implements OnChanges, OnInit {
     }
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   onSubmit() {
     if (this.form.invalid) {

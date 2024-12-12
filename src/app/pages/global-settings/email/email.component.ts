@@ -36,11 +36,11 @@ export class GlobalSettingsEmailComponent implements OnChanges {
   @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    SMTPServer: ['', Validators.required],
-    Port: [null, Validators.required],
-    AdminNotifyEmail: ['', [Validators.required, Validators.email]],
-    Username: ['', Validators.required],
-    Password: ['', Validators.required]
+    SMTPServer: '',
+    Port: null,
+    AdminNotifyEmail: ['', Validators.email],
+    Username: '',
+    Password: ''
   });
 
   constructor(private fb: FormBuilder) {}
