@@ -35,6 +35,9 @@ export class FileUploadComponent {
   chunkSize = 262144; // 256KB chunk size for upload
   previews: string[] = [];
   uploadProgress: number[] = [];
+  fileId: string;
+  fileName: string;
+  isUploading = false;
 
   constructor(
     public dialogRef: MatDialogRef<FileUploadComponent>,
@@ -101,6 +104,19 @@ export class FileUploadComponent {
     file: File,
     fileIndex: number
   ): Promise<void> {
+
+    this.fileName = file.name;
+    const temp = {
+      FilePath: this.data.currentPath,
+      FileName: file.name,
+      FileSize: file.size
+    };
+    // Pre upload api call
+    const response = await firstValueFrom(
+      this.service.CallAPI('PreUpload', JSON.stringify(temp))
+    );
+    this.fileId = response.fileID;
+  
     await this.uploadChunks(0, file, fileIndex); // Start uploading the file from chunk 0
   }
 
@@ -124,8 +140,13 @@ export class FileUploadComponent {
         return;
       }
       // Use firstValueFrom to convert observable to promise and wait for it to complete
+      const uploadtemp = {
+        FilePath: this.data.currentPath,
+        FileId: this.fileId,
+      };
+
       await firstValueFrom(
-        this.service.uploadFile('upload', this.data.currentPath, chunkFile)
+        this.service.uploadFile('upload', JSON.stringify(uploadtemp), chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
