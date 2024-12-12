@@ -33,7 +33,7 @@ export class GlobalSettingsStorageComponent implements OnChanges {
   @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
   form: FormGroup = this.fb.group({
-    MaxUserStorage: [null, Validators.required]
+    MaxUserStorage: [null]
   });
 
   constructor(private fb: FormBuilder) {}

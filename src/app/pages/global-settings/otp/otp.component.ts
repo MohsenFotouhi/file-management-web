@@ -47,7 +47,9 @@ export class GlobalSettingsOtpComponent implements OnChanges, OnInit {
     TextToken: '',
     LinkUrl: '',
     SecretKey: '',
-    TimeOut: null
+    TimeOut: null,
+    Issuer: '',
+    TextEmailLink: ['', Validators.pattern(/\[LINK\]/)]
   });
 
   constructor(private fb: FormBuilder) {}
