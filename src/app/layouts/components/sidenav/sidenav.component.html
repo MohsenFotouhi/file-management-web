@@ -54,12 +54,12 @@
         <div class="flex items-center">
           <vex-sidenav-storage
             [storageUsage]="
-              (userStorage.UserStorageUse / userStorage.MaxUserStorage) * 100
+              ((userStorage.UserStorageUse || 0) / (userStorage.MaxUserStorage || 1)) * 100
             "
             class="ml-3"></vex-sidenav-storage>
           <div class="vex-sidenav-user__content flex-auto">
             {{
-              (userStorage.UserStorageUse / userStorage.MaxUserStorage) * 100
+              ((userStorage.UserStorageUse || 0) / (userStorage.MaxUserStorage || 1)) * 100
             }}% فضای استفاده شده
           </div>
         </div>
