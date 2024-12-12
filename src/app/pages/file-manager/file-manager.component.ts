@@ -550,15 +550,18 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   }
 
   async upload() {
+    let file: any = this.currentPath;
     let path = this.currentPath.fullTitle;
     if (this.fromcontext) {
       path = this.pathFolderContextMenu.fullTitle;
+      file = this.pathFolderContextMenu;
     } else if (this.fromFolder) {
       path = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0]
         .VirtualPath;
+      file = this.selectedFolders.splice(this.selectedFolders.length - 1, 1)[0];
     }
 
-    await this.dialogService.openUploadDialog(path);
+    await this.dialogService.openUploadDialog(file, path);
     await this.getPaths(this.currentPath);
   }
 
