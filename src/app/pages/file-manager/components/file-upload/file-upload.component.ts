@@ -101,6 +101,7 @@ export class FileUploadComponent {
       await this.uploadFileInChunks(this.files[i], i);
     }
 
+    this.service.getUserStorageUse().subscribe();
     // Close the dialog after all files are uploaded
     this.dialogRef.close(this.files);
   }
@@ -147,8 +148,13 @@ export class FileUploadComponent {
       }
 
       // Use firstValueFrom to convert observable to promise and wait for it to complete
+      const uploadtemp = {
+        FilePath: this.data.currentPath,
+        FileId: this.fileId,
+      };
+
       await firstValueFrom(
-        this.service.uploadFile('upload', this.data.currentPath, chunkFile)
+        this.service.uploadFile('upload', JSON.stringify(uploadtemp), chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
