@@ -17,6 +17,7 @@ export class FileContextMenuComponent
   @Input() activeActionButtons = false;
   @Input() item = '';
   @Input() isSharedFile = false;
+  @Input() fromFolder = false;
 
   @Output() uploadlick = new EventEmitter<string>();
   @Output() downloadClick = new EventEmitter<string>();
@@ -37,9 +38,9 @@ export class FileContextMenuComponent
   constructor(private renderer: Renderer2) { }
 
 
-  ShowFileMenu: boolean = false;
-  ShowTreeMenu: boolean = false;
-  showEmptyArea: boolean = false;
+  ShowFileMenu = false;
+  ShowTreeMenu = false;
+  showEmptyArea = false;
 
   show(event: MouseEvent, from: string)
   {
@@ -93,7 +94,7 @@ export class FileContextMenuComponent
     this.downloadClick.emit();
   }
 
-  delete()
+  remove()
   {
     this.deleteClick.emit();
   }
