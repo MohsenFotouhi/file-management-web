@@ -42,8 +42,8 @@ export class FileUploadComponent {
   files: File[] = [];
   private chunkSize = 256 * 1024; // 256KB
   private cancelUpload$ = new Subject<void>();
+  filesNotUploaded: { name: string, id: string }[] = [];
   filesProgress: { name: string; id: string; progress: number; error?: string }[] = [];
-  filesUploaded: { file: File, fileId: string }[] = [];
 
   db: IDBDatabase;
 
@@ -59,8 +59,8 @@ export class FileUploadComponent {
   async close(): Promise<void> {
     this.cancelUpload$.next();
     this.cancelUpload$.complete();
-    for (const f of this.filesUploaded) {
-      await this.deleteUploadedFile(this.db, f.file, f.fileId);
+    for (const file of this.filesNotUploaded) {
+      await this.deleteUploadedFile(this.db, file.name, file.id);
     }
     await firstValueFrom(this.fileManager.getUserStorageUse());
     this.dialogRef.close(false);
@@ -95,15 +95,14 @@ export class FileUploadComponent {
     if (!input.files || !input.files.length) return;
 
     this.db = await this.dbHelper.openDB();
+
     const files: File[] = Array.from(input.files);
     files.map((file) => {
       this.preUploadFile(this.db, file);
     });
   }
 
-  // Upload the entire file in chunks synchronously
   private async preUploadFile(db: IDBDatabase, file: File): Promise<void> {
-    // Pre upload api call
     const response = await firstValueFrom(
       this.fileManager.CallAPI('PreUpload', JSON.stringify({
         FilePath: this.data.currentPath,
@@ -112,7 +111,6 @@ export class FileUploadComponent {
       }))
     );
 
-    this.filesUploaded.push({ file: file, fileId: response.fileID });
     await this.saveChunkToDb(db, file, response.fileID);
   }
 
@@ -163,7 +161,12 @@ export class FileUploadComponent {
         }),
         finalize(() => {
           // Cleanup IndexedDB after success
-          defer(() => this.dbHelper.deleteFileChunks(db, this.dbHelper.UPLOAD_STORE_NAME, fileId)).pipe(
+          defer(() => {
+            if (fileProgress && fileProgress.progress !== 100) {
+              this.filesNotUploaded.push({ name: fileProgress.name, id: fileId });
+            }
+            return this.dbHelper.deleteFileChunks(db, this.dbHelper.UPLOAD_STORE_NAME, fileId);
+          }).pipe(
             catchError((err) => {
               console.error('Error during cleanup:', err);
               return EMPTY;
@@ -179,11 +182,8 @@ export class FileUploadComponent {
         error: (err) => {
           console.error('Error uploading file:', err);
           if (fileProgress) {
-            fileProgress.error = `Error uploading file: ${err.message}`;
+            fileProgress.error = 'Error uploading file';
           }
-        },
-        complete: () => {
-          this.close();
         }
       });
   }
@@ -202,9 +202,9 @@ export class FileUploadComponent {
       (async () => {
         const fileProgress = this.filesProgress.find((fp) => fp.id === fileId);
 
-        await this.deleteUploadedFile(db, file, fileId);
+        await this.deleteUploadedFile(db, file.name, fileId);
         if (fileProgress) {
-          fileProgress.error = `Error uploading file`;
+          fileProgress.error = 'Error uploading file';
           fileProgress.progress = 0;
         }
       })()
@@ -213,14 +213,14 @@ export class FileUploadComponent {
     );
   }
 
-  async deleteUploadedFile(db: IDBDatabase, file: File, fileId: string): Promise<void> {
+  async deleteUploadedFile(db: IDBDatabase, fileName: string, fileId: string): Promise<void> {
     await this.dbHelper.deleteFileChunks(db, this.dbHelper.UPLOAD_STORE_NAME, fileId);
     //Add double slash if in doesn't have it
     const temp = (this.data.currentPath as string).endsWith('\\') ? '' : '\\';
     const data = {
       Path: this.data.currentPath,
       ParentDirectoryID: this.data.file?.fileId,
-      Items: [`${this.data.currentPath}${temp}${file.name}`],
+      Items: [`${this.data.currentPath}${temp}${fileName}`],
       ListId: [fileId]
     };
     await firstValueFrom(
