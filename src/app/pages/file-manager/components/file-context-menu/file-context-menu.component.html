@@ -4,29 +4,29 @@
         <pre>ShowFileMenu{{ShowFileMenu}}</pre>
                 <pre>ShowTreeMenu{{ShowTreeMenu}}</pre> -->
   <ul>
-    <div   *ngIf="!ShowFileMenu && !showEmptyArea" class="menu-holder" (click)="delete()">
+    <div *ngIf="!ShowFileMenu && !showEmptyArea && !ShowTreeMenu" class="menu-holder" (click)="remove()">
       <i class="fa-solid fa-trash"></i>
       <li >حذف</li>
     </div>
 
-    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder" (click)="rename()">
+    <div *ngIf="!isSharedFile && !showEmptyArea&& !ShowTreeMenu" class="menu-holder" (click)="rename()">
       <i class="fa-solid fa-i-cursor"></i>
       <li >تغییر نام</li>
     </div>
 
     <mat-divider></mat-divider>
 
-    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder"(click)="upload()">
+    <div *ngIf="!isSharedFile && !showEmptyArea && fromFolder" class="menu-holder"(click)="upload()">
       <i class="fa-solid fa-cloud-arrow-up"></i>
       <li >بارگذاری</li>
     </div>
 
-    <div  *ngIf="!showEmptyArea" class="menu-holder"(click)="download()">
+    <div  *ngIf="!showEmptyArea&& !ShowTreeMenu &&!fromFolder" class="menu-holder"(click)="download()">
       <i class="fa-solid fa-cloud-arrow-down"></i>
       <li >دانلود</li>
     </div>
 
-    <div *ngIf="!isSharedFile && !showEmptyArea" class="menu-holder"(click)="share()">
+    <div *ngIf="!isSharedFile && !showEmptyArea && !ShowTreeMenu" class="menu-holder"(click)="share()">
       <i class="fa-solid fa-share-alt"></i>
       <li >اشتراک گذاری</li>
     </div>
@@ -40,8 +40,8 @@
       </li>
     </div>
 
-    <mat-divider></mat-divider>
-    <div class="menu-holder" (click)="delete()">
+    <!-- <mat-divider></mat-divider>
+    <div class="menu-holder" (click)="remove()">
       <i class="fa-solid fa-trash"></i>
       <li >حذف</li>
     </div>
@@ -49,7 +49,7 @@
     <div class="menu-holder"(click)="reload()">
       <i class="fa-solid fa-refresh"></i>
       <li >بازیابی</li>
-    </div>
+    </div> -->
 
   </ul>
 

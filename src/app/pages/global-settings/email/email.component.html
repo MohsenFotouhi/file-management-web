@@ -10,8 +10,7 @@
           matInput
           formControlName="SMTPServer"
           type="text"
-          placeholder="آدرس سرور SMTP &hellip;"
-          required />
+          placeholder="آدرس سرور SMTP &hellip;" />
         <mat-error *ngIf="form.get('SMTPServer')?.invalid"
           >این فیلد اجباری است
         </mat-error>
@@ -23,8 +22,7 @@
           matInput
           formControlName="Port"
           type="number"
-          placeholder="پورت&hellip;"
-          required />
+          placeholder="پورت&hellip;" />
         <mat-error *ngIf="form.get('Port')?.invalid"
           >این فیلد اجباری است
         </mat-error>
@@ -35,8 +33,7 @@
         <input
           matInput
           formControlName="AdminNotifyEmail"
-          placeholder="ایمیل&hellip;"
-          required />
+          placeholder="ایمیل&hellip;" />
         <mat-error *ngIf="form.get('AdminNotifyEmail')?.invalid">
           @if (form.get("AdminNotifyEmail")?.errors?.["required"]) {
             این فیلد اجباری است
@@ -53,8 +50,7 @@
           matInput
           formControlName="Username"
           type="text"
-          placeholder="نام کاربری&hellip;"
-          required />
+          placeholder="نام کاربری&hellip;" />
         <mat-error *ngIf="form.get('Username')?.invalid"
           >این فیلد اجباری است
         </mat-error>
@@ -66,8 +62,7 @@
           matInput
           formControlName="Password"
           type="password"
-          placeholder="رمز عبور&hellip;"
-          required />
+          placeholder="رمز عبور&hellip;" />
         <mat-error *ngIf="form.get('Password')?.invalid"
           >این فیلد اجباری است
         </mat-error>

@@ -115,16 +115,20 @@ export class FileUploadComponent {
     const response = await firstValueFrom(
       this.service.CallAPI('PreUpload', JSON.stringify(temp))
     );
-    this.fileId = response.fileID;
-  
-    await this.uploadChunks(0, file, fileIndex); // Start uploading the file from chunk 0
+
+    const uploadtemp = {
+      FilePath: this.data.currentPath,
+      FileId: response.fileID,
+    };
+    await this.uploadChunks(0, file, fileIndex, JSON.stringify(uploadtemp)); // Start uploading the file from chunk 0
   }
 
   // Recursive function to upload each chunk one after another
   private async uploadChunks(
     index: number,
     file: File,
-    fileIndex: number
+    fileIndex: number,
+    commnad:string,
   ): Promise<void> {
     const totalChunks = Math.ceil(file.size / this.chunkSize);
     const lastIndex = totalChunks - 1;
@@ -140,13 +144,10 @@ export class FileUploadComponent {
         return;
       }
       // Use firstValueFrom to convert observable to promise and wait for it to complete
-      const uploadtemp = {
-        FilePath: this.data.currentPath,
-        FileId: this.fileId,
-      };
+     
 
       await firstValueFrom(
-        this.service.uploadFile('upload', JSON.stringify(uploadtemp), chunkFile)
+        this.service.uploadFile('upload', commnad, chunkFile)
       );
 
       // Update the progress after successful upload of each chunk
@@ -154,7 +155,7 @@ export class FileUploadComponent {
         this.uploadProgress[fileIndex] = Math.round(
           (100 * index) / totalChunks
         );
-        await this.uploadChunks(index + 1, file, fileIndex); // Recursively upload next chunk
+        await this.uploadChunks(index + 1, file, fileIndex, commnad); // Recursively upload next chunk
       } else {
         this.uploadProgress[fileIndex] = 100; // Upload complete
         console.log(`Upload complete for file: ${file.name}`);

@@ -29,34 +29,6 @@
       </mat-form-field>
 
       <mat-form-field class="flex-auto">
-        <mat-label>متن ایمیل</mat-label>
-        <textarea
-          matInput
-          cdkTextareaAutosize
-          formControlName="TextEmail"
-          placeholder="متن ایمیل&hellip;"
-          cdkAutosizeMinRows="3"
-          cdkAutosizeMaxRows="5"></textarea>
-        @if (form.get("TextEmail")?.invalid) {
-          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field class="flex-auto">
-        <mat-label>متن پیامک</mat-label>
-        <textarea
-          matInput
-          cdkTextareaAutosize
-          formControlName="TextSms"
-          placeholder="متن پیامک&hellip;"
-          cdkAutosizeMinRows="3"
-          cdkAutosizeMaxRows="5"></textarea>
-        @if (form.get("TextSms")?.invalid) {
-          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field class="flex-auto">
         <mat-label>متن توکن</mat-label>
         <input
           matInput
@@ -89,6 +61,52 @@
           placeholder="Timeout&hellip;" />
       </mat-form-field>
 
+      <mat-form-field class="flex-auto">
+        <mat-label>صادر کننده</mat-label>
+        <input matInput formControlName="Issuer" placeholder="صادر کننده&hellip;" />
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن لینک ایمیل</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          formControlName="TextEmailLink"
+          placeholder="متن لینک ایمیل&hellip;"
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
+        @if (form.get("TextEmailLink")?.invalid) {
+          <mat-error>این متن باید دارای [LINK] باشد</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن ایمیل</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          formControlName="TextEmail"
+          placeholder="متن ایمیل&hellip;"
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
+        @if (form.get("TextEmail")?.invalid) {
+          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>متن پیامک</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          formControlName="TextSms"
+          placeholder="متن پیامک&hellip;"
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
+        @if (form.get("TextSms")?.invalid) {
+          <mat-error>این متن باید دارای [OTP] باشد</mat-error>
+        }
+      </mat-form-field>
     </div>
 
     <div class="flex items-center justify-end gap-2">

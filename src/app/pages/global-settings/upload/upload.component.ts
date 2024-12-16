@@ -45,16 +45,16 @@ export class GlobalSettingsUploadComponenet implements OnChanges {
   disabledAllowDays: boolean[] = [];
   disabledDenyDays: boolean[] = [];
   form: FormGroup = this.fb.group({
-    MaxByteUpload: [null, Validators.required],
-    MaxDataUpload: [null, Validators.required],
-    CountUploadPerDay: [null, Validators.required],
-    CountUploadPerMonth: [null, Validators.required],
+    MaxByteUpload: [null],
+    MaxDataUpload: [null],
+    CountUploadPerDay: [null],
+    CountUploadPerMonth: [null],
     // StartTimeUpload: [null],
     // EndTimeUpload: [null],
-    AllowExtestionUpload: ['', Validators.required],
-    DenyExtestionUpload: ['', Validators.required],
-    AllowDayUpload: ['', Validators.required],
-    DenyDayUpload: ['', Validators.required]
+    AllowExtestionUpload: [''],
+    DenyExtestionUpload: [''],
+    AllowDayUpload: [''],
+    DenyDayUpload: ['']
   });
 
   constructor(private fb: FormBuilder) {}
