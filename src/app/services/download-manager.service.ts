@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, from, lastValueFrom, mergeMap, Observable, retry, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IndexDBHelperService } from './index-db-helper.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +43,6 @@ export class DownloadManagerService {
   downloadChunk(fileUrl: string, start: number, end: number): Observable<Blob> {
     const headers = new HttpHeaders({ Range: `bytes=${start}-${end}` });
     return this.http.get(fileUrl, { headers, responseType: 'blob' }).pipe(
-      retry(2), // تلاش مجدد تا 2 بار
       catchError((error) => throwError(() => error))
     );
   }
