@@ -85,7 +85,6 @@ export class FileDownloadService {
     return chunkIndex;
   }
 
-
   private async combineChunks(db: IDBDatabase, storeName: string, totalChunks: number,
                               fileId: string, fileName: string): Promise<void> {
     const chunks: Blob[] = [];

@@ -10,15 +10,19 @@
 
 <div dir="ltr">
   <ul class="max-h-[67vh] overflow-y-auto overflow-x-hidden mx-2 px-0">
-    <li *ngFor="let file of files; let i = index">
+    <li *ngFor="let file of filesProgress; let i = index">
       <div class="font-mono">
         <div class="">
           <div class="d-flex flex-row align-items-center">
             <p class="text-left mb-0 pr-2 text-field">{{ file.name }} </p>
-            <mat-progress-bar
-              [dir]="'ltr'"
-              [ngClass]="{'progress-completed': uploadProgress[i] === 100}"
-              mode="determinate" [value]="uploadProgress[i]"></mat-progress-bar>
+            @if (file.error) {
+              <p>{{ file.error }}</p>
+            } @else {
+              <mat-progress-bar
+                [dir]="'ltr'"
+                [ngClass]="{'progress-completed': file.progress === 100}"
+                mode="determinate" [value]="file.progress"></mat-progress-bar>
+            }
           </div>
         </div>
       </div>
