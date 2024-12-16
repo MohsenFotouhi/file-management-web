@@ -166,8 +166,6 @@ export class FileManagerService {
     const url = `${this.apiUrl}GetUserStorageUse`;
     return this.http.get<UserStorageUse>(url).pipe(
       map((res) => {
-        res.MaxUserStorage = 54299584000;
-        res.UserStorageUse = 5429958400;
         this.setUserStorage(res);
         return res;
       })
