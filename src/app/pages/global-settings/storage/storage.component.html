@@ -1,8 +1,5 @@
 <div @fadeInUp class="card flex-auto">
-  <form
-    [formGroup]="form"
-    class="px-6 py-4 flex flex-col"
-    (ngSubmit)="onSubmit()">
+  <form [formGroup]="form" class="px-6 py-4 flex flex-col" (ngSubmit)="onSubmit()">
     <div class="flex flex-col sm:grid sm:grid-cols-2 sm:gap-4">
       <mat-form-field class="flex-auto">
         <mat-label>فضای ذخیره کاربر</mat-label>
@@ -12,6 +9,32 @@
           type="number"
           placeholder="حداکثر فضای ذخیره کاربر(مگابایت)&hellip;" />
         @if (form.get("MaxUserStorage")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto">
+        <mat-label>آدرس پایه</mat-label>
+        <input matInput formControlName="BaseUrl" placeholder="***.***//:http(s)&hellip;" />
+        @if (form.get("BaseUrl")?.invalid) {
+          <mat-error>فرمت آدرس اشتباه است</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto">
+        <mat-label>آدرس منبع دانلود</mat-label>
+        <input matInput formControlName="DownLoadUri" placeholder="آدرس منبع دانلود&hellip;" />
+        @if (form.get("DownLoadUri")?.invalid) {
+          <mat-error>این فیلد اجباری است </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="flex-auto">
+        <mat-label>اندازه بخش رمزنگاری‌شده</mat-label>
+        <input
+          matInput
+          formControlName="EncryptedChunkSize"
+          type="number"
+          placeholder="اندازه بخش رمزنگاری‌شده&hellip;" />
+        @if (form.get("EncryptedChunkSize")?.invalid) {
           <mat-error>این فیلد اجباری است </mat-error>
         }
       </mat-form-field>

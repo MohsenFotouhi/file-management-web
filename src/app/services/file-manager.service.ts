@@ -13,20 +13,21 @@ export class FileManagerService {
   progress = 0;
   private userStorage = new BehaviorSubject<UserStorageUse>({
     UserStorageUse: 0,
-    MaxUserStorage: 0
+    MaxUserStorage: 0,
+    usedSpacePercentage: 0
   });
   userStorageUse$ = this.userStorage.asObservable();
 
   private id = 'RayanFileManagerApi1';
   private apiUrl = environment.api + '/';
 
-  constructor(private http: HttpClient,
-              private fileDownloadService: FileDownloadService) {
-  }
+  constructor(
+    private http: HttpClient,
+    private fileDownloadService: FileDownloadService
+  ) {}
 
   async downloadFileWithRange(fileId: string, totalSize: number, fileName: string) {
-    const url =
-      `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
+    const url = `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
 
     await this.fileDownloadService.downloadFile(url, totalSize, fileId, fileName);
   }
@@ -166,6 +167,8 @@ export class FileManagerService {
     const url = `${this.apiUrl}GetUserStorageUse`;
     return this.http.get<UserStorageUse>(url).pipe(
       map((res) => {
+        const percentage = (res.UserStorageUse / res.MaxUserStorage) * 100;
+        res.usedSpacePercentage = percentage % 1 === 0 ? percentage : +percentage.toFixed(2);
         this.setUserStorage(res);
         return res;
       })

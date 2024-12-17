@@ -21,4 +21,5 @@ export interface PublicModel {
 export interface UserStorageUse {
   UserStorageUse: number;
   MaxUserStorage: number;
+  usedSpacePercentage: number;
 }
