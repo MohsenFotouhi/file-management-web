@@ -127,7 +127,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.rootPath.childs = [];
     for (const folder of this.folders) {
       this.rootPath.childs.push({
-        title: folder.FolderName,
+        title: folder.FarsiName || folder.FolderName,
         fullTitle: folder.VirtualPath,
         parent: folder.VirtualPath.split('\\')[0] + '\\',
         fileId: folder.FileId,
@@ -177,7 +177,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
         });
 
         this.currentPath.childs.push({
-          title: folder.FolderName,
+          title: folder.FarsiName || folder.FolderName,
           fullTitle: folder.VirtualPath,
           parent: parentTitle,
           fileId: folder.FileId,
@@ -357,9 +357,9 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async rename() {
     let newName: any;
     if (this.selectedFiles.length > 0) {
-      newName = this.selectedFiles[0].FileName;
+      newName = this.selectedFiles[0].FarsiName || this.selectedFiles[0].FileName;
     } else if (this.selectedFolders.length > 0) {
-      newName = this.selectedFolders[0].FolderName;
+      newName = this.selectedFolders[0].FarsiName || this.selectedFolders[0].FolderName;
     } else {
       return;
     }
@@ -697,9 +697,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
       const response = await firstValueFrom(
         this.service.CallAPI(command, parameters)
       );
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
-      await this.previews();
+      await this.bindingData(response);
     } catch (error) {
       console.error('API error:', error);
     } finally {
