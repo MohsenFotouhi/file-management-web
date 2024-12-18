@@ -16,14 +16,16 @@ import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 export class GlobalSettingsStorageComponent implements OnChanges {
   @Input() data: string;
   @Output() submitForm: EventEmitter<Storage> = new EventEmitter();
-  form: FormGroup = this.fb.group({
-    MaxUserStorage: [null],
-    BaseUrl: ['', Validators.pattern(/^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/)],
-    DownLoadUri: [''],
-    EncryptedChunkSize: [null]
-  });
+  form: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      MaxUserStorage: [null],
+      BaseUrl: ['', Validators.pattern(/^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/)],
+      DownLoadUri: [''],
+      EncryptedChunkSize: [null]
+    });
+  }
 
   ngOnChanges(): void {
     if (this.data) {
@@ -35,6 +37,7 @@ export class GlobalSettingsStorageComponent implements OnChanges {
     if (this.form.invalid) {
       return;
     }
+    this.form.controls['EncryptedChunkSize'].setValue(262144);
     this.submitForm.emit(this.form.value);
   }
 }
