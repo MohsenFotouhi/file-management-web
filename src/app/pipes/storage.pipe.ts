@@ -9,7 +9,10 @@ export class StoragePipe implements PipeTransform {
     const temp = value;
     let res = '';
     if (temp >= 1024) {
-      res = `${(temp / 1024).toFixed(2)}GB`;
+      res =
+        temp % 1024 === 0
+          ? `${temp / 1024}GB`
+          : `${(temp / 1024).toFixed(2)}GB`;
     } else {
       res = `${temp}MB`;
     }

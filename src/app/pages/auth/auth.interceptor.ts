@@ -71,6 +71,7 @@ export class AuthInterceptor implements HttpInterceptor {
           );
         } else {
           this.handle400Error(snackBar, error);
+          
           return throwError(() => error); // Return the original error
         }
       })
@@ -119,6 +120,6 @@ export class AuthInterceptor implements HttpInterceptor {
     //   horizontalPosition: 'right',
     //   verticalPosition: 'top',
     // });
-    this.toast.open(error.error);
+    this.toast.open(error.error.errorMessage);
   }
 }
