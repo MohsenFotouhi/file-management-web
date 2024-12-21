@@ -127,7 +127,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
     this.rootPath.childs = [];
     for (const folder of this.folders) {
       this.rootPath.childs.push({
-        title: folder.FolderName,
+        title: folder.FarsiName || folder.FolderName,
         fullTitle: folder.VirtualPath,
         parent: folder.VirtualPath.split('\\')[0] + '\\',
         fileId: folder.FileId,
@@ -177,7 +177,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
         });
 
         this.currentPath.childs.push({
-          title: folder.FolderName,
+          title: folder.FarsiName || folder.FolderName,
           fullTitle: folder.VirtualPath,
           parent: parentTitle,
           fileId: folder.FileId,
@@ -351,15 +351,14 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async renameButtonClicked() {
     await this.rename();
-    await this.getPaths(this.currentPath);
   }
 
   async rename() {
     let newName: any;
     if (this.selectedFiles.length > 0) {
-      newName = this.selectedFiles[0].FileName;
+      newName = this.selectedFiles[0].FarsiName || this.selectedFiles[0].FileName;
     } else if (this.selectedFolders.length > 0) {
-      newName = this.selectedFolders[0].FolderName;
+      newName = this.selectedFolders[0].FarsiName || this.selectedFolders[0].FolderName;
     } else {
       return;
     }
@@ -537,11 +536,14 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async search() {
     const data = {
-      Path: this.currentPath.title,
+      Path: this.currentPath.fullTitle,
       ParentDirectoryID: this.currentPath.fileId,
       Query: this.searchKeyWord
     };
-    await this.callApiWithResponse('search', JSON.stringify(data));
+    const response = await firstValueFrom(
+      this.service.CallAPI('search', JSON.stringify(data))
+    );
+    await this.bindingData(response);
   }
 
   /**********************-Context Event-************************/
@@ -643,7 +645,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async doubleClick(folder: Folder) {
     const folderSelected = this.currentPath.childs.find(
-      (x) => x.title == folder.FolderName
+      (x) => x.title == (folder.FarsiName || folder.FolderName)
     );
     if (folderSelected) await this.pathChange(folderSelected);
   }
@@ -694,12 +696,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async callApiWithResponse(command: string, parameters: string) {
     try {
       await this.spinner.show();
-      const response = await firstValueFrom(
+      await firstValueFrom(
         this.service.CallAPI(command, parameters)
       );
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
-      await this.previews();
+      await this.getPaths(this.currentPath);
     } catch (error) {
       console.error('API error:', error);
     } finally {
