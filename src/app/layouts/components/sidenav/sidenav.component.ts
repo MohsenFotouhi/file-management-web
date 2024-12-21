@@ -67,6 +67,7 @@ export class SidenavComponent implements OnInit {
 
   items$: Observable<NavigationItem[]> = this.navigationService.items$;
   userStorage$: Observable<UserStorageUse>;
+  usedSpacePercentage: number;
 
   constructor(
     private navigationService: NavigationService,
@@ -85,7 +86,7 @@ export class SidenavComponent implements OnInit {
     // ).subscribe()
     // this.storageUsage = 60;
     this.userStorage$ = this.service.userStorageUse$;
-    this.getUserStorage()
+    this.getUserStorage();
   }
 
   collapseOpenSidenav() {
