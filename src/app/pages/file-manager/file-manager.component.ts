@@ -351,7 +351,6 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async renameButtonClicked() {
     await this.rename();
-    await this.getPaths(this.currentPath);
   }
 
   async rename() {
@@ -537,11 +536,14 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async search() {
     const data = {
-      Path: this.currentPath.title,
+      Path: this.currentPath.fullTitle,
       ParentDirectoryID: this.currentPath.fileId,
       Query: this.searchKeyWord
     };
-    await this.callApiWithResponse('search', JSON.stringify(data));
+    const response = await firstValueFrom(
+      this.service.CallAPI('search', JSON.stringify(data))
+    );
+    await this.bindingData(response);
   }
 
   /**********************-Context Event-************************/
@@ -643,7 +645,7 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
 
   async doubleClick(folder: Folder) {
     const folderSelected = this.currentPath.childs.find(
-      (x) => x.title == folder.FolderName
+      (x) => x.title == (folder.FarsiName || folder.FolderName)
     );
     if (folderSelected) await this.pathChange(folderSelected);
   }
@@ -694,10 +696,10 @@ export class FileManagerComponent implements OnInit, AfterViewInit {
   async callApiWithResponse(command: string, parameters: string) {
     try {
       await this.spinner.show();
-      const response = await firstValueFrom(
+      await firstValueFrom(
         this.service.CallAPI(command, parameters)
       );
-      await this.bindingData(response);
+      await this.getPaths(this.currentPath);
     } catch (error) {
       console.error('API error:', error);
     } finally {
