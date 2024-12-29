@@ -5,7 +5,7 @@ export interface CreateDownloadLinkCommand {
   shareWithUsers: User[];
   shareWithEmails: string[];
   virtualPath: string;
-  FileID: string;
+  fileID: string;
 }
 
 export interface User {

@@ -96,16 +96,16 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
       const response = await firstValueFrom(this.service.getSharedFiles());
       this.rootPath.title = response.CurrentPath;
       this.rootPath.fullTitle = response.CurrentPath;
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
+      this.folders = response.folders || [];
+      this.files = response.files || [];
       this.rootPath.childs = [];
       for (const folder of this.folders) {
         this.rootPath.childs.push(
           {
-            title: folder.FolderName,
-            fullTitle: folder.VirtualPath,
-            parent: folder.VirtualPath.split('\\')[0] + '\\',
-            fileId: folder.FileId,
+            title: folder.folderName,
+            fullTitle: folder.virtualPath,
+            parent: folder.virtualPath.split('\\')[0] + '\\',
+            fileId: folder.fileId,
             childs: []
           });
       }
@@ -136,8 +136,8 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
           this.service.CallAPI(command, path.fileId)
         );
 
-        this.folders = response.Folders || [];
-        this.files = response.Files || [];
+        this.folders = response.folders || [];
+        this.files = response.files || [];
         await this.previews();
 
         let parentTitle: string = '';
@@ -147,7 +147,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
 
         for (const folder of this.folders) {
           parentTitle = '';
-          let parents = folder.VirtualPath.split('\\');
+          let parents = folder.virtualPath.split('\\');
           parents.splice(-1);
           parents.forEach(element => {
             if (parentTitle.trim().length > 0)
@@ -156,10 +156,10 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
           });
 
           this.currentPath.childs.push({
-            title: folder.FolderName,
-            fullTitle: folder.VirtualPath,
+            title: folder.folderName,
+            fullTitle: folder.virtualPath,
             parent: parentTitle,
-            fileId: folder.FileId,
+            fileId: folder.fileId,
             childs: []
           });
         }
@@ -176,10 +176,10 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   async previews() {
     this.blobs = [];
     for (const file of this.files) {
-      if (file.FileName.endsWith('.png') && false) {
+      if (file.fileName.endsWith('.png') && false) {
         try {
           const response = await firstValueFrom(
-            this.service.preview('filePreview', (file.VirtualPath))
+            this.service.preview('filePreview', (file.virtualPath))
           );
           const fileURL = URL.createObjectURL(response);
           this.blobs.push({ file: file, content: fileURL });
@@ -224,7 +224,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
   async onFolderDblClick(folder: Folder) {
     clearTimeout(this.clickTimeout);
     this.clickTimeout = null;
-    const child = this.currentPath.childs.find(x => x.title == folder.FolderName);
+    const child = this.currentPath.childs.find(x => x.title == folder.folderName);
     if (child) await this.pathChange(child);
   }
 
@@ -317,7 +317,7 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
 
     for (const file of this.selectedFiles) {
       try {
-        await this.service.downloadFileWithRange(file.FileId, file.RealFileSize, file.FarsiName || file.FileName);
+        await this.service.downloadFileWithRange(file.fileId, file.realFileSize, file.farsiName || file.fileName);
       } catch (error) {
         console.error('File download error:', error);
       }
@@ -338,8 +338,8 @@ export class SharedWithUserComponent implements OnInit, AfterViewInit {
         }))
       );
 
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
+      this.folders = response.folders || [];
+      this.files = response.files || [];
       await this.previews();
     } catch (error) {
       console.error('API error:', error);

@@ -68,8 +68,8 @@ export class ShareModalComponent {
     private spinner: NgxSpinnerService,
     private shareService: ShareService
   ) {
-    this.virtualPath = data.VirtualPath;
-    this.fileID = data.FileId;
+    this.virtualPath = data.virtualPath;
+    this.fileID = data.fileId;
   }
 
   clickEvent(link: string) {
@@ -166,7 +166,7 @@ export class ShareModalComponent {
       virtualPath: this.virtualPath,
       shareWithUsers: selectedUser,
       shareWithEmails: this.emailList,
-      FileID: this.fileID
+      fileID: this.fileID
     };
 
     this.spinner.show();
