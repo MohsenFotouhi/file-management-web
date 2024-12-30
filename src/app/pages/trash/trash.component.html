@@ -53,89 +53,89 @@
                    alt="img/folder.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <p class="file-name truncate">{{ currentFolder.FolderName }}</p>
+              <p class="file-name truncate">{{ currentFolder.folderName }}</p>
               <div class="file-size"></div>
             </div>
             <div class="border fileItem"
                  *ngFor="let currentFile of blobs let i = index"
                  [ngClass]=" isFileInSelectedFiles(currentFile.file) ?  'active':  'inactive' "
                  (click)="onFileClick($event , currentFile.file)">
-              <img *ngIf="currentFile.file.FileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.css') " src="assets/img/filesIcons/css.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('dll')" src="assets/img/filesIcons/dll.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('dll')" src="assets/img/filesIcons/dll.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.exe') " src="assets/img/filesIcons/exe.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.exe') " src="assets/img/filesIcons/exe.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.file')" src="assets/img/filesIcons/file.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.file')" src="assets/img/filesIcons/file.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.folder')" src="assets/img/filesIcons/folder.png" alt=""
+              <img *ngIf=" currentFile.file.fileName.endsWith('.folder')" src="assets/img/filesIcons/folder.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.html')" src="assets/img/filesIcons/html.png" alt=""
+              <img *ngIf=" currentFile.file.fileName.endsWith('.html')" src="assets/img/filesIcons/html.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.js')" src="assets/img/filesIcons/js.png" alt=""
+              <img *ngIf=" currentFile.file.fileName.endsWith('.js')" src="assets/img/filesIcons/js.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.json')" src="assets/img/filesIcons/json.png" alt=""
+              <img *ngIf=" currentFile.file.fileName.endsWith('.json')" src="assets/img/filesIcons/json.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.MP3')" src="assets/img/filesIcons/MP3.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.MP3')" src="assets/img/filesIcons/MP3.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf=" currentFile.file.FileName.endsWith('.MP4')" src="assets/img/filesIcons/MP4.png" alt=""
+              <img *ngIf=" currentFile.file.fileName.endsWith('.MP4')" src="assets/img/filesIcons/MP4.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.php')" src="assets/img/filesIcons/php.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.php')" src="assets/img/filesIcons/php.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.txt')" src="assets/img/filesIcons/txt.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.txt')" src="assets/img/filesIcons/txt.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.zip')" src="assets/img/filesIcons/zip.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.zip')" src="assets/img/filesIcons/zip.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
-              <img *ngIf="currentFile.file.FileName.endsWith('.pdf')" src="assets/img/filesIcons/pdf.png" alt=""
+              <img *ngIf="currentFile.file.fileName.endsWith('.pdf')" src="assets/img/filesIcons/pdf.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
 
               <img *ngIf="
-                         currentFile.file.FileName.endsWith('.img') ||
-                         currentFile.file.FileName.endsWith('.png') ||
-                         currentFile.file.FileName.endsWith('.jpeg') "
+                         currentFile.file.fileName.endsWith('.img') ||
+                         currentFile.file.fileName.endsWith('.png') ||
+                         currentFile.file.fileName.endsWith('.jpeg') "
                    src="assets/img/filesIcons/image.png" alt=""
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
 
               <img *ngIf="
-                    ! currentFile.file.FileName.endsWith('.css') &&
-                    ! currentFile.file.FileName.endsWith('.dll') &&
-                    ! currentFile.file.FileName.endsWith('.exe') &&
-                    ! currentFile.file.FileName.endsWith('.file') &&
-                    ! currentFile.file.FileName.endsWith('.folder') &&
-                    ! currentFile.file.FileName.endsWith('.html') &&
-                    ! currentFile.file.FileName.endsWith('.js') &&
-                    ! currentFile.file.FileName.endsWith('.json') &&
-                    ! currentFile.file.FileName.endsWith('.MP3') &&
-                    ! currentFile.file.FileName.endsWith('.MP4') &&
-                    ! currentFile.file.FileName.endsWith('.pdf') &&
-                    ! currentFile.file.FileName.endsWith('.php') &&
-                    ! currentFile.file.FileName.endsWith('.txt') &&
-                    ! currentFile.file.FileName.endsWith('.zip') &&
-                    ! currentFile.file.FileName.endsWith('.png') &&
-                    ! currentFile.file.FileName.endsWith('.img') &&
-                    ! currentFile.file.FileName.endsWith('.jpeg')
+                    ! currentFile.file.fileName.endsWith('.css') &&
+                    ! currentFile.file.fileName.endsWith('.dll') &&
+                    ! currentFile.file.fileName.endsWith('.exe') &&
+                    ! currentFile.file.fileName.endsWith('.file') &&
+                    ! currentFile.file.fileName.endsWith('.folder') &&
+                    ! currentFile.file.fileName.endsWith('.html') &&
+                    ! currentFile.file.fileName.endsWith('.js') &&
+                    ! currentFile.file.fileName.endsWith('.json') &&
+                    ! currentFile.file.fileName.endsWith('.MP3') &&
+                    ! currentFile.file.fileName.endsWith('.MP4') &&
+                    ! currentFile.file.fileName.endsWith('.pdf') &&
+                    ! currentFile.file.fileName.endsWith('.php') &&
+                    ! currentFile.file.fileName.endsWith('.txt') &&
+                    ! currentFile.file.fileName.endsWith('.zip') &&
+                    ! currentFile.file.fileName.endsWith('.png') &&
+                    ! currentFile.file.fileName.endsWith('.img') &&
+                    ! currentFile.file.fileName.endsWith('.jpeg')
                     " src="assets/img/filesIcons/file.png" alt="file.png"
                    [ngClass]="{'list-view-file-image': isListView, 'grid-view-file-image': !isListView}"
                    class="file-image" />
                 <span style="max-width: 100%;">
-                    <p class="file-name truncate">{{ currentFile.file.FileName }}</p>
+                    <p class="file-name truncate">{{ currentFile.file.fileName }}</p>
                 </span>
-              <div class="file-size">{{ currentFile.file.FileSize }}</div>
+              <div class="file-size">{{ currentFile.file.fileSize }}</div>
             </div>
           </div>
         </div>

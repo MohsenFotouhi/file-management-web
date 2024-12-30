@@ -85,16 +85,16 @@ export class TrashComponent implements OnInit, AfterViewInit {
       const response = await firstValueFrom(this.service.CallAPI('RecycleBin', ''));
       this.rootPath.title = response.CurrentPath;
       this.rootPath.fullTitle = response.CurrentPath;
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
+      this.folders = response.folders || [];
+      this.files = response.files || [];
       this.rootPath.childs = [];
       for (const folder of this.folders) {
         this.rootPath.childs.push(
           {
-            title: folder.FolderName,
-            fullTitle: folder.VirtualPath,
-            parent: folder.VirtualPath.split('\\')[0] + '\\',
-            fileId: folder.FileId,
+            title: folder.folderName,
+            fullTitle: folder.virtualPath,
+            parent: folder.virtualPath.split('\\')[0] + '\\',
+            fileId: folder.fileId,
             childs: []
           });
       }
@@ -125,8 +125,8 @@ export class TrashComponent implements OnInit, AfterViewInit {
           this.service.CallAPI(command, path.fullTitle)
         );
 
-        this.folders = response.Folders || [];
-        this.files = response.Files || [];
+        this.folders = response.folders || [];
+        this.files = response.files || [];
         await this.previews();
 
         let parentTitle: string = '';
@@ -136,7 +136,7 @@ export class TrashComponent implements OnInit, AfterViewInit {
 
         for (const folder of this.folders) {
           parentTitle = '';
-          let parents = folder.VirtualPath.split('\\');
+          let parents = folder.virtualPath.split('\\');
           parents.splice(-1);
           parents.forEach(element => {
             if (parentTitle.trim().length > 0)
@@ -145,10 +145,10 @@ export class TrashComponent implements OnInit, AfterViewInit {
           });
 
           this.currentPath.childs.push({
-            title: folder.FolderName,
-            fullTitle: folder.VirtualPath,
+            title: folder.folderName,
+            fullTitle: folder.virtualPath,
             parent: parentTitle,
-            fileId: folder.FileId,
+            fileId: folder.fileId,
             childs: []
           });
         }
@@ -165,10 +165,10 @@ export class TrashComponent implements OnInit, AfterViewInit {
   async previews() {
     this.blobs = [];
     for (const file of this.files) {
-      if (file.FileName.endsWith('.png') && false) {
+      if (file.fileName.endsWith('.png') && false) {
         try {
           const response = await firstValueFrom(
-            this.service.preview('filePreview', (file.VirtualPath))
+            this.service.preview('filePreview', (file.virtualPath))
           );
           const fileURL = URL.createObjectURL(response);
           this.blobs.push({ file: file, content: fileURL });
@@ -310,13 +310,13 @@ export class TrashComponent implements OnInit, AfterViewInit {
       }
 
       for (const folder of this.selectedFolders) {
-        Items.push(folder.VirtualPath);
-        ListId.push(folder.FileId);
+        Items.push(folder.virtualPath);
+        ListId.push(folder.fileId);
       }
 
       for (const file of this.selectedFiles) {
-        Items.push(this.currentPath.fullTitle + '\\' + file.FileName);
-        ListId.push(file.FileId);
+        Items.push(this.currentPath.fullTitle + '\\' + file.fileName);
+        ListId.push(file.fileId);
       }
 
       const data = {
@@ -342,13 +342,13 @@ export class TrashComponent implements OnInit, AfterViewInit {
         Items.push(this.pathFolderContextMenu.fullTitle);
       }
       for (const folder of this.selectedFolders) {
-        Items.push(folder.VirtualPath);
-        ListId.push(folder.FileId);
+        Items.push(folder.virtualPath);
+        ListId.push(folder.fileId);
       }
 
       for (const file of this.selectedFiles) {
-        Items.push(this.currentPath.fullTitle + '\\' + file.FileName);
-        ListId.push(file.FileId);
+        Items.push(this.currentPath.fullTitle + '\\' + file.fileName);
+        ListId.push(file.fileId);
       }
 
       const data = {
@@ -380,8 +380,8 @@ export class TrashComponent implements OnInit, AfterViewInit {
         }))
       );
 
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
+      this.folders = response.folders || [];
+      this.files = response.files || [];
       await this.previews();
     } catch (error) {
       console.error('API error:', error);
@@ -406,8 +406,8 @@ export class TrashComponent implements OnInit, AfterViewInit {
     try {
       await this.spinner.show();
       const response = await firstValueFrom(this.service.CallAPI(command, parameters));
-      this.folders = response.Folders || [];
-      this.files = response.Files || [];
+      this.folders = response.folders || [];
+      this.files = response.files || [];
       await this.previews();
     } catch (error) {
       console.error('API error:', error);

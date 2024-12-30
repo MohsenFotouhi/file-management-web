@@ -96,7 +96,7 @@ export class LinkDownloadComponent implements OnInit {
           return of(res);
         }),
         catchError((err) => {
-          this.router.navigate(['/error-404']);
+          // this.router.navigate(['/error-404']);
           return of(err);
         }),
         finalize(() => {

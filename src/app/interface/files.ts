@@ -1,43 +1,43 @@
 export class File {
-  FileName!: string;
-  VirtualPath!: string;
-  FileSize!: string;
-  ModifiedDate!: string;
-  CreateDate!: string;
-  UniqueProperty!: string;
-  DownloadId!: string;
-  FileId!: string;
-  CanDownLoad!: boolean;
-  CanView!: boolean;
-  CanShare!: boolean;
-  IsPrivate!: boolean;
-  CheckSum!: string;
-  ViewCount!: number;
-  ShareCount!: number;
-  DownLoadCount!: number;
-  FarsiName!: string;
-  FileSizeInDisk!: string;
-  RealFileSize!: number;
-  ParentDirectoryId!: string
+  fileName!: string;
+  virtualPath!: string;
+  fileSize!: string;
+  modifiedDate!: string;
+  createDate!: string;
+  uniqueProperty!: string;
+  downloadId!: string;
+  fileId!: string;
+  canDownLoad!: boolean;
+  canView!: boolean;
+  canShare!: boolean;
+  isPrivate!: boolean;
+  checkSum!: string;
+  viewCount!: number;
+  shareCount!: number;
+  downLoadCount!: number;
+  farsiName!: string;
+  fileSizeInDisk!: string;
+  realFileSize!: number;
+  parentDirectoryId!: string
 }
 
 export class Folder {
-  FolderName!: string;
-  VirtualPath!: string;
-  ModifiedDate!: string;
-  CreateDate!: string;
-  UniqueProperty!: string;
-  FileId!: string;
-  CanDownLoad!: boolean;
-  CanView!: boolean;
-  CanShare!: boolean;
-  IsPrivate!: boolean;
-  CheckSum!: string;
-  ViewCount!: number;
-  ShareCount!: number;
-  DownLoadCount!: number;
-  FarsiName!: string;
-  ParentDirectoryId!: string;
+  folderName!: string;
+  virtualPath!: string;
+  modifiedDate!: string;
+  createDate!: string;
+  uniqueProperty!: string;
+  fileId!: string;
+  canDownLoad!: boolean;
+  canView!: boolean;
+  canShare!: boolean;
+  isPrivate!: boolean;
+  checkSum!: string;
+  viewCount!: number;
+  shareCount!: number;
+  downLoadCount!: number;
+  farsiName!: string;
+  parentDirectoryId!: string;
 }
 
 export class FileBlob {
