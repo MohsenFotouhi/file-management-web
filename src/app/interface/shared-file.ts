@@ -1,12 +1,12 @@
 export interface SharedFile {
-    IsPermanent: boolean;
-    IsPublic: boolean;
-    CreateDate: string;
-    ExpireDate: string;
-    VirtualPath: string;
-    FileName: string;
-    ShareWithEmails: string[];
-    ShareWithUsers: User[];
+    isPermanent: boolean;
+    isPublic: boolean;
+    createDate: string;
+    expireDate: string;
+    virtualPath: string;
+    fileName: string;
+    shareWithEmails: string[];
+    shareWithUsers: User[];
 }
 
 

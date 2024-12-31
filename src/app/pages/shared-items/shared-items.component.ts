@@ -39,30 +39,30 @@ export class SharedItemsComponent implements OnInit
     // },
     {
       label: 'نام فایل',
-      property: 'FileName',
+      property: 'fileName',
       type: 'text'
     },
     {
       label: 'تاریخ اشتراک گذاری',
-      property: 'CreateDate',
+      property: 'createDate',
       type: 'text',
       cssClasses: ['font-medium']
     },
     {
       label: 'تاریخ انقضا',
-      property: 'ExpireDate',
+      property: 'expireDate',
       type: 'text',
       cssClasses: ['text-secondary']
     },
     {
       label: 'عمومی',
-      property: 'IsPublic',
+      property: 'isPublic',
       type: 'checkbox',
       cssClasses: ['text-secondary']
     },
     {
       label: 'دائمی',
-      property: 'IsPermanent',
+      property: 'isPermanent',
       type: 'checkbox',
       cssClasses: ['text-secondary']
     },

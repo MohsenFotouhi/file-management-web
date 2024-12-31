@@ -16,14 +16,14 @@ export class DashboardService {
   constructor(private http: HttpClient) {
 
     this.files = [
-      { IsPermanent : false, IsPublic : true, CreateDate : '1403/01/02' , ExpireDate : '1403/01/02' ,
-        FileName :'فایل یک', VirtualPath :'', ShareWithUsers :[{  userId :'' ,username :'' }] , ShareWithEmails :[] },
-        { IsPermanent : false, IsPublic : false, CreateDate : '1403/01/02' , ExpireDate : '1403/01/02' ,
-          FileName :'فایل دو', VirtualPath :'', ShareWithUsers :[{  userId :'' ,username :'' }] , ShareWithEmails :[] },
-        { IsPermanent : true, IsPublic : true, CreateDate : '1403/01/02' , ExpireDate : '1403/01/02' ,
-          FileName :'فایل سه', VirtualPath :'', ShareWithUsers :[{  userId :'' ,username :'' }] , ShareWithEmails :[] },
-        { IsPermanent : false, IsPublic : false, CreateDate : '1403/01/02' , ExpireDate : '1403/01/02' ,
-          FileName :'فایل چهار', VirtualPath :'', ShareWithUsers :[{  userId :'' ,username :'' }] , ShareWithEmails :[] },
+      { isPermanent : false, isPublic : true, createDate : '1403/01/02' , expireDate : '1403/01/02' ,
+        fileName :'فایل یک', virtualPath :'', shareWithUsers :[{  userId :'' ,username :'' }] , shareWithEmails :[] },
+        { isPermanent : false, isPublic : false, createDate : '1403/01/02' , expireDate : '1403/01/02' ,
+          fileName :'فایل دو', virtualPath :'', shareWithUsers :[{  userId :'' ,username :'' }] , shareWithEmails :[] },
+        { isPermanent : true, isPublic : true, createDate : '1403/01/02' , expireDate : '1403/01/02' ,
+          fileName :'فایل سه', virtualPath :'', shareWithUsers :[{  userId :'' ,username :'' }] , shareWithEmails :[] },
+        { isPermanent : false, isPublic : false, createDate : '1403/01/02' , expireDate : '1403/01/02' ,
+          fileName :'فایل چهار', virtualPath :'', shareWithUsers :[{  userId :'' ,username :'' }] , shareWithEmails :[] },
       ];
 
   }
