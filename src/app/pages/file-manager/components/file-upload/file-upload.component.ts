@@ -106,10 +106,11 @@ export class FileUploadComponent {
   ): Promise<void> {
 
     this.fileName = file.name;
+    console.log(this.data);
     const temp = {
-      FilePath: this.data.currentPath,
-      FileName: file.name,
-      FileSize: file.size
+      filePath: this.data.currentPath,
+      fileName: file.name,
+      fileSize: file.size
     };
     // Pre upload api call
     const response = await firstValueFrom(
@@ -117,8 +118,8 @@ export class FileUploadComponent {
     );
 
     const uploadtemp = {
-      FilePath: this.data.currentPath,
-      FileId: response.fileID,
+      filePath: this.data.currentPath,
+      fileId: response.fileID,
     };
     await this.uploadChunks(0, file, fileIndex, JSON.stringify(uploadtemp)); // Start uploading the file from chunk 0
   }

@@ -78,11 +78,11 @@ export class FileManagerService {
   ): Observable<any> {
     const destinationPathInfo = [{ key: currentPath, name: currentPath }];
     const chunkMetadata = {
-      UploadId: '2feabfc4-9473-7c29-fc56-4deac56c3f84',
-      FileName: file.name,
-      Index: index,
-      TotalCount: totalCount,
-      FileSize: fileSize
+      uploadId: '2feabfc4-9473-7c29-fc56-4deac56c3f84',
+      fileName: file.name,
+      index: index,
+      totalCount: totalCount,
+      fileSize: fileSize
     };
     const argumentsData = JSON.stringify({
       destinationPathInfo: destinationPathInfo,
@@ -134,10 +134,10 @@ export class FileManagerService {
     return this.http.post(url, formData, { responseType: 'blob' });
   }
 
-  downloadShareFiles(downloadId: string, VirtualPath: string): Observable<any> {
+  downloadShareFiles(downloadId: string, virtualPath: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('downloadId', downloadId);
-    formData.append('virtualPath', VirtualPath);
+    formData.append('virtualPath', virtualPath);
 
     const url = `${this.apiUrl}api/ShareFile/DownloadShareFiles`;
     return this.http.post(url, formData, { responseType: 'blob' });
