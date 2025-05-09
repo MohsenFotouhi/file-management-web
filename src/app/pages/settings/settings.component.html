@@ -1,0 +1,25 @@
+<vex-page-layout mode="card">
+  <vex-page-layout-header class="h-6"></vex-page-layout-header>
+
+  <vex-page-layout-content class="container">
+    <div *ngIf="settingsData$ | async as settingsData" class="card">
+      <mat-tab-group>
+        <mat-tab label="ذخیره سازی">
+          <div class="p-6">
+            <settings-storage
+              [data]="settingsData.storageSetting"
+              (submitForm)="onStorageSubmit($event)"></settings-storage>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="سطل زباله">
+          <div class="p-6">
+            <settings-recycle-bin
+              [data]="settingsData.recycleBinSetting"
+              (formSubmit)="onRecycleBinSubmit($event)"></settings-recycle-bin>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>

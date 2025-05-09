@@ -114,7 +114,6 @@ export class ToolbarUserDropdownComponent implements OnInit
   ngOnInit()
   {
     this.username = localStorage.getItem('username') ?? '';
-
   }
 
   setStatus(status: OnlineStatus)
@@ -130,8 +129,7 @@ export class ToolbarUserDropdownComponent implements OnInit
 
   logout()
   {
-    localStorage.removeItem('token');
-    this.close;
-    this.router.navigate(['/login']);
+    this.close();
+    this.authService.logout();
   }
 }

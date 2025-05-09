@@ -19,6 +19,7 @@ speed-measure-plugin.json
 .project
 .classpath
 .c9/
+.vs
 *.launch
 .settings/
 *.sublime-workspace
@@ -30,6 +31,7 @@ speed-measure-plugin.json
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+.prettierrc
 
 # misc
 /.angular/cache
@@ -47,3 +49,5 @@ testem.log
 Thumbs.db
 
 /ARCHIVE/*
+
+bun.lockb

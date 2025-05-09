@@ -1,0 +1,16 @@
+<div [formGroup]="form">
+  <mat-form-field class="w-full">
+    <mat-label>{{ label }}</mat-label>
+    <input
+      [placeholder]="placeholder"
+      aria-label="12hr format"
+      [ngxTimepicker]="default"
+      [formControlName]="controlName"
+      [format]="24"
+      matInput
+      readonly />
+    <ngx-material-timepicker
+      #default
+      ></ngx-material-timepicker>
+  </mat-form-field>
+</div>

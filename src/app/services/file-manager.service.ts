@@ -1,82 +1,88 @@
-import { HttpClient, HttpHeaders, HttpParams, } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from "../../environments/environment";
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { UserStorageUse } from '../interface/share-models';
+import { environment } from '../../environments/environment';
+import { FileDownloadService } from './file-download.service';
 import { FileSystemCommand } from '../interface/file-system-command';
-
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FileManagerService
-{
+export class FileManagerService {
+  progress = 0;
+  private userStorage = new BehaviorSubject<UserStorageUse>({
+    UserStorageUse: 0,
+    MaxUserStorage: 0,
+    usedSpacePercentage: 0
+  });
+  userStorageUse$ = this.userStorage.asObservable();
 
-  constructor(private http: HttpClient) { }
-
+  private id = 'RayanFileManagerApi1';
   private apiUrl = environment.api + '/';
-  id: string = 'HgoApi1';
 
+  constructor(
+    private http: HttpClient,
+    private fileDownloadService: FileDownloadService
+  ) {}
 
-  CallAPI(command: string, parameters: string): Observable<any>
-  {
+  async downloadFileWithRange(fileId: string, totalSize: number, fileName: string) {
+    const url = `${this.apiUrl}api/DownloadFile/download-with-range?fileID=` + fileId;
+
+    await this.fileDownloadService.downloadFile(url, totalSize, fileId, fileName);
+  }
+
+  CallAPI(command: string, parameters: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 
-
-  uploadFileChunk(formData: FormData): Observable<any>
-  {
-    return this.http.post<any>(`${ this.apiUrl }HgoApi1`, formData, {
-      headers: new HttpHeaders({ 'enctype': 'multipart/form-data' })
+  uploadFileChunk(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}RayanFileManagerApi1`, formData, {
+      headers: new HttpHeaders({ enctype: 'multipart/form-data' })
     });
   }
 
+  preview(command: string, parameters: string): Observable<any> {
+    let params = new HttpParams();
+    params = params.set('id', this.id);
+    params = params.set('command', command);
+    params = params.set('parameters', parameters);
 
-
-
-
-
-  preview(command: string, parameters: string): Observable<any>
-  {
-
-    let formData = new HttpParams();
-    formData = formData.set('id', this.id);
-    formData = formData.set('command', command);
-    formData = formData.set('parameters', parameters);
-
-    const url = `${ this.apiUrl }HgoApi2`;
-    return this.http.get(url, { params: formData, responseType: 'blob' });
+    const url = `${this.apiUrl}RayanFileManagerApi2`;
+    return this.http.get(url, { params: params, responseType: 'blob' });
   }
 
-  uploadFile(command: string, parameters: string, file: File): Observable<any>
-  {
-
+  uploadFile(command: string, parameters: string, file: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
     formData.append('file', file, file.name);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 
-  uploadFileEncrypt(currentPath: string, file: File, index: number, totalCount: number, fileSize: number): Observable<any>
-  {
-
+  uploadFileEncrypt(
+    currentPath: string,
+    file: File,
+    index: number,
+    totalCount: number,
+    fileSize: number
+  ): Observable<any> {
     const destinationPathInfo = [{ key: currentPath, name: currentPath }];
-    const chunkMetadata =
-    {
-      UploadId: "2feabfc4-9473-7c29-fc56-4deac56c3f84",
-      FileName: file.name,
-      Index: index,
-      TotalCount: totalCount,
-      FileSize: fileSize
+    const chunkMetadata = {
+      uploadId: '2feabfc4-9473-7c29-fc56-4deac56c3f84',
+      fileName: file.name,
+      index: index,
+      totalCount: totalCount,
+      fileSize: fileSize
     };
     const argumentsData = JSON.stringify({
       destinationPathInfo: destinationPathInfo,
@@ -88,16 +94,15 @@ export class FileManagerService
     formData.append('arguments', argumentsData);
     formData.append('command', 'UploadChunk');
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     // const url = `http://localhost:13153/api/file-manager-file-system-images`;
     return this.http.post<any>(url, formData);
   }
 
-  downloadFileDecrypt(currentPath: string, fileName: string): Observable<any>
-  {
+  downloadFileDecrypt(currentPath: string, fileName: string): Observable<any> {
     const pathInfoList = [
       [{ key: currentPath, name: currentPath }],
-      [{ key: currentPath + "\\" + fileName, name: fileName }]
+      [{ key: currentPath + '\\' + fileName, name: fileName }]
     ];
 
     const payload = {
@@ -105,81 +110,72 @@ export class FileManagerService
       command: FileSystemCommand.Download
     };
 
-
     const url = `http://localhost:13153/api/file-manager-file-system-images`;
     return this.http.post<any>(url, payload);
   }
 
-  downloadFile(command: string, parameters: string): Observable<any>
-  {
-
+  downloadFile(command: string, parameters: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
-  downloadFileAsync(command: string, parameters: string): Observable<any>
-  {
 
+  downloadFileAsync(command: string, parameters: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', command);
     formData.append('parameters', parameters);
 
-    const url = `${ this.apiUrl }api/DownloadFile/DownloadFileAsync`;
+    const url = `${this.apiUrl}api/DownloadFile/DownloadFileAsync`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
 
-  downloadShareFiles(downloadId: string, VirtualPath: string): Observable<any>
-  {
-
+  downloadShareFiles(downloadId: string, virtualPath: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('downloadId', downloadId);
-    formData.append('virtualPath', VirtualPath);
+    formData.append('virtualPath', virtualPath);
 
-    const url = `${ this.apiUrl }api/ShareFile/DownloadShareFiles`;
+    const url = `${this.apiUrl}api/ShareFile/DownloadShareFiles`;
     return this.http.post(url, formData, { responseType: 'blob' });
   }
 
-  pasteFile(actionName: string, data: string): Observable<any>
-  {
-
+  pasteFile(actionName: string, data: string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
     formData.append('command', actionName);
     formData.append('parameters', data);
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
-
   }
 
-  // getSharedFiles(): Observable<any> {
-  //   var files = [
-  //     { CreateDate : '' , FileName: "text1.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text2.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text3.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text4.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''},
-  //     { CreateDate : '' , FileName: "text5.txt" , FileSize : "10kb" , ModifiedDate :'' , VirtualPath :''}
-  //   ];
-
-  //   return of(files);
-  // }
-
-  getSharedFiles(): Observable<any>
-  {
+  getSharedFiles(): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('id', this.id);
-    formData.append('command', "getSharedFiles");
+    formData.append('command', 'getSharedFiles');
     formData.append('parameters', '');
 
-    const url = `${ this.apiUrl }HgoApi1`;
+    const url = `${this.apiUrl}RayanFileManagerApi1`;
     return this.http.post<any>(url, formData);
   }
 
+  getUserStorageUse() {
+    const url = `${this.apiUrl}GetUserStorageUse`;
+    return this.http.get<UserStorageUse>(url).pipe(
+      map((res) => {
+        const percentage = (res.UserStorageUse / res.MaxUserStorage) * 100;
+        res.usedSpacePercentage = percentage % 1 === 0 ? percentage : +percentage.toFixed(2);
+        this.setUserStorage(res);
+        return res;
+      })
+    );
+  }
 
-
+  setUserStorage(value: UserStorageUse) {
+    this.userStorage.next(value);
+  }
 }

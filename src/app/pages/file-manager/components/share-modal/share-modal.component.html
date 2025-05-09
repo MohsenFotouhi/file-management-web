@@ -1,44 +1,78 @@
 <h2 mat-dialog-title>اشتراک گزاری</h2>
-<mat-dialog-content  *ngIf="!sharedLink.length" >
+<mat-dialog-content *ngIf="!sharedLink.length">
   <mat-checkbox [formControl]="isPublic">عمومی</mat-checkbox>
   <mat-checkbox [formControl]="isPermanent">دائمی</mat-checkbox>
-  <div class="datepicker-container" (click)="openCalendar()">
-    <input matInput placeholder="تاریخ انقضا را انتخاب کنید" [formControl]="expireDate" readonly>
+  <div
+    *ngIf="!isPermanent.value"
+    class="datepicker-container"
+    (click)="openCalendar()">
+    <input
+      matInput
+      placeholder="تاریخ انقضا را انتخاب کنید"
+      [formControl]="expireDate"
+      readonly />
     <mat-icon svgIcon="mat:calendar_today"></mat-icon>
   </div>
   <!-- users list -->
   <div *ngIf="!isPublic.value" class="mt-3 mb-1">
     <div dir="ltr" class="search-input">
-      <input #searchElm dir="ltr" placeholder="Search..." type="text" (keyup)="onSearch()"
-             [formControl]="searchValue">
-      <div *ngIf="searchLoading" class="spinner-border spinner-border-sm text-primary" role="status">
+      <input
+        #searchElm
+        dir="ltr"
+        placeholder="Search..."
+        type="text"
+        (keyup)="onSearch()"
+        [formControl]="searchValue" />
+      <div
+        *ngIf="searchLoading"
+        class="spinner-border spinner-border-sm text-primary"
+        role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
 
-      <div *ngIf="!searchLoading && searchValue.value" class="close-icon cursor-pointer"
-           (click)="searchValue.setValue('')">
+      <div
+        *ngIf="!searchLoading && searchValue.value"
+        class="close-icon cursor-pointer"
+        (click)="searchValue.setValue('')">
         <mat-icon svgIcon="mat:close"></mat-icon>
       </div>
 
-      <div *ngIf="searchElm.value" class="select-list p-2 border rounded w-100  d-flex flex-column gap-2">
-        <div class="w-100 " *ngFor="let user of userList" (click)="onSelectUser(user)">
+      <div
+        *ngIf="searchElm.value"
+        class="select-list p-2 border rounded w-100 d-flex flex-column gap-2">
+        <div
+          class="w-100"
+          *ngFor="let user of userList"
+          (click)="onSelectUser(user)">
           <div class="flex items-center justify-between w-100 cursor-pointer">
             <div class="flex items-center">
-              <div class="rounded-full h-9 w-9 flex items-center justify-center text-white-50 bg-secondary">
+              <div
+                class="rounded-full h-9 w-9 flex items-center justify-center text-white-50 bg-secondary">
                 <mat-icon svgIcon="mat:person"></mat-icon>
               </div>
               <div class="flex-auto ms-2 text-start">
-                <h4 class="body-2 m-0 leading-snug">{{user.firstName + ' ' + user?.lastName}}</h4>
-                <h5 class="text-secondary m-0 caption leading-none">{{user?.username}}</h5>
+                <h4 class="body-2 m-0 leading-snug">
+                  {{ user.firstName + " " + user?.lastName }}
+                </h4>
+                <h5 class="text-secondary m-0 caption leading-none">
+                  {{ user?.username }}
+                </h5>
               </div>
             </div>
-            <button class="text-success" color="primary" type="button" *ngIf="isUserSelected(user)">
+            <button
+              class="text-success"
+              color="primary"
+              type="button"
+              *ngIf="isUserSelected(user)">
               <mat-icon svgIcon="mat:check_circle"></mat-icon>
             </button>
           </div>
         </div>
 
-        <div dir="rtl" class="d-flex flex-column gap-2 align-items-center w-100 mt-4" *ngIf="userList?.length === 0">
+        <div
+          dir="rtl"
+          class="d-flex flex-column gap-2 align-items-center w-100 mt-4"
+          *ngIf="userList?.length === 0">
           <mat-icon class="text-warning" svgIcon="mat:error_outline"></mat-icon>
           <span>کاربری پیدا نشده است!</span>
         </div>
@@ -46,76 +80,114 @@
     </div>
   </div>
 
-  <div dir="ltr" *ngIf="!isPublic.value" class="selected-list row border rounded p-2 mx-0">
+  <div
+    dir="ltr"
+    *ngIf="!isPublic.value"
+    class="selected-list row border rounded p-2 mx-0">
     <div class="col-4 py-2" *ngFor="let user of selectedUserList">
-      <div class=" cursor-pointer seleceted-item" (click)="onSelectUser(user)">
+      <div class="cursor-pointer seleceted-item" (click)="onSelectUser(user)">
         <div class="flex flex-column items-center justify-between">
           <div class="flex flex-column items-center gap-2">
             <div
               class="rounded-full position-relative h-9 w-9 flex items-center justify-center text-white-50 bg-secondary">
               <mat-icon svgIcon="mat:person"></mat-icon>
               <span class="delete-user text-danger">
-              <mat-icon svgIcon="mat:close"></mat-icon>
-            </span>
+                <mat-icon svgIcon="mat:close"></mat-icon>
+              </span>
             </div>
             <div class="flex-auto text-center">
-              <h5 class="text-secondary m-0 caption leading-none">{{user?.username}}</h5>
+              <h5 class="text-secondary m-0 caption leading-none">
+                {{ user?.username }}
+              </h5>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div dir="rtl" class="d-flex flex-column gap-2 align-items-center justify-center col-12"
-         *ngIf="selectedUserList?.length === 0">
+    <div
+      dir="rtl"
+      class="d-flex flex-column gap-2 align-items-center justify-center col-12"
+      *ngIf="selectedUserList?.length === 0">
       <mat-icon class="text-warning" svgIcon="mat:error_outline"></mat-icon>
       <span>هیچ کاربری انتخاب نشده است!</span>
     </div>
   </div>
 
   <!-- email list -->
-  <div class="mt-3 mb-1 search-input" [class.border-danger]="emailValue.value && emailValue.invalid">
-    <input dir="ltr" placeholder="Email..." class="" type="text" (keyup.enter)="addEmail()"
-           [formControl]="emailValue">
+  <div
+    *ngIf="!isPublic.value"
+    class="mt-3 mb-1 search-input"
+    [class.border-danger]="emailValue.value && emailValue.invalid">
+    <input
+      dir="ltr"
+      placeholder="Email..."
+      class=""
+      type="text"
+      (keyup.enter)="addEmail()"
+      [formControl]="emailValue" />
   </div>
 
-  <div dir="ltr" class="email-list row border rounded p-2 mx-0 gap-2">
-    <div class="col-12 px-0" *ngFor="let email of emailList;index as i">
-      <div class="border rounded px-3 py-1 d-flex justify-content-between align-items-center bg-secondary-subtle">
-        <span>{{email}}</span>
+  <div
+    *ngIf="!isPublic.value"
+    dir="ltr"
+    class="email-list row border rounded p-2 mx-0 gap-2">
+    <div class="col-12 px-0" *ngFor="let email of emailList; index as i">
+      <div
+        class="border rounded px-3 py-1 d-flex justify-content-between align-items-center bg-secondary-subtle">
+        <span>{{ email }}</span>
 
-        <button class="text-danger pt-1" color="primary" type="button" (click)="removeEmail(i)">
+        <button
+          class="text-danger pt-1"
+          color="primary"
+          type="button"
+          (click)="removeEmail(i)">
           <mat-icon svgIcon="mat:close"></mat-icon>
         </button>
       </div>
     </div>
 
-
-    <div *ngIf="!emailList?.length" dir="rtl" class="d-flex flex-column gap-2 align-items-center justify-center col-12">
+    <div
+      *ngIf="!emailList?.length"
+      dir="rtl"
+      class="d-flex flex-column gap-2 align-items-center justify-center col-12">
       <mat-icon class="text-warning" svgIcon="mat:error_outline"></mat-icon>
       <span>هیچ ایمیلی وارد نشده است!</span>
     </div>
   </div>
 
   <div class="flex justify-between mt-3">
-    <button mat-button class="dialog-button" (click)="closeModal()">بستن</button>
-    <button mat-button class="dialog-button" (click)="createLink()">ساخت لینک</button>
+    <button mat-button class="dialog-button" (click)="closeModal()">
+      بستن
+    </button>
+    <button
+      mat-button
+      class="dialog-button"
+      [disabled]="
+        (!isPublic.value && !selectedUserList.length && !emailList.length) ||
+        (!isPermanent.value && !expireDate.value)
+      "
+      (click)="createLink()">
+      ساخت لینک
+    </button>
   </div>
-
 </mat-dialog-content>
 
-<mat-dialog-content  *ngIf="sharedLink.length">
+<mat-dialog-content *ngIf="sharedLink.length">
   <div>
-  <div  class="w-100 d-flex flex-column justify-content-center align-items-center">
-    <mat-form-field appearance="outline" class="w-100 mt-3">
-      <input class="w-100" readonly [value]="sharedLink" matInput placeholder="لینک اشتراک">
-       <button
-      mat-icon-button
-      matPrefix
-      (click)="clickEvent(sharedLink)" >
-      <mat-icon>file_copy</mat-icon>
-    </button>
-    </mat-form-field>
+    <div
+      class="w-100 d-flex flex-column justify-content-center align-items-center">
+      <mat-form-field appearance="outline" class="w-100 mt-3">
+        <input
+          class="w-100"
+          readonly
+          [value]="sharedLink"
+          matInput
+          placeholder="لینک اشتراک" />
+        <button mat-icon-button matPrefix (click)="clickEvent(sharedLink)">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
   </div>
-</div>
 </mat-dialog-content>

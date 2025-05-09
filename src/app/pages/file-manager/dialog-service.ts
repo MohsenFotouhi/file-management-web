@@ -1,6 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
-import { file } from 'src/app/interface/files';
+import { File } from 'src/app/interface/files';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
@@ -13,9 +13,9 @@ import { ShareModalComponent } from './components/share-modal/share-modal.compon
 export class DialogService {
   constructor(private dialog: MatDialog) { }
 
-  openRenameDialog(files: file[]): Promise<string | undefined> {
+  openRenameDialog(name: string): Promise<string | undefined> {
     const dialogRef = this.dialog.open(RenameDialogComponent, {
-      data: { newName: files },
+      data: { newName: name },
       width: '500px'
     });
 
@@ -40,7 +40,7 @@ export class DialogService {
     return dialogRef.afterClosed().toPromise();
   }
 
-  openFileSharingDialog(files :file[]) {
+  openFileSharingDialog(files :File[]) {
     const dialogRef = this.dialog.open(ShareModalComponent, {
       data: { files: files },
       width: '500px'

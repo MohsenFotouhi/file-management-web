@@ -12,6 +12,7 @@ import { DashboardComponent } from "./dashboard.component";
 import { ShareDetailComponent } from './share-files/share-detail/share-detail.component';
 import { ShareFilesComponent } from "./share-files/share-files.component";
 import { UserStorageComponent } from "./user-storage/user-storage.component";
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent }
@@ -33,8 +34,8 @@ const routes: Routes = [
     MatTableModule,
     MatTooltipModule,
     MatSortModule,
-    ShareDetailComponent
-
+    ShareDetailComponent,
+    MatProgressBarModule
   ]
 })
 export class DashboardModule

@@ -15,6 +15,12 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { VexChartComponent } from '@vex/components/vex-chart/vex-chart.component';
+import { SidenavStorageComponent } from './sidenav-storage/sidenav-storage.component';
+import { FileManagerService } from '../../../services/file-manager.service';
+import { UserStorageUse } from 'src/app/interface/share-models';
+import { StoragePipe } from 'src/app/pipes/storage.pipe';
 
 @Component({
   selector: 'vex-sidenav',
@@ -29,11 +35,17 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
     VexScrollbarComponent,
     NgFor,
     SidenavItemComponent,
-    AsyncPipe
+    AsyncPipe,
+    MatProgressSpinnerModule,
+    VexChartComponent,
+    SidenavStorageComponent,
+    StoragePipe
   ]
 })
 export class SidenavComponent implements OnInit {
   @Input() collapsed: boolean = false;
+
+  storageUsage: number = 0;
   collapsedOpen$ = this.layoutService.sidenavCollapsedOpen$;
   title$ = this.configService.config$.pipe(
     map((config) => config.sidenav.title)
@@ -54,16 +66,28 @@ export class SidenavComponent implements OnInit {
   userMenuOpen$: Observable<boolean> = of(false);
 
   items$: Observable<NavigationItem[]> = this.navigationService.items$;
+  userStorage$: Observable<UserStorageUse>;
+  usedSpacePercentage: number;
 
   constructor(
     private navigationService: NavigationService,
     private layoutService: VexLayoutService,
     private configService: VexConfigService,
     private readonly popoverService: VexPopoverService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private service: FileManagerService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // this.service.CallAPI("", "").pipe(
+    //   map((data) => {
+    //     this.storageUsage = data;
+    //   }),
+    // ).subscribe()
+    // this.storageUsage = 60;
+    this.userStorage$ = this.service.userStorageUse$;
+    this.getUserStorage();
+  }
 
   collapseOpenSidenav() {
     this.layoutService.collapseOpenSidenav();
@@ -115,5 +139,9 @@ export class SidenavComponent implements OnInit {
       width: '100%',
       maxWidth: '600px'
     });
+  }
+
+  getUserStorage() {
+    this.service.getUserStorageUse().subscribe();
   }
 }
